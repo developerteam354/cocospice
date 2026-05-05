@@ -37,8 +37,6 @@ const toProxyUrl = (urlOrKey: string): string => {
   // Extract key from a full S3 URL
   const s3Match = urlOrKey.match(/amazonaws\.com\/(.+)$/);
   const key = s3Match ? s3Match[1] : urlOrKey;
-  // NEXT_PUBLIC_API_URL = "http://localhost:5000/api"
-  // Result:              "http://localhost:5000/api/user/upload/image?key=..."
   return `${process.env.NEXT_PUBLIC_API_URL}/api/user/upload/image?key=${encodeURIComponent(key)}`;
 };
 
