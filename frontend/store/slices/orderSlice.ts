@@ -51,6 +51,8 @@ interface PlaceOrderData {
   codCharge: number;
   totalAmount: number;
   paymentMethod: PaymentMethod;
+  paymentStatus?: PaymentStatus;
+  stripePaymentIntentId?: string;
   shippingAddress?: ShippingAddress;
 }
 
@@ -63,7 +65,8 @@ export const placeOrder = createAsyncThunk<Order, PlaceOrderData>(
       const { data } = await privateApi.post('/orders', orderData);
       return data.order;
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to place order';
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      const message = axiosErr?.response?.data?.message || 'Failed to place order';
       return rejectWithValue(message);
     }
   }

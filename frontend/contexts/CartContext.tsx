@@ -132,7 +132,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const updateQuantity = (index: number, delta: number) =>
     dispatch(updateQuantityAction({ index, delta }));
 
-  const clearCart = () => dispatch(clearCartAction());
+  const clearCart = () => {
+    dispatch(clearCartAction());
+    // Immediately sync the empty cart to the server so it doesn't repopulate
+    // on the next page load (the debounced sync would be cancelled by the redirect).
+    const sessionId = getSessionId();
+    dispatch(syncCartToServer({ sessionId, items: [], orderType, orderNote }));
+  };
 
   const setOrderType = (type: 'delivery' | 'collection') =>
     dispatch(setOrderTypeAction(type));

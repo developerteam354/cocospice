@@ -557,10 +557,15 @@
 .methodIcon { font-size: 1.4rem; }
 
 .methodLabel {
-  flex: 1;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-primary, #111);
+}
+
+.methodSub {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #6b7280);
+  margin-top: 2px;
 }
 
 .methodCheck {
@@ -673,6 +678,55 @@
 
 .cashIcon { font-size: 2rem; flex-shrink: 0; }
 .cashInfo p { margin: 0; font-size: 0.88rem; color: #166534; line-height: 1.5; }
+
+.codNotice {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: #166534;
+  background: rgba(16,185,129,0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+/* Stripe PaymentElement wrapper */
+.stripeCardWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0 20px;
+}
+
+.stripeLoadingBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  background: #f8fafc;
+  min-height: 80px;
+}
+
+.stripeCardBox {
+  padding: 14px 16px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.stripeCardBox:focus-within {
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+}
+
+.stripeNote {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+}
 
 /* Mini summary */
 .miniSummary {

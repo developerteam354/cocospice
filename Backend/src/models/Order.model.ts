@@ -39,6 +39,7 @@ export interface IOrder extends Document {
   // Payment
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
+  stripePaymentIntentId?: string;   // Stripe reference for card payments
   
   // Status
   orderStatus: OrderStatus;
@@ -135,6 +136,10 @@ const orderSchema = new Schema<IOrder>(
       type: String, 
       enum: ['Pending', 'Paid', 'Failed'], 
       default: 'Pending',
+    },
+    stripePaymentIntentId: {
+      type: String,
+      default: null,
     },
     
     // Status
