@@ -14,8 +14,10 @@ export const getCart = async (req: Request, res: Response, next: NextFunction): 
     }
 
     const cart = await Cart.findOne({ sessionId }).exec();
+    // Filter out any stale items that lost their productId (e.g. from old data)
+    const cleanItems = (cart?.items ?? []).filter(item => !!item.productId);
     res.status(200).json({
-      cart:      cart?.items      ?? [],
+      cart:      cleanItems,
       orderType: cart?.orderType  ?? 'delivery',
       orderNote: cart?.orderNote  ?? '',
     });

@@ -48,15 +48,28 @@ export default function PaymentPage() {
     setPlacing(true);
 
     try {
+      // Validate all cart items have a resolvable productId
+      const resolveId = (item: typeof cart[0]) =>
+        item.id || (item as any).productId || (item as any)._id || '';
+
+      const invalidItems = cart.filter(item => !resolveId(item));
+      if (invalidItems.length > 0) {
+        toast.error(
+          'Some cart items are missing product information. Please refresh the page and re-add them.',
+        );
+        setPlacing(false);
+        return;
+      }
+
       // Prepare order data
       const orderData = {
         items: cart.map(item => ({
-          productId: item.id,
+          productId: item.id || (item as any).productId || (item as any)._id,
           name: item.name,
           price: item.price,
           quantity: item.quantity,
           selectedExtraOptions: item.selectedExtraOptions || [],
-          subtotal: item.price * item.quantity + (item.selectedExtraOptions?.reduce((sum, opt) => sum + opt.price, 0) || 0) * item.quantity,
+          subtotal: (item.price + (item.selectedExtraOptions?.reduce((sum, opt) => sum + opt.price, 0) || 0)) * item.quantity,
         })),
         orderType,
         orderNote: orderNote || '',

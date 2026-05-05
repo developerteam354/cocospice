@@ -70,6 +70,10 @@ export const userOrderController = {
         order,
       });
     } catch (err: unknown) {
+      if (err instanceof Error && err.message.startsWith('Invalid productId')) {
+        res.status(400).json({ message: err.message });
+        return;
+      }
       next(err);
     }
   },

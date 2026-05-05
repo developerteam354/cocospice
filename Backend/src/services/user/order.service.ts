@@ -1,6 +1,6 @@
 import { Order, type IOrder, type IOrderItem, type IShippingAddress } from '../../models/Order.model.js';
 import { User } from '../../models/User.model.js';
-import type { Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 interface CreateOrderData {
   userId: string;
@@ -26,11 +26,23 @@ export const orderService = {
     // Generate unique order ID
     const orderId = await (Order as any).generateOrderId();
 
+    // Sanitise + cast productId strings → ObjectId to avoid Mongoose validation errors
+    const sanitisedItems = data.items.map((item, idx) => {
+      const rawId = (item as any).productId;
+      if (!rawId || !Types.ObjectId.isValid(rawId)) {
+        throw new Error(`Invalid productId at item index ${idx}: "${rawId}"`);
+      }
+      return {
+        ...item,
+        productId: new Types.ObjectId(rawId),
+      };
+    });
+
     // Create order
     const order = await Order.create({
       orderId,
       userId: data.userId,
-      items: data.items,
+      items: sanitisedItems,
       orderType: data.orderType,
       orderNote: data.orderNote || '',
       subtotal: data.subtotal,

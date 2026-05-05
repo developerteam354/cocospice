@@ -28,8 +28,17 @@ export const fetchCartFromServer = createAsyncThunk(
       );
       if (!res.ok) throw new Error('Failed to fetch cart');
       const data = await res.json();
+      // Resolve productId from whichever field exists, then discard items with none
+      const rawItems = (data.cart ?? []) as any[];
+      const validItems = rawItems
+        .map(item => ({
+          ...item,
+          id: item.id || item.productId || item._id || '',
+        }))
+        .filter(item => !!item.id) as CartItem[];
+
       return {
-        items: (data.cart ?? []) as CartItem[],
+        items: validItems,
         orderType: (data.orderType ?? 'delivery') as 'delivery' | 'collection',
         orderNote: (data.orderNote ?? '') as string,
       };
@@ -63,7 +72,15 @@ export const syncCartToServer = createAsyncThunk(
       const res = await fetch(`${API_BASE_URL}/user/cart/sync`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, items, orderType, orderNote }),
+        body: JSON.stringify({
+          sessionId,
+          // Only sync items that have a valid productId
+          items: items
+            .filter(item => !!(item.id || (item as any).productId))
+            .map(item => ({ ...item, productId: item.id || (item as any).productId })),
+          orderType,
+          orderNote,
+        }),
       });
       if (!res.ok) throw new Error('Failed to sync cart');
       return true;
