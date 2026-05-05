@@ -18,6 +18,9 @@ const extrasKey = (extras?: ExtraOption[]) => JSON.stringify(extras ?? []);
 /**
  * Fetch saved cart from backend.
  * Uses sessionId (userId or guestId) — no JWT required.
+ *
+ * The Cart model stores items with `productId` (not `id`), so we normalise
+ * each item back to the frontend CartItem shape (id = productId) on the way in.
  */
 export const fetchCartFromServer = createAsyncThunk(
   'cart/fetchFromServer',
@@ -28,8 +31,25 @@ export const fetchCartFromServer = createAsyncThunk(
       );
       if (!res.ok) throw new Error('Failed to fetch cart');
       const data = await res.json();
+
+      // Server stores { productId, name, price, ... } — map back to CartItem { id, ... }
+      const items: CartItem[] = (data.cart ?? []).map((item: any) => ({
+        id:                   item.id ?? item.productId,   // prefer id if already present
+        name:                 item.name,
+        description:          item.description ?? '',
+        price:                item.price,
+        image:                item.image ?? '',
+        images:               item.images ?? [],
+        categoryId:           item.categoryId ?? '',
+        quantity:             item.quantity,
+        selectedExtraOptions: item.selectedExtraOptions ?? [],
+        isVeg:                item.isVeg,
+        stock:                item.stock,
+        isAvailable:          item.isAvailable,
+      }));
+
       return {
-        items: (data.cart ?? []) as CartItem[],
+        items,
         orderType: (data.orderType ?? 'delivery') as 'delivery' | 'collection',
         orderNote: (data.orderNote ?? '') as string,
       };
@@ -42,6 +62,9 @@ export const fetchCartFromServer = createAsyncThunk(
 /**
  * Sync current cart to backend.
  * Uses sessionId — no JWT required.
+ *
+ * The Cart model requires `productId` on each item, so we map `id` → `productId`
+ * before sending. The frontend always uses `id`; the backend always uses `productId`.
  */
 export const syncCartToServer = createAsyncThunk(
   'cart/syncToServer',
@@ -60,10 +83,16 @@ export const syncCartToServer = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      // Map frontend CartItem (id) → backend ICartItem (productId)
+      const serverItems = items.map(({ id, ...rest }) => ({
+        productId: id,
+        ...rest,
+      }));
+
       const res = await fetch(`${API_BASE_URL}/user/cart/sync`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, items, orderType, orderNote }),
+        body: JSON.stringify({ sessionId, items: serverItems, orderType, orderNote }),
       });
       if (!res.ok) throw new Error('Failed to sync cart');
       return true;

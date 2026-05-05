@@ -23,10 +23,24 @@ import { injectStore } from '../lib/api';
 
 const cartPersistConfig = {
   key: 'cocospice_cart',
-  version: 1,
+  version: 2,   // bumped from 1 → 2 to trigger migration for productId → id rename
   storage,
   // Whitelist specific fields to keep the persisted payload lean
   whitelist: ['items', 'orderType', 'orderNote'],
+  migrate: (state: any) => {
+    // v1 → v2: cart items were stored with `productId` instead of `id`.
+    // Normalize any stale items so buildItems() always has item.id populated.
+    if (state?.items) {
+      state.items = state.items.map((item: any) => {
+        if (!item.id && item.productId) {
+          const { productId, ...rest } = item;
+          return { ...rest, id: productId };
+        }
+        return item;
+      });
+    }
+    return Promise.resolve(state);
+  },
 };
 
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);
