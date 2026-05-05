@@ -208,6 +208,14 @@ export default function OrderDetailsPage() {
                   {currentOrder.shippingAddress?.city}, {currentOrder.shippingAddress?.zipCode}
                 </p>
               </div>
+              {currentOrder.shippingAddress?.instructions && (
+                <div className="pt-4 border-t border-gray-50">
+                  <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Delivery Instructions</p>
+                  <p className="text-[0.9rem] font-bold text-gray-700 leading-relaxed bg-orange-50 rounded-xl px-4 py-3 border border-orange-100">
+                    {currentOrder.shippingAddress.instructions}
+                  </p>
+                </div>
+              )}
               {currentOrder.expectedDelivery && (
                 <div className="pt-4 border-t border-gray-50 flex items-center gap-2">
                    <Clock size={16} className="text-orange-500" />
@@ -281,6 +289,21 @@ export default function OrderDetailsPage() {
                 </div>
               </div>
             </div>
+
+            {/* Customer Instructions (orderNote) */}
+            {currentOrder.orderNote && (
+              <div className="rounded-[32px] border border-blue-100 bg-white p-8 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Package size={20} strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-[0.8rem] font-black uppercase tracking-widest text-gray-400">Customer Instructions</h3>
+                </div>
+                <p className="text-[0.95rem] font-bold text-gray-700 leading-relaxed bg-blue-50 rounded-xl px-5 py-4 border border-blue-100">
+                  {currentOrder.orderNote}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Timeline */}

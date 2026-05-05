@@ -23,6 +23,7 @@ export interface IShippingAddress {
   state: string;
   zipCode: string;
   country: string;
+  instructions?: string;
 }
 
 export interface IOrderTimeline {
@@ -40,6 +41,7 @@ export interface IOrder {
   price: number; // Total price
   status: OrderStatus;
   paymentMethod?: PaymentMethod;
+  orderNote?: string;           // "Your Instructions" from checkout review
   shippingAddress?: IShippingAddress;
   expectedDelivery?: string;
   timeline?: IOrderTimeline[];

@@ -16,7 +16,9 @@ export const userCategoryRepository = {
   },
 
   /**
-   * Find categories with product count
+   * Find categories with product count.
+   * The $project stage must include categoryImage and isListed — without them
+   * the aggregate strips those fields and the frontend receives empty image URLs.
    */
   findWithProductCount: async () => {
     return Category.aggregate([
@@ -30,7 +32,9 @@ export const userCategoryRepository = {
       },
       {
         $project: {
-          name: 1,
+          name:          1,
+          categoryImage: 1,   // ← must be explicit or the field is dropped
+          isListed:      1,
           productCount: {
             $size: {
               $filter: {

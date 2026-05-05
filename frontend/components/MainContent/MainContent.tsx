@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { MenuItem, Category } from '../../types';
 import styles from './MainContent.module.css';
 
@@ -26,13 +25,15 @@ export default function MainContent({ categoryTitle, items, categories, onSelect
                 onClick={() => onSelectCategory(cat.id)}
               >
                 {cat.categoryImage ? (
-                  <Image 
-                    src={cat.categoryImage} 
-                    alt={cat.name} 
-                    width={100} 
-                    height={100} 
-                    className={styles.categoryItemImage} 
-                    priority={index < 4} 
+                  <img
+                    src={cat.categoryImage}
+                    alt={cat.name}
+                    width={100}
+                    height={100}
+                    className={styles.categoryItemImage}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
                   />
                 ) : (
                   <div style={{ 

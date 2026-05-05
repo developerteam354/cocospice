@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { MenuItem, ExtraOption } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
@@ -54,7 +53,7 @@ export default function ClientApp() {
 
   // Fetch initial data
   useEffect(() => {
-    dispatch(fetchCategories());
+    dispatch(fetchCategories(true));   // withProductCount=true — $project now includes categoryImage
     dispatch(fetchProducts());
   }, [dispatch]);
 
@@ -269,15 +268,24 @@ export default function ClientApp() {
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   {c.categoryImage ? (
-                    <Image 
-                      src={c.categoryImage} 
-                      alt={c.name} 
-                      width={36} 
-                      height={36} 
-                      className={styles.categoryImg} 
+                    <img
+                      src={c.categoryImage}
+                      alt={c.name}
+                      width={36}
+                      height={36}
+                      className={styles.categoryImg}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                        const sibling = (e.currentTarget as HTMLImageElement).nextElementSibling as HTMLElement | null;
+                        if (sibling) sibling.style.display = 'inline';
+                      }}
                     />
-                  ) : (
+                  ) : null}
+                  {(!c.categoryImage) && (
                     <span className={styles.categoryIcon}>🍽️</span>
+                  )}
+                  {c.categoryImage && (
+                    <span className={styles.categoryIcon} style={{ display: 'none' }}>🍽️</span>
                   )}
                   <span className={styles.categoryText}>{c.name}</span>
                 </button>

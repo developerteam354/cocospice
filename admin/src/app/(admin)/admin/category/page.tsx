@@ -105,7 +105,7 @@ function CategoryCard({ cat, index, onEdit, onToggle, onDelete }: CategoryCardPr
               {cat.isListed ? <EyeOff size={18} strokeWidth={2.5} /> : <Eye size={18} strokeWidth={2.5} />}
             </button>
             <button 
-              onClick={() => handleDelete(cat)}
+              onClick={() => onDelete(cat)}
               title="Delete Category"
               className="rounded-2xl p-3 border border-gray-100 bg-white text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all active:scale-95 shadow-sm"
             >

@@ -132,12 +132,13 @@ function StripePaymentForm({ total, cartTotal }: { total: number; cartTotal: num
   const buildShippingAddress = () => {
     if (!shippingAddress?.line1) return undefined;
     return {
-      fullName: shippingAddress.fullName,
-      line1:    shippingAddress.line1,
-      line2:    shippingAddress.line2 ?? '',
-      city:     shippingAddress.city,
-      postcode: shippingAddress.postcode,
-      phone:    shippingAddress.phone,
+      fullName:     shippingAddress.fullName,
+      line1:        shippingAddress.line1,
+      line2:        shippingAddress.line2 ?? '',
+      city:         shippingAddress.city,
+      postcode:     shippingAddress.postcode,
+      phone:        shippingAddress.phone,
+      instructions: shippingAddress.instructions ?? '',
     };
   };
 
@@ -288,12 +289,13 @@ export default function PaymentPage() {
   const buildShippingAddress = () => {
     if (!shippingAddress?.line1) return undefined;
     return {
-      fullName: shippingAddress.fullName,
-      line1:    shippingAddress.line1,
-      line2:    shippingAddress.line2 ?? '',
-      city:     shippingAddress.city,
-      postcode: shippingAddress.postcode,
-      phone:    shippingAddress.phone,
+      fullName:     shippingAddress.fullName,
+      line1:        shippingAddress.line1,
+      line2:        shippingAddress.line2 ?? '',
+      city:         shippingAddress.city,
+      postcode:     shippingAddress.postcode,
+      phone:        shippingAddress.phone,
+      instructions: shippingAddress.instructions ?? '',
     };
   };
 

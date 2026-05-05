@@ -41,6 +41,7 @@ interface BackendOrder {
     city: string;
     postcode: string;
     phone: string;
+    instructions?: string;
   };
   createdAt: string;
   updatedAt: string;
@@ -77,12 +78,14 @@ const transformOrder = (backendOrder: BackendOrder): IOrder => {
     price: backendOrder.totalAmount,
     status: backendOrder.orderStatus as any,
     paymentMethod: backendOrder.paymentMethod as any,
+    orderNote: backendOrder.orderNote || '',
     shippingAddress: backendOrder.shippingAddress ? {
-      street: backendOrder.shippingAddress.line1,
-      city: backendOrder.shippingAddress.city,
-      state: '', // Not in backend model
-      zipCode: backendOrder.shippingAddress.postcode,
-      country: 'UK',
+      street:       backendOrder.shippingAddress.line1,
+      city:         backendOrder.shippingAddress.city,
+      state:        '',
+      zipCode:      backendOrder.shippingAddress.postcode,
+      country:      'UK',
+      instructions: backendOrder.shippingAddress.instructions || '',
     } : undefined,
     date: backendOrder.createdAt,
     createdAt: backendOrder.createdAt,
