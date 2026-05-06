@@ -12,6 +12,7 @@ export interface ICreateProductInput {
   stock: number;
   isAvailable: boolean;
   category: string;
+  hasSpiceLevel: boolean;
   extraOptions: IExtraOption[];
   thumbnail: IImageAsset;   // pre-uploaded S3 asset
   gallery: IImageAsset[];   // pre-uploaded S3 assets

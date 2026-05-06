@@ -125,6 +125,7 @@ function StripePaymentForm({ total, cartTotal }: { total: number; cartTotal: num
         price:                item.price,
         quantity:             item.quantity,
         selectedExtraOptions: item.selectedExtraOptions ?? [],
+        spiceLevel:           item.spiceLevel,
         subtotal:             (item.price + extrasTotal) * item.quantity,
       };
     });
@@ -309,6 +310,7 @@ export default function PaymentPage() {
         price:                item.price,
         quantity:             item.quantity,
         selectedExtraOptions: item.selectedExtraOptions ?? [],
+        spiceLevel:           item.spiceLevel,
         subtotal:             (item.price + extrasTotal) * item.quantity,
       };
     });

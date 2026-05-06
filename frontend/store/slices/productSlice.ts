@@ -80,6 +80,7 @@ export const fetchProducts = createAsyncThunk(
           isAvailable: p.isAvailable,
           ratings: p.ratings,
           soldCount: p.soldCount,
+          hasSpiceLevel: p.hasSpiceLevel,
         };
         
         if (!transformed.image) {

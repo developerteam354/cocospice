@@ -96,6 +96,14 @@ export default function CartSidebar({ cart, onUpdateQuantity, onClearCart, onClo
                     ))}
                   </div>
                 )}
+
+                {item.spiceLevel && (
+                  <div className={styles.itemOptions}>
+                    <span className={styles.spiceBadge}>
+                      🌶️ {item.spiceLevel}
+                    </span>
+                  </div>
+                )}
                 
                 {item.description && (
                   <p className={styles.itemDesc}>{item.description}</p>

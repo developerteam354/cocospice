@@ -14,6 +14,7 @@ export interface IOrderItem {
   thumbnail: string;
   quantity: number;
   price: number;
+  spiceLevel?: string;
   subtotal: number;
 }
 

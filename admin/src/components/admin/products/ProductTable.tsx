@@ -47,7 +47,7 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
         <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mb-5 border border-gray-100 shadow-sm">
           <Eye size={40} className="text-gray-200" />
         </div>
-        <p className="text-[1.1rem] font-black text-gray-900">No products found</p>
+        <p className="text-[1.1rem] font-bold text-gray-900">No products found</p>
         <p className="text-[0.9rem] font-medium text-gray-500 mt-1">Try adjusting your filters or search query</p>
       </div>
     );
@@ -59,12 +59,12 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-gray-50 bg-gray-50/30">
-              <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Product Info</th>
-              <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Category</th>
-              <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Pricing</th>
-              <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 text-center">Inventory</th>
-              <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 text-center">Status</th>
-              <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
+              <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Product Info</th>
+              <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Category</th>
+              <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Pricing</th>
+              <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 text-center">Inventory</th>
+              <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 text-center">Status</th>
+              <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -92,14 +92,14 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-black text-gray-900 truncate leading-tight group-hover:text-emerald-700 transition-colors">{product.name}</p>
+                        <p className="font-bold text-gray-900 truncate leading-tight group-hover:text-emerald-700 transition-colors">{product.name}</p>
                         <div className="flex items-center gap-2 mt-1.5">
                           {product.isVeg ? (
-                            <span className="flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest text-emerald-600">
+                            <span className="flex items-center gap-1 text-[0.65rem] font-bold uppercase tracking-widest text-emerald-600">
                               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" /> Veg
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1 text-[0.65rem] font-black uppercase tracking-widest text-red-600">
+                            <span className="flex items-center gap-1 text-[0.65rem] font-bold uppercase tracking-widest text-red-600">
                               <span className="h-1.5 w-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]" /> Non-Veg
                             </span>
                           )}
@@ -111,7 +111,7 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
 
                   {/* Category */}
                   <td className="px-6 py-5">
-                    <span className="inline-flex items-center rounded-lg bg-gray-100 px-2.5 py-1 text-[0.75rem] font-black text-gray-500 uppercase tracking-wider">
+                    <span className="inline-flex items-center rounded-lg bg-gray-100 px-2.5 py-1 text-[0.75rem] font-bold text-gray-500 uppercase tracking-wider">
                       {product.category?.name ?? 'Standard'}
                     </span>
                   </td>
@@ -119,7 +119,7 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
                   {/* Price */}
                   <td className="px-6 py-5">
                     <div className="flex flex-col">
-                      <span className="text-[1.1rem] font-black text-gray-900">
+                      <span className="text-[1.1rem] font-bold text-gray-900">
                         ₹{product.finalPrice.toFixed(2)}
                       </span>
                       {product.offerPercentage > 0 && (
@@ -127,7 +127,7 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
                           <span className="text-[0.75rem] font-bold text-gray-400 line-through">
                             ₹{product.price.toFixed(2)}
                           </span>
-                          <span className="text-[0.7rem] font-black text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-md">
+                          <span className="text-[0.7rem] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-md">
                             -{product.offerPercentage}%
                           </span>
                         </div>
@@ -137,7 +137,7 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
 
                   {/* Stock count */}
                   <td className="px-6 py-5 text-center">
-                    <span className="text-[1.1rem] font-black text-gray-900">{product.stock}</span>
+                    <span className="text-[1.1rem] font-bold text-gray-900">{product.stock}</span>
                     <p className="text-[0.65rem] font-bold text-gray-400 uppercase tracking-widest">Units</p>
                   </td>
 

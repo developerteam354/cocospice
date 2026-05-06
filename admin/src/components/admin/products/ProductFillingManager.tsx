@@ -44,7 +44,7 @@ export default function ProductFillingManager({ filling, onChange }: ProductFill
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-[1rem] font-black text-gray-900 tracking-tight">
+        <h2 className="text-[1rem] font-bold text-gray-900 tracking-tight">
           Product Filling
           <span className="ml-2 text-[0.8rem] font-bold text-gray-400 normal-case">
             (e.g., Veg, Chicken, Beef)

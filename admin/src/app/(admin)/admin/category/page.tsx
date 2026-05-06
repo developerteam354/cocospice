@@ -74,7 +74,7 @@ function CategoryCard({ cat, index, onEdit, onToggle, onDelete }: CategoryCardPr
 
         {/* Content */}
         <div className="flex-1 space-y-2">
-          <h3 className="text-[1.3rem] font-black text-gray-900 tracking-tight group-hover:text-emerald-700 transition-colors">
+          <h3 className="text-[1.3rem] font-bold text-gray-900 tracking-tight group-hover:text-emerald-700 transition-colors">
             {cat.name}
           </h3>
           <p className="text-[0.9rem] font-medium text-gray-500 line-clamp-2 leading-relaxed">
@@ -86,7 +86,7 @@ function CategoryCard({ cat, index, onEdit, onToggle, onDelete }: CategoryCardPr
         <div className="mt-6 flex items-center gap-2 pt-5 border-t border-gray-50">
           <button 
             onClick={() => onEdit(cat)}
-            className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-gray-50 px-4 py-3 text-[0.85rem] font-black text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-95 border border-transparent hover:border-emerald-100"
+            className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-gray-50 px-4 py-3 text-[0.85rem] font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-95 border border-transparent hover:border-emerald-100"
           >
             <Pencil size={16} strokeWidth={2.5} />
             Edit
@@ -218,7 +218,7 @@ export default function CategoryPage() {
           <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
             className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-[2.2rem] font-black text-gray-900 tracking-tighter">Category Manager</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">Category Manager</h1>
               <p className="text-[0.95rem] font-medium text-gray-500 mt-1">
                 Manage how your menu items are grouped and displayed
               </p>
@@ -248,12 +248,12 @@ export default function CategoryPage() {
             </div>
             <div className="hidden md:flex items-center gap-6 px-6 border-l border-gray-100">
                <div className="text-center">
-                  <p className="text-[1.1rem] font-black text-gray-900">{categories.length}</p>
-                  <p className="text-[0.65rem] font-black uppercase tracking-widest text-gray-400">Total</p>
+                  <p className="text-[1.1rem] font-bold text-gray-900">{categories.length}</p>
+                  <p className="text-[0.65rem] font-bold uppercase tracking-widest text-gray-400">Total</p>
                </div>
                <div className="text-center">
-                  <p className="text-[1.1rem] font-black text-emerald-600">{categories.filter(c => c.isListed).length}</p>
-                  <p className="text-[0.65rem] font-black uppercase tracking-widest text-gray-400">Active</p>
+                  <p className="text-[1.1rem] font-bold text-emerald-600">{categories.filter(c => c.isListed).length}</p>
+                  <p className="text-[0.65rem] font-bold uppercase tracking-widest text-gray-400">Active</p>
                </div>
             </div>
           </motion.div>
@@ -272,7 +272,7 @@ export default function CategoryPage() {
               <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
                 <Tag size={40} className="text-gray-200" />
               </div>
-              <h3 className="text-[1.2rem] font-black text-gray-900">No categories found</h3>
+              <h3 className="text-[1.2rem] font-bold text-gray-900">No categories found</h3>
               <p className="text-gray-500 font-medium mt-1">
                 {search ? 'Try a different search term' : 'Start by adding your first menu category'}
               </p>

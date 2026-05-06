@@ -107,14 +107,14 @@ export default function NewOrdersPage() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-6"
       >
         <div>
-          <h1 className="text-[2.2rem] font-black text-gray-900 tracking-tighter leading-tight">Incoming Orders</h1>
+          <h1 className="text-3xl sm:text-[2.2rem] font-bold text-gray-900 tracking-tight leading-tight">Incoming Orders</h1>
           <p className="text-[0.95rem] font-medium text-gray-500 mt-1">
             Real-time management of your restaurant's active transactions
           </p>
         </div>
         <button
           onClick={() => router.push('/admin/orders/delivered')}
-          className="group flex items-center justify-center gap-2 rounded-2xl bg-white border border-gray-100 px-6 py-4 text-[0.9rem] font-black text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95"
+          className="group flex items-center justify-center gap-2 rounded-2xl bg-white border border-gray-100 px-6 py-4 text-[0.9rem] font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95"
         >
           <Package size={20} strokeWidth={2.5} className="text-gray-400 group-hover:text-emerald-500 transition-colors" />
           Archive & Delivered
@@ -124,7 +124,7 @@ export default function NewOrdersPage() {
       {/* ── Stat Overview ── */}
       <motion.div
          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-         className="grid grid-cols-2 lg:grid-cols-4 gap-6"
+         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
       >
          {[
            { label: 'Active', value: newOrders.length, color: 'bg-amber-500', iconColor: 'text-white', icon: Clock },
@@ -138,8 +138,8 @@ export default function NewOrdersPage() {
                    <stat.icon size={24} strokeWidth={2.5} />
                 </div>
                 <div>
-                   <p className="text-[1.8rem] font-black text-gray-900 leading-none">{stat.value}</p>
-                   <p className="text-[0.7rem] font-black uppercase tracking-widest text-gray-400 mt-1.5">{stat.label}</p>
+                   <p className="text-[1.8rem] font-bold text-gray-900 leading-none">{stat.value}</p>
+                   <p className="text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 mt-1.5">{stat.label}</p>
                 </div>
              </div>
            </div>
@@ -167,7 +167,7 @@ export default function NewOrdersPage() {
             <button
               key={f}
               onClick={() => setStatusFilter(f)}
-              className={`rounded-[18px] px-6 py-3 text-[0.8rem] font-black uppercase tracking-wider whitespace-nowrap transition-all ${
+              className={`rounded-[18px] px-6 py-3 text-[0.8rem] font-bold uppercase tracking-wider whitespace-nowrap transition-all ${
                 statusFilter === f
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-400 hover:text-gray-600'
@@ -188,12 +188,12 @@ export default function NewOrdersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/30">
-                <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Order Context</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Customer Details</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 hidden lg:table-cell">Temporal</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Transaction</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Status</th>
-                <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 text-right">Fulfillment</th>
+                <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Order Context</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Customer Details</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 hidden lg:table-cell">Temporal</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Transaction</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Status</th>
+                <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 text-right">Fulfillment</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -208,7 +208,7 @@ export default function NewOrdersPage() {
                       <div className="w-20 h-20 bg-gray-50 rounded-[24px] flex items-center justify-center mb-5 border border-gray-100">
                         <Package size={40} className="text-gray-200" />
                       </div>
-                      <p className="text-[1.1rem] font-black text-gray-900">No active orders found</p>
+                      <p className="text-[1.1rem] font-bold text-gray-900">No active orders found</p>
                       <p className="text-[0.9rem] font-medium text-gray-500 mt-1">Ready and waiting for new business</p>
                     </div>
                   </td>
@@ -227,7 +227,7 @@ export default function NewOrdersPage() {
                             <Clock size={20} className="text-gray-400" />
                           </div>
                           <div>
-                            <span className="font-mono text-[0.75rem] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                            <span className="font-mono text-[0.75rem] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
                               #{order.orderId}
                             </span>
                             <p className="text-[0.65rem] font-bold text-gray-400 mt-1 uppercase tracking-wider">Reference ID</p>
@@ -238,7 +238,7 @@ export default function NewOrdersPage() {
                       {/* Customer Details */}
                       <td className="px-6 py-5">
                         <div className="min-w-0">
-                          <p className="font-black text-gray-900 leading-tight truncate">{order.user.name}</p>
+                          <p className="font-bold text-gray-900 leading-tight truncate">{order.user.name}</p>
                           <p className="text-[0.85rem] font-bold text-gray-400 truncate mt-1">{order.user.email}</p>
                         </div>
                       </td>
@@ -246,12 +246,12 @@ export default function NewOrdersPage() {
                       {/* Temporal */}
                       <td className="hidden px-6 py-5 lg:table-cell">
                         <p className="text-[0.9rem] font-bold text-gray-500">{formatDate(order.date)}</p>
-                        <p className="text-[0.65rem] font-black text-gray-300 uppercase mt-1 tracking-tighter">Order Timestamp</p>
+                        <p className="text-[0.65rem] font-bold text-gray-300 uppercase mt-1 tracking-tighter">Order Timestamp</p>
                       </td>
 
                       {/* Transaction */}
                       <td className="px-6 py-5">
-                        <p className="text-[1.1rem] font-black text-gray-900">₹{order.price.toFixed(2)}</p>
+                        <p className="text-[1.1rem] font-bold text-gray-900">₹{order.price.toFixed(2)}</p>
                         <p className="text-[0.65rem] font-bold text-emerald-600/70 uppercase tracking-widest mt-1">Total Paid</p>
                       </td>
 
@@ -297,7 +297,7 @@ export default function NewOrdersPage() {
                             <button
                               onClick={() => handleStatusUpdate(order._id, 'On the Way')}
                               disabled={updating}
-                              className="flex items-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 text-[0.8rem] font-black text-white hover:bg-emerald-600 transition-all active:scale-95 shadow-md shadow-emerald-500/20"
+                              className="flex items-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 text-[0.8rem] font-bold text-white hover:bg-emerald-600 transition-all active:scale-95 shadow-md shadow-emerald-500/20"
                             >
                               <Truck size={18} strokeWidth={2.5} />
                               <span>Dispatch</span>
@@ -308,7 +308,7 @@ export default function NewOrdersPage() {
                             <button
                               onClick={() => handleStatusUpdate(order._id, 'Delivered')}
                               disabled={updating}
-                              className="flex items-center gap-2 rounded-2xl bg-white border border-gray-100 px-5 py-3 text-[0.8rem] font-black text-emerald-600 hover:bg-emerald-50 hover:border-emerald-100 transition-all active:scale-95 shadow-sm"
+                              className="flex items-center gap-2 rounded-2xl bg-white border border-gray-100 px-5 py-3 text-[0.8rem] font-bold text-emerald-600 hover:bg-emerald-50 hover:border-emerald-100 transition-all active:scale-95 shadow-sm"
                             >
                               <CheckCircle size={18} strokeWidth={2.5} />
                               <span>Complete</span>

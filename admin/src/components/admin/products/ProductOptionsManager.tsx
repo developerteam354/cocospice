@@ -83,7 +83,7 @@ export default function ProductOptionsManager({ options, onChange }: ProductOpti
   return (
     <section className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-[1rem] font-black text-gray-900 tracking-tight">
+        <h2 className="text-[1rem] font-bold text-gray-900 tracking-tight">
           Product Options
           <span className="ml-2 text-[0.8rem] font-bold text-gray-400 normal-case">
             (e.g., Spice Level, Size)
@@ -144,13 +144,13 @@ export default function ProductOptionsManager({ options, onChange }: ProductOpti
                           type="text"
                           value={option.name}
                           onChange={(e) => updateOptionName(optionIndex, e.target.value)}
-                          className="w-full bg-transparent text-[1rem] font-black text-gray-900 outline-none"
+                          className="w-full bg-transparent text-[1rem] font-bold text-gray-900 outline-none"
                           placeholder="Option name"
                         />
                         <p className="text-[0.8rem] font-bold text-gray-400 mt-0.5">
                           {option.choices.length} choice{option.choices.length !== 1 ? 's' : ''}
                           {option.required && (
-                            <span className="ml-2 text-amber-600 font-black uppercase tracking-tighter text-[0.7rem] bg-amber-50 px-1.5 py-0.5 rounded-md">Required</span>
+                            <span className="ml-2 text-amber-600 font-bold uppercase tracking-tighter text-[0.7rem] bg-amber-50 px-1.5 py-0.5 rounded-md">Required</span>
                           )}
                         </p>
                       </div>
@@ -159,7 +159,7 @@ export default function ProductOptionsManager({ options, onChange }: ProductOpti
                       <button
                         type="button"
                         onClick={() => toggleRequired(optionIndex)}
-                        className={`h-10 px-4 rounded-xl text-[0.8rem] font-black uppercase tracking-wide transition-all border ${
+                        className={`h-10 px-4 rounded-xl text-[0.8rem] font-bold uppercase tracking-wide transition-all border ${
                           option.required
                             ? 'bg-amber-50 text-amber-600 border-amber-100 shadow-sm'
                             : 'bg-white text-gray-400 border-gray-100'
@@ -187,7 +187,7 @@ export default function ProductOptionsManager({ options, onChange }: ProductOpti
                         transition={{ duration: 0.2 }}
                         className="border-t border-gray-100 bg-gray-50/30 p-6 space-y-4"
                       >
-                        <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest">
+                        <p className="text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest">
                           Manage Choices
                         </p>
 

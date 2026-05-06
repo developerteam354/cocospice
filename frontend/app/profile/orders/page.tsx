@@ -13,7 +13,7 @@ import type { RootState } from '@/store/store';
 type OrderStatus = 'pending' | 'confirmed' | 'on-the-way' | 'delivered' | 'cancelled';
 
 interface OrderExtra { name: string; price: number; }
-interface OrderItem  { name: string; quantity: number; price: number; selectedExtras?: OrderExtra[]; }
+interface OrderItem  { name: string; quantity: number; price: number; spiceLevel?: string; selectedExtras?: OrderExtra[]; }
 interface Order {
   id: string; date: string; status: OrderStatus; totalAmount: number;
   orderType: 'delivery' | 'collection'; paymentMethod: string;
@@ -166,7 +166,14 @@ function OrderCard({ order, index }: { order: Order; index: number }) {
                           {item.quantity}x
                         </div>
                         <div className="flex flex-col gap-1">
-                          <p className="font-bold text-gray-900 text-[0.95rem]">{item.name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-gray-900 text-[0.95rem]">{item.name}</p>
+                            {item.spiceLevel && (
+                              <span className="px-2 py-0.5 rounded-lg bg-orange-50 text-orange-600 text-[0.65rem] font-bold uppercase tracking-wider border border-orange-100">
+                                🌶️ {item.spiceLevel}
+                              </span>
+                            )}
+                          </div>
                           {item.selectedExtras && item.selectedExtras.length > 0 && (
                             <div className="flex flex-wrap gap-1.5">
                               {item.selectedExtras.map((ex, ei) => (
@@ -294,6 +301,7 @@ export default function ProfileOrdersPage() {
       name: item.name,
       quantity: item.quantity,
       price: item.price,
+      spiceLevel: item.spiceLevel,
       selectedExtras: item.selectedExtraOptions,
     })),
   }));

@@ -72,14 +72,14 @@ export default function DeliveredOrdersPage() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-6"
       >
         <div>
-          <h1 className="text-[2.2rem] font-black text-gray-900 tracking-tighter leading-tight">Order Archive</h1>
+          <h1 className="text-3xl sm:text-[2.2rem] font-bold text-gray-900 tracking-tight leading-tight">Order Archive</h1>
           <p className="text-[0.95rem] font-medium text-gray-500 mt-1">
             Historical records of completed and fulfilled restaurant transactions
           </p>
         </div>
         <button
           onClick={() => router.push('/admin/orders/new')}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-white border border-gray-100 px-6 py-4 text-[0.9rem] font-black text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-white border border-gray-100 px-6 py-4 text-[0.9rem] font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95"
         >
           <Clock size={20} strokeWidth={2.5} className="text-gray-400" />
           Active Orders
@@ -112,12 +112,12 @@ export default function DeliveredOrdersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/30">
-                <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Order ID</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Recipient</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 hidden md:table-cell">Fulfilled On</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Settlement</th>
-                <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Method</th>
-                <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 text-right">Review</th>
+                <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Order ID</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Recipient</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 hidden md:table-cell">Fulfilled On</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Settlement</th>
+                <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Method</th>
+                <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 text-right">Review</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -132,7 +132,7 @@ export default function DeliveredOrdersPage() {
                       <div className="w-20 h-20 bg-gray-50 rounded-[24px] flex items-center justify-center mb-5 border border-gray-100">
                         <Package size={40} className="text-gray-200" />
                       </div>
-                      <p className="text-[1.1rem] font-black text-gray-900">No archived records</p>
+                      <p className="text-[1.1rem] font-bold text-gray-900">No archived records</p>
                       <p className="text-[0.9rem] font-medium text-gray-500 mt-1">Completed orders will appear here</p>
                     </div>
                   </td>
@@ -146,7 +146,7 @@ export default function DeliveredOrdersPage() {
                     >
                       {/* ID */}
                       <td className="px-8 py-5">
-                        <span className="font-mono text-[0.75rem] font-black text-gray-400 bg-gray-50 px-2 py-1 rounded-md group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors">
+                        <span className="font-mono text-[0.75rem] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-md group-hover:text-emerald-600 group-hover:bg-emerald-50 transition-colors">
                           #{order.orderId}
                         </span>
                       </td>
@@ -154,7 +154,7 @@ export default function DeliveredOrdersPage() {
                       {/* Recipient */}
                       <td className="px-6 py-5">
                         <div className="min-w-0">
-                          <p className="font-black text-gray-900 leading-tight truncate">{order.user.name}</p>
+                          <p className="font-bold text-gray-900 leading-tight truncate">{order.user.name}</p>
                           <p className="text-[0.85rem] font-bold text-gray-400 truncate mt-1">{order.user.email}</p>
                         </div>
                       </td>
@@ -166,7 +166,7 @@ export default function DeliveredOrdersPage() {
 
                       {/* Amount */}
                       <td className="px-6 py-5">
-                        <p className="text-[1.1rem] font-black text-emerald-600">₹{order.price.toFixed(2)}</p>
+                        <p className="text-[1.1rem] font-bold text-emerald-600">₹{order.price.toFixed(2)}</p>
                       </td>
 
                       {/* Method */}

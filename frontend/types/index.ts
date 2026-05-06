@@ -19,6 +19,7 @@ export interface MenuItem {
   ingredients?: string[];
   categoryId: string;
   extraOptions?: ExtraOption[];
+  hasSpiceLevel?: boolean;
   // Additional fields from backend
   isVeg?: boolean;
   stock?: number;
@@ -36,6 +37,7 @@ export interface Category {
 export interface CartItem extends MenuItem {
   quantity: number;
   selectedExtraOptions?: ExtraOption[]; // selected extras, each adds to price
+  spiceLevel?: 'Low' | 'Medium' | 'Very Spicy';
 }
 
 export interface User {

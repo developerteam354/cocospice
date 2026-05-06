@@ -89,7 +89,7 @@ export default function LoginForm() {
             <ShieldCheck size={32} className="text-emerald-600" strokeWidth={2.5} />
           </div>
           <div className="text-center">
-            <h1 className="text-[1.8rem] font-black text-gray-900 tracking-tight leading-tight">Admin Portal</h1>
+            <h1 className="text-[1.8rem] font-bold text-gray-900 tracking-tight leading-tight">Admin Portal</h1>
             <p className="mt-2 text-[0.95rem] font-medium text-gray-500">Sign in to manage your restaurant</p>
           </div>
         </motion.div>
@@ -136,7 +136,7 @@ export default function LoginForm() {
             <Button 
               type="submit" 
               loading={loading} 
-              className="w-full py-4 text-[1rem] font-black shadow-[0_10px_25px_rgba(16,185,129,0.25)] hover:shadow-[0_12px_30px_rgba(16,185,129,0.35)]"
+              className="w-full py-4 text-[1rem] font-bold shadow-[0_10px_25px_rgba(16,185,129,0.25)] hover:shadow-[0_12px_30px_rgba(16,185,129,0.35)]"
             >
               Sign In to Dashboard
             </Button>

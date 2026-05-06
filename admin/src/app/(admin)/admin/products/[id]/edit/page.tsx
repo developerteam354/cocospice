@@ -35,7 +35,7 @@ const schema = z.object({
   category:        z.string().min(1, 'Category is required'),
   isVeg:           z.boolean(),
   isAvailable:     z.boolean(),
-  extraOptions:    z.array(extraOptionSchema),
+  hasSpiceLevel:   z.boolean(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -66,10 +66,6 @@ export default function EditProductPage() {
   const [gallery, setGallery]         = useState<IUploadedAsset[]>([]);
   const [dataLoaded, setDataLoaded]   = useState(false);
 
-  // Refs for extra option inputs
-  const optionNameRef  = useRef<HTMLInputElement>(null);
-  const optionPriceRef = useRef<HTMLInputElement>(null);
-
   const isUploading = thumbnail.some((a) => a.uploading) || gallery.some((a) => a.uploading);
 
   const {
@@ -80,15 +76,16 @@ export default function EditProductPage() {
     defaultValues: {
       isVeg: true, isAvailable: true,
       offerPercentage: '0', stock: '0',
-      extraOptions: [],
+      hasSpiceLevel: false,
     },
   });
 
-  const isVeg       = watch('isVeg');
-  const isAvailable = watch('isAvailable');
-  const priceNum    = parseFloat(watch('price') ?? '0') || 0;
-  const offerNum    = parseFloat(watch('offerPercentage') ?? '0') || 0;
-  const finalPrice  = offerNum > 0
+  const isVeg         = watch('isVeg');
+  const isAvailable   = watch('isAvailable');
+  const hasSpiceLevel = watch('hasSpiceLevel');
+  const priceNum      = parseFloat(watch('price') ?? '0') || 0;
+  const offerNum      = parseFloat(watch('offerPercentage') ?? '0') || 0;
+  const finalPrice    = offerNum > 0
     ? (priceNum - (priceNum * offerNum) / 100).toFixed(2)
     : priceNum.toFixed(2);
 
@@ -113,7 +110,7 @@ export default function EditProductPage() {
           : currentProduct.category,
         isVeg: currentProduct.isVeg,
         isAvailable: currentProduct.isAvailable,
-        extraOptions: normalizeExtraOptions(currentProduct.extraOptions),
+        hasSpiceLevel: currentProduct.hasSpiceLevel ?? false,
       });
 
       // Set existing images
@@ -127,33 +124,6 @@ export default function EditProductPage() {
       setDataLoaded(true);
     }
   }, [currentProduct, dataLoaded, reset]);
-
-  // ─── Extra Option helpers ────────────────────────────────────────────────────
-
-  const addOption = (currentOptions: IExtraOption[]) => {
-    const name  = optionNameRef.current?.value.trim() ?? '';
-    const price = parseFloat(optionPriceRef.current?.value ?? '0') || 0;
-    if (!name) return currentOptions;
-    const updated = [...currentOptions, { name, price }];
-    if (optionNameRef.current)  optionNameRef.current.value  = '';
-    if (optionPriceRef.current) optionPriceRef.current.value = '';
-    optionNameRef.current?.focus();
-    return updated;
-  };
-
-  const removeOption = (currentOptions: IExtraOption[], index: number) =>
-    currentOptions.filter((_, i) => i !== index);
-
-  const handleOptionKeyDown = (
-    e: React.KeyboardEvent,
-    currentOptions: IExtraOption[],
-    onChange: (val: IExtraOption[]) => void
-  ) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      onChange(addOption(currentOptions));
-    }
-  };
 
   // ─── Upload helpers ──────────────────────────────────────────────────────────
 
@@ -228,7 +198,8 @@ export default function EditProductPage() {
           stock:           parseInt(data.stock ?? '0', 10) || 0,
           isAvailable:     data.isAvailable,
           category:        data.category,
-          extraOptions:    data.extraOptions,
+          hasSpiceLevel:   data.hasSpiceLevel,
+          extraOptions:    [],
           thumbnail:       { url: readyThumbnail.url, key: readyThumbnail.key },
           gallery:         gallery.filter((a) => !a.uploading).map(({ url, key }) => ({ url, key })),
         },
@@ -404,85 +375,45 @@ export default function EditProductPage() {
               </div>
             </div>
 
-            {/* ── Extra Options ── */}
-            <Controller
-              name="extraOptions"
-              control={control}
-              render={({ field }) => (
-                <div className="rounded-[32px] border border-gray-100 bg-white p-8 shadow-sm space-y-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
-                      <Plus size={20} strokeWidth={2.5} />
-                    </div>
-                    <div className="flex-1">
-                      <h2 className="text-[0.85rem] font-black uppercase tracking-widest text-gray-400">Extra Add-ons</h2>
-                      <p className="text-[0.8rem] font-bold text-gray-400 mt-0.5 normal-case">Add optional extras like toppings or sides</p>
-                    </div>
+            <div className="rounded-[32px] border border-gray-100 bg-white p-8 shadow-sm space-y-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-orange-50 text-orange-600 border border-orange-100">
+                  <ChefHat size={20} strokeWidth={2.5} />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-gray-400">Spice Level Configuration</h2>
+                  <p className="text-[0.8rem] font-bold text-gray-400 mt-0.5 normal-case">Enable spice level selection for this product</p>
+                </div>
+              </div>
+
+              <button 
+                type="button" 
+                onClick={() => setValue('hasSpiceLevel', !hasSpiceLevel)}
+                className={`w-full flex items-center justify-between rounded-2xl border-2 px-5 py-4 transition-all active:scale-[0.98] ${
+                  hasSpiceLevel 
+                    ? 'border-orange-100 bg-orange-50 text-orange-700 shadow-sm' 
+                    : 'border-gray-200 bg-gray-50 text-gray-500 shadow-inner'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`h-8 w-8 flex items-center justify-center rounded-full ${hasSpiceLevel ? 'bg-orange-500 text-white' : 'bg-gray-400 text-white'}`}>
+                    <ChefHat size={16} />
                   </div>
-
-                  <div className="flex gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-100 shadow-inner">
-                    <input
-                      ref={optionNameRef}
-                      type="text"
-                      placeholder="e.g. Extra Cheese"
-                      onKeyDown={(e) => handleOptionKeyDown(e, field.value, field.onChange)}
-                      className="flex-1 bg-white rounded-xl border border-gray-200 px-4 py-2.5 text-[0.9rem] font-bold text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
-                    />
-                    <input
-                      ref={optionPriceRef}
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      placeholder="₹0.00"
-                      onKeyDown={(e) => handleOptionKeyDown(e, field.value, field.onChange)}
-                      className="w-28 bg-white rounded-xl border border-gray-200 px-4 py-2.5 text-[0.9rem] font-bold text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => field.onChange(addOption(field.value))}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-all active:scale-95 shadow-md shadow-emerald-200"
-                    >
-                      <Plus size={20} strokeWidth={3} />
-                    </button>
-                  </div>
-
-                  {/* Badge list */}
-                  <AnimatePresence>
-                    {field.value.length > 0 && (
-                      <div className="flex flex-wrap gap-2.5 pt-2">
-                        {field.value.map((option, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/30 pl-4 pr-2 py-2"
-                          >
-                            <span className="text-[0.85rem] font-bold text-gray-800">{option.name}</span>
-                            <span className="text-[0.8rem] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm">
-                              +₹{option.price.toFixed(2)}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => field.onChange(removeOption(field.value, i))}
-                              className="h-7 w-7 flex items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600 transition-all"
-                            >
-                              <X size={14} strokeWidth={3} />
-                            </button>
-                          </motion.div>
-                        ))}
-                      </div>
-                    )}
-                  </AnimatePresence>
-
-                  {field.value.length === 0 && (
-                    <div className="text-center py-6 rounded-2xl border-2 border-dashed border-gray-100">
-                      <p className="text-[0.85rem] font-bold text-gray-400 italic">No extra options added.</p>
-                    </div>
-                  )}
+                  <span className="font-bold uppercase tracking-wider text-[0.8rem]">{hasSpiceLevel ? 'Spice Level Enabled' : 'Spice Level Disabled'}</span>
+                </div>
+                <div className={`h-6 w-10 rounded-full relative transition-colors ${hasSpiceLevel ? 'bg-orange-500' : 'bg-gray-400'}`}>
+                  <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${hasSpiceLevel ? 'right-1' : 'left-1'}`} />
+                </div>
+              </button>
+              
+              {hasSpiceLevel && (
+                <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100">
+                  <p className="text-[0.8rem] font-bold text-orange-600">
+                    Users will be prompted to choose: <span className="underline">Low</span>, <span className="underline">Medium</span>, or <span className="underline">Very Spicy</span>.
+                  </p>
                 </div>
               )}
-            />
+            </div>
           </div>
 
           {/* Right Column - Category & Images */}

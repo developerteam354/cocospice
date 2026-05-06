@@ -85,36 +85,28 @@ export default function ClientApp() {
    * - If the product has extras AND no extras have been chosen yet → open ExtrasModal.
    * - Otherwise add directly.
    */
-  const handleAddToCart = (item: MenuItem, selectedExtras?: ExtraOption[]) => {
-    const hasExtras = item.extraOptions && item.extraOptions.length > 0;
-
-    // If extras exist and caller hasn't already resolved them → open modal
-    if (hasExtras && selectedExtras === undefined) {
+  const handleAddToCart = (item: MenuItem, selectedExtras?: ExtraOption[], spiceLevel?: 'Low' | 'Medium' | 'Very Spicy') => {
+    // If spice level selection is enabled and none is provided → open modal
+    if (item.hasSpiceLevel && !spiceLevel) {
       setExtrasItem(item);
       setSelectedItem(null); // close detail modal if open
       return;
     }
 
-    // Add to cart (with or without extras)
-    addItemToCart(item, selectedExtras && selectedExtras.length > 0 ? selectedExtras : undefined);
+    // Add to cart
+    addItemToCart(item, selectedExtras, spiceLevel);
 
-    if (selectedExtras && selectedExtras.length > 0) {
-      const names = selectedExtras.map((e) => e.name).join(', ');
-      toast.success(`${item.name} added to cart (${names})`);
+    if (spiceLevel) {
+      toast.success(`${item.name} added to cart (${spiceLevel})`);
     } else {
       toast.success(`${item.name} added to cart`);
     }
   };
 
-  /** Called when user confirms selection inside ExtrasModal */
-  const handleExtrasConfirm = (item: MenuItem, selectedExtras: ExtraOption[]) => {
-    addItemToCart(item, selectedExtras.length > 0 ? selectedExtras : undefined);
-    if (selectedExtras.length > 0) {
-      const names = selectedExtras.map((e) => e.name).join(', ');
-      toast.success(`${item.name} added to cart (${names})`);
-    } else {
-      toast.success(`${item.name} added to cart`);
-    }
+  /** Called when user confirms selection inside SpiceLevelModal */
+  const handleSpiceLevelConfirm = (item: MenuItem, spiceLevel: 'Low' | 'Medium' | 'Very Spicy') => {
+    addItemToCart(item, undefined, spiceLevel);
+    toast.success(`${item.name} added to cart (${spiceLevel})`);
     setExtrasItem(null);
   };
 
@@ -387,7 +379,7 @@ export default function ClientApp() {
       {extrasItem && (
         <ExtrasModal
           item={extrasItem}
-          onConfirm={handleExtrasConfirm}
+          onConfirm={handleSpiceLevelConfirm as any}
           onClose={() => setExtrasItem(null)}
         />
       )}

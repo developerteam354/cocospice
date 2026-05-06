@@ -43,9 +43,8 @@ export const fetchCartFromServer = createAsyncThunk(
         categoryId:           item.categoryId ?? '',
         quantity:             item.quantity,
         selectedExtraOptions: item.selectedExtraOptions ?? [],
-        isVeg:                item.isVeg,
-        stock:                item.stock,
         isAvailable:          item.isAvailable,
+        spiceLevel:           item.spiceLevel,
       }));
 
       return {
@@ -124,20 +123,23 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    /** Add item to cart. Same product + same extras → increment quantity */
+    /** Add item to cart. Same product + same extras + same spice → increment quantity */
     addToCart: (
       state,
-      action: PayloadAction<{ item: MenuItem; selectedExtraOptions?: ExtraOption[] }>
+      action: PayloadAction<{ item: MenuItem; selectedExtraOptions?: ExtraOption[]; spiceLevel?: 'Low' | 'Medium' | 'Very Spicy' }>
     ) => {
-      const { item, selectedExtraOptions } = action.payload;
+      const { item, selectedExtraOptions, spiceLevel } = action.payload;
       const key = extrasKey(selectedExtraOptions);
       const existing = state.items.find(
-        (c) => c.id === item.id && extrasKey(c.selectedExtraOptions) === key
+        (c) => 
+          c.id === item.id && 
+          extrasKey(c.selectedExtraOptions) === key &&
+          c.spiceLevel === spiceLevel
       );
       if (existing) {
         existing.quantity += 1;
       } else {
-        state.items.push({ ...item, quantity: 1, selectedExtraOptions });
+        state.items.push({ ...item, quantity: 1, selectedExtraOptions, spiceLevel });
       }
     },
 

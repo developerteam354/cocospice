@@ -127,7 +127,7 @@ export default function OrderDetailsPage() {
             </button>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-[1.8rem] font-black text-gray-900 tracking-tight">Order #{currentOrder.orderId}</h1>
+                <h1 className="text-2xl sm:text-[1.8rem] font-bold text-gray-900 tracking-tight">Order #{currentOrder.orderId}</h1>
                 <Badge variant={safeBadgeVariant(currentOrder.status)}>{currentOrder.status}</Badge>
               </div>
               <p className="text-[0.9rem] font-medium text-gray-500 mt-0.5">
@@ -153,14 +153,14 @@ export default function OrderDetailsPage() {
               <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <User size={20} strokeWidth={2.5} />
               </div>
-              <h3 className="text-[0.8rem] font-black uppercase tracking-widest text-gray-400">Customer</h3>
+              <h3 className="text-[0.8rem] font-bold uppercase tracking-widest text-gray-400">Customer</h3>
             </div>
             <div className="flex items-center gap-4">
               <div className="relative h-14 w-14 rounded-2xl overflow-hidden border border-gray-100">
                 <Image src={currentOrder.user.avatar} alt={currentOrder.user.name} fill className="object-cover" />
               </div>
               <div>
-                <p className="text-[1.1rem] font-black text-gray-900 leading-tight">{currentOrder.user.name}</p>
+                <p className="text-[1.1rem] font-bold text-gray-900 leading-tight">{currentOrder.user.name}</p>
                 <p className="text-[0.85rem] font-bold text-gray-400 mt-0.5">{currentOrder.user.email}</p>
               </div>
             </div>
@@ -182,12 +182,12 @@ export default function OrderDetailsPage() {
             </div>
             <div className="space-y-4">
               <div>
-                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Method</p>
-                <p className="text-[1rem] font-black text-gray-900">{currentOrder.paymentMethod}</p>
+                <p className="text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest mb-1">Method</p>
+                <p className="text-[1rem] font-bold text-gray-900">{currentOrder.paymentMethod}</p>
               </div>
               <div className="pt-4 border-t border-gray-50">
-                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Total Amount</p>
-                <p className="text-[1.8rem] font-black text-emerald-600 tracking-tight">₹{currentOrder.price.toLocaleString()}</p>
+                <p className="text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Amount</p>
+                <p className="text-[1.8rem] font-bold text-emerald-600 tracking-tight">₹{currentOrder.price.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -264,8 +264,8 @@ export default function OrderDetailsPage() {
               </div>
 
               <div className="space-y-4">
-                {currentOrder.items?.map((item) => (
-                  <div key={item._id} className="flex items-center gap-5 p-4 rounded-2xl border border-gray-50 bg-gray-50/30">
+                {currentOrder.items?.map((item, index) => (
+                  <div key={`${item._id}-${index}`} className="flex items-center gap-5 p-4 rounded-2xl border border-gray-50 bg-gray-50/30">
                     <div className="relative h-16 w-16 rounded-xl overflow-hidden border border-gray-100 bg-white">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="h-full w-full object-cover" />
@@ -274,7 +274,14 @@ export default function OrderDetailsPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[1rem] font-black text-gray-900 truncate">{item.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[1rem] font-black text-gray-900 truncate">{item.name}</p>
+                        {item.spiceLevel && (
+                          <span className="px-2 py-0.5 rounded-lg bg-orange-100 text-orange-600 text-[0.65rem] font-black uppercase tracking-wider border border-orange-200">
+                            🌶️ {item.spiceLevel}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[0.85rem] font-bold text-gray-400 mt-0.5">₹{item.price.toFixed(2)} × {item.quantity}</p>
                     </div>
                     <div className="text-right">

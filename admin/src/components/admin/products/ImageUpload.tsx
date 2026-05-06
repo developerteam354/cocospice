@@ -35,7 +35,7 @@ export default function ImageUpload({
 
   return (
     <div className="flex flex-col gap-3">
-      <label className="text-[0.9rem] font-black text-gray-900 tracking-tight">{label}</label>
+      <label className="text-[0.9rem] font-bold text-gray-900 tracking-tight">{label}</label>
 
       <div className="flex flex-wrap gap-4">
         {assets.map((asset, i) => (
@@ -72,7 +72,7 @@ export default function ImageUpload({
             className="flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-[20px] border-2 border-dashed border-gray-200 bg-gray-50/50 text-gray-400 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all active:scale-95"
           >
             <Upload size={24} strokeWidth={2.5} />
-            <span className="text-[0.75rem] font-black uppercase tracking-wider">Upload</span>
+            <span className="text-[0.75rem] font-bold uppercase tracking-wider">Upload</span>
           </button>
         )}
       </div>

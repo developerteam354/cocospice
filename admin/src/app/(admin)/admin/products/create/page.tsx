@@ -32,7 +32,7 @@ const schema = z.object({
   category:        z.string().min(1, 'Category is required'),
   isVeg:           z.boolean(),
   isAvailable:     z.boolean(),
-  extraOptions:    z.array(extraOptionSchema),
+  hasSpiceLevel:   z.boolean(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -46,10 +46,6 @@ export default function CreateProductPage() {
   const [thumbnail, setThumbnail]     = useState<IUploadedAsset[]>([]);
   const [gallery, setGallery]         = useState<IUploadedAsset[]>([]);
 
-  // Refs for extra option inputs
-  const optionNameRef  = useRef<HTMLInputElement>(null);
-  const optionPriceRef = useRef<HTMLInputElement>(null);
-
   const isUploading = thumbnail.some((a) => a.uploading) || gallery.some((a) => a.uploading);
 
   const {
@@ -60,12 +56,13 @@ export default function CreateProductPage() {
     defaultValues: {
       isVeg: true, isAvailable: true,
       offerPercentage: '0', stock: '0',
-      extraOptions: [],
+      hasSpiceLevel: false,
     },
   });
 
-  const isVeg       = watch('isVeg');
-  const isAvailable = watch('isAvailable');
+  const isVeg         = watch('isVeg');
+  const isAvailable   = watch('isAvailable');
+  const hasSpiceLevel = watch('hasSpiceLevel');
   const priceNum    = parseFloat(watch('price') ?? '0') || 0;
   const offerNum    = parseFloat(watch('offerPercentage') ?? '0') || 0;
   const finalPrice  = offerNum > 0
@@ -75,33 +72,6 @@ export default function CreateProductPage() {
   useEffect(() => {
     productService.getCategories().then(setCategories).catch(() => {});
   }, []);
-
-  // ─── Extra Option helpers ────────────────────────────────────────────────────
-
-  const addOption = (currentOptions: IExtraOption[]) => {
-    const name  = optionNameRef.current?.value.trim() ?? '';
-    const price = parseFloat(optionPriceRef.current?.value ?? '0') || 0;
-    if (!name) return currentOptions;
-    const updated = [...currentOptions, { name, price }];
-    if (optionNameRef.current)  optionNameRef.current.value  = '';
-    if (optionPriceRef.current) optionPriceRef.current.value = '';
-    optionNameRef.current?.focus();
-    return updated;
-  };
-
-  const removeOption = (currentOptions: IExtraOption[], index: number) =>
-    currentOptions.filter((_, i) => i !== index);
-
-  const handleOptionKeyDown = (
-    e: React.KeyboardEvent,
-    currentOptions: IExtraOption[],
-    onChange: (val: IExtraOption[]) => void
-  ) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      onChange(addOption(currentOptions));
-    }
-  };
 
   // ─── Upload helpers ──────────────────────────────────────────────────────────
 
@@ -171,7 +141,8 @@ export default function CreateProductPage() {
         stock:           parseInt(data.stock ?? '0', 10) || 0,
         isAvailable:     data.isAvailable,
         category:        data.category,
-        extraOptions:    data.extraOptions,
+        hasSpiceLevel:   data.hasSpiceLevel,
+        extraOptions:    [],
         thumbnail:       { url: readyThumbnail.url, key: readyThumbnail.key },
         gallery:         gallery.filter((a) => !a.uploading).map(({ url, key }) => ({ url, key })),
       });
@@ -217,8 +188,8 @@ export default function CreateProductPage() {
             <ArrowLeft size={20} strokeWidth={2.5} />
           </button>
           <div>
-            <h1 className="text-[1.8rem] font-black text-gray-900 tracking-tight">Add New Product</h1>
-            <p className="text-[0.95rem] font-medium text-gray-500 mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Add New Product</h1>
+            <p className="text-sm sm:text-[0.95rem] font-medium text-gray-500 mt-1">
               Create a fresh dish for your digital menu
             </p>
           </div>
@@ -235,12 +206,12 @@ export default function CreateProductPage() {
           {/* Left Column - Main Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* ── Basic Info ── */}
-            <div className="rounded-[32px] border border-gray-100 bg-white p-8 shadow-sm space-y-6">
+            <div className="rounded-[32px] border border-gray-100 bg-white p-5 sm:p-8 shadow-sm space-y-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 border border-gray-100">
                   <Package size={20} strokeWidth={2.5} />
                 </div>
-                <h2 className="text-[0.85rem] font-black uppercase tracking-widest text-gray-400">Basic Information</h2>
+                <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-gray-400">Basic Information</h2>
               </div>
               
               <Input 
@@ -251,7 +222,7 @@ export default function CreateProductPage() {
               />
               
               <div className="flex flex-col gap-2">
-                <label className="text-[0.9rem] font-black text-gray-900 tracking-tight">Description</label>
+                <label className="text-[0.9rem] font-bold text-gray-900 tracking-tight">Description</label>
                 <textarea 
                   rows={4} 
                   placeholder="Describe the dish, its preparation, and taste..."
@@ -269,12 +240,12 @@ export default function CreateProductPage() {
             </div>
 
             {/* ── Pricing & Inventory ── */}
-            <div className="rounded-[32px] border border-gray-100 bg-white p-8 shadow-sm space-y-6">
+            <div className="rounded-[32px] border border-gray-100 bg-white p-5 sm:p-8 shadow-sm space-y-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
                   <Tag size={20} strokeWidth={2.5} />
                 </div>
-                <h2 className="text-[0.85rem] font-black uppercase tracking-widest text-gray-400">Pricing & Inventory</h2>
+                <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-gray-400">Pricing & Inventory</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -294,15 +265,15 @@ export default function CreateProductPage() {
               </div>
 
               {/* Final price display */}
-              <div className="flex items-center justify-between rounded-3xl border-2 border-dashed border-emerald-100 bg-emerald-50/30 p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between rounded-3xl border-2 border-dashed border-emerald-100 bg-emerald-50/30 p-5 sm:p-6 gap-4 sm:gap-0">
                 <div>
-                  <p className="text-[0.8rem] font-black text-emerald-600/60 uppercase tracking-wider">Estimated Selling Price</p>
-                  <p className="text-[2.2rem] font-black text-emerald-600 tracking-tighter">₹{finalPrice}</p>
+                  <p className="text-[0.8rem] font-bold text-emerald-600/60 uppercase tracking-wider">Estimated Selling Price</p>
+                  <p className="text-3xl sm:text-[2.2rem] font-bold text-emerald-600 tracking-tight">₹{finalPrice}</p>
                 </div>
                 {offerNum > 0 && (
-                  <div className="text-right">
+                  <div className="sm:text-right">
                     <p className="text-[1rem] font-bold text-gray-400 line-through">₹{priceNum.toFixed(2)}</p>
-                    <p className="text-[0.95rem] font-black text-orange-600 bg-orange-100 px-3 py-1 rounded-lg mt-1">{offerNum}% OFF SAVINGS</p>
+                    <p className="text-[0.95rem] font-bold text-orange-600 bg-orange-100 px-3 py-1 rounded-lg mt-1">{offerNum}% OFF SAVINGS</p>
                   </div>
                 )}
               </div>
@@ -321,100 +292,60 @@ export default function CreateProductPage() {
               </div>
             </div>
 
-            {/* ── Extra Options ── */}
-            <Controller
-              name="extraOptions"
-              control={control}
-              render={({ field }) => (
-                <div className="rounded-[32px] border border-gray-100 bg-white p-8 shadow-sm space-y-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
-                      <Plus size={20} strokeWidth={2.5} />
-                    </div>
-                    <div className="flex-1">
-                      <h2 className="text-[0.85rem] font-black uppercase tracking-widest text-gray-400">Extra Add-ons</h2>
-                      <p className="text-[0.8rem] font-bold text-gray-400 mt-0.5 normal-case">Add optional extras like toppings or sides</p>
-                    </div>
+            <div className="rounded-[32px] border border-gray-100 bg-white p-5 sm:p-8 shadow-sm space-y-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-orange-50 text-orange-600 border border-orange-100">
+                  <ChefHat size={20} strokeWidth={2.5} />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-gray-400">Spice Level Configuration</h2>
+                  <p className="text-[0.8rem] font-bold text-gray-400 mt-0.5 normal-case">Enable spice level selection for this product</p>
+                </div>
+              </div>
+
+              <button 
+                type="button" 
+                onClick={() => setValue('hasSpiceLevel', !hasSpiceLevel)}
+                className={`w-full flex items-center justify-between rounded-2xl border-2 px-5 py-4 transition-all active:scale-[0.98] ${
+                  hasSpiceLevel 
+                    ? 'border-orange-100 bg-orange-50 text-orange-700 shadow-sm' 
+                    : 'border-gray-200 bg-gray-50 text-gray-500 shadow-inner'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`h-8 w-8 flex items-center justify-center rounded-full ${hasSpiceLevel ? 'bg-orange-500 text-white' : 'bg-gray-400 text-white'}`}>
+                    <ChefHat size={16} />
                   </div>
-
-                  <div className="flex gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-100 shadow-inner">
-                    <input
-                      ref={optionNameRef}
-                      type="text"
-                      placeholder="e.g. Extra Cheese"
-                      onKeyDown={(e) => handleOptionKeyDown(e, field.value, field.onChange)}
-                      className="flex-1 bg-white rounded-xl border border-gray-200 px-4 py-2.5 text-[0.9rem] font-bold text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
-                    />
-                    <input
-                      ref={optionPriceRef}
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      placeholder="₹0.00"
-                      onKeyDown={(e) => handleOptionKeyDown(e, field.value, field.onChange)}
-                      className="w-28 bg-white rounded-xl border border-gray-200 px-4 py-2.5 text-[0.9rem] font-bold text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => field.onChange(addOption(field.value))}
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition-all active:scale-95 shadow-md shadow-emerald-200"
-                    >
-                      <Plus size={20} strokeWidth={3} />
-                    </button>
-                  </div>
-
-                  {/* Badge list */}
-                  <AnimatePresence>
-                    {field.value.length > 0 && (
-                      <div className="flex flex-wrap gap-2.5 pt-2">
-                        {field.value.map((option, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/30 pl-4 pr-2 py-2"
-                          >
-                            <span className="text-[0.85rem] font-bold text-gray-800">{option.name}</span>
-                            <span className="text-[0.8rem] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm">
-                              +₹{option.price.toFixed(2)}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => field.onChange(removeOption(field.value, i))}
-                              className="h-7 w-7 flex items-center justify-center rounded-lg text-gray-400 hover:bg-red-50 hover:text-red-600 transition-all"
-                            >
-                              <X size={14} strokeWidth={3} />
-                            </button>
-                          </motion.div>
-                        ))}
-                      </div>
-                    )}
-                  </AnimatePresence>
-
-                  {field.value.length === 0 && (
-                    <div className="text-center py-6 rounded-2xl border-2 border-dashed border-gray-100">
-                      <p className="text-[0.85rem] font-bold text-gray-400 italic">No extra options added.</p>
-                    </div>
-                  )}
+                  <span className="font-bold uppercase tracking-wider text-[0.8rem]">{hasSpiceLevel ? 'Spice Level Enabled' : 'Spice Level Disabled'}</span>
+                </div>
+                <div className={`h-6 w-10 rounded-full relative transition-colors ${hasSpiceLevel ? 'bg-orange-500' : 'bg-gray-400'}`}>
+                  <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${hasSpiceLevel ? 'right-1' : 'left-1'}`} />
+                </div>
+              </button>
+              
+              {hasSpiceLevel && (
+                <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100">
+                  <p className="text-[0.8rem] font-bold text-orange-600">
+                    Users will be prompted to choose: <span className="underline">Low</span>, <span className="underline">Medium</span>, or <span className="underline">Very Spicy</span>.
+                  </p>
                 </div>
               )}
-            />
+            </div>
           </div>
 
           {/* Right Column - Category & Images */}
           <div className="space-y-6">
             {/* ── Category & Visibility ── */}
-            <div className="rounded-[32px] border border-gray-100 bg-white p-8 shadow-sm space-y-6">
+            <div className="rounded-[32px] border border-gray-100 bg-white p-5 sm:p-8 shadow-sm space-y-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-orange-50 text-orange-600 border border-orange-100">
                   <ChefHat size={20} strokeWidth={2.5} />
                 </div>
-                <h2 className="text-[0.85rem] font-black uppercase tracking-widest text-gray-400">Settings</h2>
+                <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-gray-400">Settings</h2>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[0.9rem] font-black text-gray-900 tracking-tight">Category</label>
+                <label className="text-[0.9rem] font-bold text-gray-900 tracking-tight">Category</label>
                 <select 
                   {...register('category')}
                   className={inputBaseClass}
@@ -441,7 +372,7 @@ export default function CreateProductPage() {
                     <div className={`h-8 w-8 flex items-center justify-center rounded-full ${isVeg ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
                       <Leaf size={16} fill="currentColor" />
                     </div>
-                    <span className="font-black uppercase tracking-wider text-[0.8rem]">{isVeg ? 'Pure Veg' : 'Non-Vegetarian'}</span>
+                    <span className="font-bold uppercase tracking-wider text-[0.8rem]">{isVeg ? 'Pure Veg' : 'Non-Vegetarian'}</span>
                   </div>
                   <div className={`h-6 w-10 rounded-full relative transition-colors ${isVeg ? 'bg-emerald-500' : 'bg-red-500'}`}>
                     <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${isVeg ? 'right-1' : 'left-1'}`} />
@@ -461,25 +392,25 @@ export default function CreateProductPage() {
                     <div className={`h-8 w-8 flex items-center justify-center rounded-full ${isAvailable ? 'bg-emerald-500 text-white' : 'bg-gray-400 text-white'}`}>
                       {isAvailable ? <Eye size={16} /> : <EyeOff size={16} />}
                     </div>
-                    <span className="font-black uppercase tracking-wider text-[0.8rem]">{isAvailable ? 'Publicly Listed' : 'Private / Hidden'}</span>
+                    <span className="font-bold uppercase tracking-wider text-[0.8rem]">{isAvailable ? 'Publicly Listed' : 'Private / Hidden'}</span>
                   </div>
                 </button>
               </div>
             </div>
 
             {/* ── Images ── */}
-            <div className="rounded-[32px] border border-gray-100 bg-white p-8 shadow-sm space-y-6">
-              <div className="flex items-center justify-between mb-2">
+            <div className="rounded-[32px] border border-gray-100 bg-white p-5 sm:p-8 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2 sm:gap-0">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
                     <Plus size={20} strokeWidth={2.5} />
                   </div>
-                  <h2 className="text-[0.85rem] font-black uppercase tracking-widest text-gray-400">Media Assets</h2>
+                  <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-gray-400">Media Assets</h2>
                 </div>
                 {isUploading && (
                    <div className="flex items-center gap-2">
                       <Loader2 size={16} className="animate-spin text-emerald-600" />
-                      <span className="text-[0.7rem] font-black uppercase text-emerald-600">Uploading...</span>
+                      <span className="text-[0.7rem] font-bold uppercase text-emerald-600">Uploading...</span>
                    </div>
                 )}
               </div>

@@ -62,7 +62,7 @@ export default function ProductFilters({ filters, categories, onChange }: Produc
           onChange={(e) => onChange({ minPrice: e.target.value ? Number(e.target.value) : undefined })}
           className="w-20 bg-transparent border-none p-2 text-[0.9rem] font-bold text-gray-900 placeholder:text-gray-400 outline-none"
         />
-        <span className="text-gray-300 font-black">/</span>
+        <span className="text-gray-300 font-bold">/</span>
         <input
           type="number"
           placeholder="Max ₹"

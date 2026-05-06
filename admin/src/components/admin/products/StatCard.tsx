@@ -31,7 +31,7 @@ export default function StatCard({ label, value, icon: Icon, color, loading }: S
         {loading ? (
           <div className="mt-2 h-7 w-16 animate-pulse rounded bg-gray-100" />
         ) : (
-          <p className="text-[1.6rem] font-black text-gray-900 leading-tight mt-0.5">{value.toLocaleString()}</p>
+          <p className="text-[1.6rem] font-bold text-gray-900 leading-tight mt-0.5">{value.toLocaleString()}</p>
         )}
       </div>
     </div>

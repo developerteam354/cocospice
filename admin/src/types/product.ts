@@ -35,6 +35,7 @@ export interface IProduct {
   category: IProductCategory;
   ratings: { average: number; count: number };
   soldCount: number;
+  hasSpiceLevel: boolean;
   extraOptions: IExtraOption[];
   createdAt: string;
   updatedAt: string;

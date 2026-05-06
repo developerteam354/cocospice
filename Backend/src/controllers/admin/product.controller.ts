@@ -12,6 +12,7 @@ interface ICreateProductBody {
   category: string;
   isVeg?: boolean;
   ingredients?: string[];
+  hasSpiceLevel?: boolean;
   extraOptions?: Array<{ name: string; price?: number } | string>;
   thumbnail: IImageAsset;
   gallery?: IImageAsset[];
@@ -46,6 +47,7 @@ export const productController = {
         stock:           Number(body.stock ?? 0),
         isAvailable:     body.isAvailable ?? true,
         category:        body.category,
+        hasSpiceLevel:   body.hasSpiceLevel ?? false,
         extraOptions:    normalizeExtraOptions(body.extraOptions),
         thumbnail:       body.thumbnail,
         gallery:         body.gallery ?? [],

@@ -16,6 +16,7 @@ export interface ICartItem {
   categoryId: string;
   quantity: number;
   selectedExtraOptions: IExtraOption[];
+  spiceLevel?: string;
 }
 
 // ─── Main interface ───────────────────────────────────────────────────────────
@@ -46,6 +47,7 @@ const cartItemSchema = new Schema<ICartItem>(
     categoryId:          { type: String, default: '' },
     quantity:            { type: Number, required: true, min: 1 },
     selectedExtraOptions: { type: [extraOptionSchema], default: [] },
+    spiceLevel:           { type: String },
   },
   { _id: false }
 );

@@ -49,7 +49,7 @@ function StatCard({ label, value, icon: Icon, color, loading }: StatCardProps) {
           {loading ? (
             <div className="mt-2 h-8 w-16 animate-pulse rounded bg-gray-100" />
           ) : (
-            <p className="mt-1 text-3xl font-black text-gray-900">{value}</p>
+            <p className="mt-1 text-3xl font-bold text-gray-900">{value}</p>
           )}
         </div>
         <div className={`rounded-2xl bg-gradient-to-br p-3.5 border ${colorClasses[color]} shadow-sm`}>
@@ -103,7 +103,7 @@ function ProductCard({ product, index, onView, onEdit, onToggleList }: ProductCa
         {/* Floating Intelligence */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.offerPercentage > 0 && (
-            <div className="rounded-xl bg-red-500 px-3 py-1.5 text-[0.7rem] font-black text-white shadow-lg shadow-red-500/20 uppercase tracking-tighter backdrop-blur-md">
+            <div className="rounded-xl bg-red-500 px-3 py-1.5 text-[0.7rem] font-bold text-white shadow-lg shadow-red-500/20 uppercase tracking-tighter backdrop-blur-md">
               -{product.offerPercentage}%
             </div>
           )}
@@ -129,21 +129,21 @@ function ProductCard({ product, index, onView, onEdit, onToggleList }: ProductCa
       <div className="flex flex-1 flex-col justify-between relative z-10 px-1">
         <div className="space-y-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-[0.65rem] font-black uppercase tracking-[0.15em] text-emerald-600/80">
+            <span className="text-[0.65rem] font-bold uppercase tracking-[0.15em] text-emerald-600/80">
               {typeof product.category === 'object' ? product.category.name : 'Uncategorized'}
             </span>
             <div className="h-1 w-1 rounded-full bg-gray-200" />
-            <span className="text-[0.65rem] font-black text-gray-400 uppercase tracking-widest">
+            <span className="text-[0.65rem] font-bold text-gray-400 uppercase tracking-widest">
               #{product.productCode || product._id.slice(-4).toUpperCase()}
             </span>
           </div>
           
-          <h3 className="text-[1.15rem] font-black text-gray-900 line-clamp-1 leading-tight group-hover:text-emerald-700 transition-colors duration-300">
+          <h3 className="text-[1.15rem] font-bold text-gray-900 line-clamp-1 leading-tight group-hover:text-emerald-700 transition-colors duration-300">
             {product.name}
           </h3>
           
           <div className="flex items-center gap-2 pt-1">
-            <span className="text-[1.4rem] font-black text-gray-900 tracking-tighter">₹{product.finalPrice}</span>
+            <span className="text-[1.4rem] font-bold text-gray-900 tracking-tight">₹{product.finalPrice}</span>
             {product.offerPercentage > 0 && (
               <span className="text-[0.85rem] font-bold text-gray-400 line-through decoration-gray-300">₹{product.price}</span>
             )}
@@ -157,7 +157,7 @@ function ProductCard({ product, index, onView, onEdit, onToggleList }: ProductCa
               e.stopPropagation();
               onEdit(product._id);
             }}
-            className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-gray-900 px-4 py-3.5 text-[0.8rem] font-black text-white hover:bg-emerald-600 transition-all duration-300 active:scale-95 shadow-md shadow-gray-200 hover:shadow-emerald-500/20"
+            className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-gray-900 px-4 py-3.5 text-[0.8rem] font-bold text-white hover:bg-emerald-600 transition-all duration-300 active:scale-95 shadow-md shadow-gray-200 hover:shadow-emerald-500/20"
           >
             <Edit2 size={16} strokeWidth={3} />
             <span>Edit</span>
@@ -272,14 +272,14 @@ export default function ProductsPage() {
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-6"
         >
           <div>
-            <h1 className="text-[2.2rem] font-black text-gray-900 tracking-tighter leading-tight">Product Archive</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight leading-tight">Product Archive</h1>
             <p className="text-[0.95rem] font-medium text-gray-500 mt-1">
               Management and orchestration of the culinary inventory
             </p>
           </div>
           <button 
             onClick={() => router.push('/admin/products/create')}
-            className="flex items-center justify-center gap-3 rounded-[22px] bg-emerald-500 px-8 py-4 text-[0.95rem] font-black text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95"
+            className="flex items-center justify-center gap-3 rounded-[22px] bg-emerald-500 px-8 py-4 text-[0.95rem] font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95"
           >
             <Plus size={20} strokeWidth={3} />
             Initialize Product
@@ -287,7 +287,7 @@ export default function ProductsPage() {
         </motion.div>
 
         {/* Intelligence Cards */}
-        <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:grid-cols-4">
           <StatCard label="Total Inventory" value={stats.total} icon={Package} color="emerald" loading={statsLoading} />
           <StatCard label="Active Status" value={stats.available} icon={CheckCircle} color="emerald" loading={statsLoading} />
           <StatCard label="Stock Depletion" value={stats.outOfStock} icon={XCircle} color="red" loading={statsLoading} />
@@ -316,7 +316,7 @@ export default function ProductsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-              className="h-14 px-6 rounded-[22px] border-none bg-gray-50 text-[0.9rem] font-black text-gray-600 outline-none hover:bg-gray-100 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all cursor-pointer"
+              className="w-full sm:w-auto h-14 px-6 rounded-[22px] border-none bg-gray-50 text-[0.9rem] font-bold text-gray-600 outline-none hover:bg-gray-100 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all cursor-pointer"
             >
               <option value="all">All States</option>
               <option value="available">Available</option>
@@ -328,7 +328,7 @@ export default function ProductsPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="h-14 px-6 rounded-[22px] border-none bg-gray-50 text-[0.9rem] font-black text-gray-600 outline-none hover:bg-gray-100 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all cursor-pointer"
+              className="w-full sm:w-auto h-14 px-6 rounded-[22px] border-none bg-gray-50 text-[0.9rem] font-bold text-gray-600 outline-none hover:bg-gray-100 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all cursor-pointer"
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (

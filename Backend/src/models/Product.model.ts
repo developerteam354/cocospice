@@ -49,6 +49,7 @@ export interface IProduct extends Document {
   // Stats
   ratings: IRatings;
   soldCount: number;
+  hasSpiceLevel: boolean;
   extraOptions: IExtraOption[];
 
   // Timestamps (injected by mongoose)
@@ -122,6 +123,7 @@ const productSchema = new Schema<IProduct>(
     // Stats
     ratings:      { type: ratingsSchema, default: () => ({ average: 0, count: 0 }) },
     soldCount:    { type: Number, default: 0, min: 0 },
+    hasSpiceLevel: { type: Boolean, default: false },
     extraOptions: { type: [extraOptionSchema], default: [] },
   },
   { timestamps: true }

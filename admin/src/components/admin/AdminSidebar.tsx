@@ -97,7 +97,7 @@ export default function AdminSidebar({
               transition={{ duration: 0.2 }}
               className="flex-1 overflow-hidden ml-1"
             >
-              <p className="whitespace-nowrap text-[0.95rem] font-extrabold text-gray-900 truncate">
+              <p className="whitespace-nowrap text-[0.95rem] font-bold text-gray-900 truncate">
                 {admin?.fullName ?? 'Admin'}
               </p>
               <p className="whitespace-nowrap text-[0.75rem] font-bold text-gray-500 capitalize">
@@ -254,7 +254,7 @@ export default function AdminSidebar({
                   </div>
 
                   {/* Title */}
-                  <h3 className="mb-2 text-[1.4rem] font-black text-gray-900">
+                  <h3 className="mb-2 text-[1.4rem] font-bold text-gray-900">
                     Sign Out?
                   </h3>
 

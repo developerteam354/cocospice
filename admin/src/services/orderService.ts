@@ -24,6 +24,7 @@ interface BackendOrder {
     price: number;
     quantity: number;
     selectedExtraOptions?: Array<{ name: string; price: number }>;
+    spiceLevel?: string;
     subtotal: number;
   }>;
   orderType: 'delivery' | 'collection';
@@ -72,6 +73,7 @@ const transformOrder = (backendOrder: BackendOrder): IOrder => {
         thumbnail,
         quantity: item.quantity,
         price: item.price,
+        spiceLevel: item.spiceLevel,
         subtotal: item.subtotal,
       };
     }),

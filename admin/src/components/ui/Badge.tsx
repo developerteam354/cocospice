@@ -13,7 +13,7 @@ const styles: Record<BadgeProps['variant'], string> = {
 
 export default function Badge({ variant, children }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center rounded-xl border px-3 py-1 text-[0.65rem] font-black uppercase tracking-[0.05em] transition-all duration-300 ${styles[variant]}`}>
+    <span className={`inline-flex items-center rounded-xl border px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.05em] transition-all duration-300 ${styles[variant]}`}>
       <span className="relative flex h-1.5 w-1.5 mr-1.5">
         <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-20 ${variant === 'slate' ? 'bg-gray-400' : styles[variant].split(' ')[1].replace('text', 'bg')}`}></span>
         <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${variant === 'slate' ? 'bg-gray-400' : styles[variant].split(' ')[1].replace('text', 'bg')}`}></span>

@@ -119,10 +119,10 @@ export default function CategoryModal({ open, onClose, onSave, initial }: Catego
               {/* Header Interface */}
               <div className="flex items-center justify-between border-b border-gray-100 px-8 py-6">
                 <div>
-                  <h2 className="text-[1.5rem] font-black tracking-tight text-gray-900 leading-none">
+                  <h2 className="text-[1.5rem] font-bold tracking-tight text-gray-900 leading-none">
                     {initial ? 'Edit Category' : 'Create Category'}
                   </h2>
-                  <p className="mt-1 text-[0.75rem] font-black text-gray-400 uppercase tracking-widest">
+                  <p className="mt-1 text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest">
                     Standard Registry Manifest
                   </p>
                 </div>
@@ -149,7 +149,7 @@ export default function CategoryModal({ open, onClose, onSave, initial }: Catego
                   </div>
                   <div className="flex-1">
                     <p className="text-[0.8rem] font-bold text-gray-500 mb-2">Category Iconography</p>
-                    <label className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-[0.75rem] font-black text-gray-700 shadow-sm border border-gray-100 hover:border-emerald-200 hover:text-emerald-600 transition-all">
+                    <label className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-[0.75rem] font-bold text-gray-700 shadow-sm border border-gray-100 hover:border-emerald-200 hover:text-emerald-600 transition-all">
                       <Upload size={14} strokeWidth={3} />
                       Choose File
                       <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
@@ -160,17 +160,17 @@ export default function CategoryModal({ open, onClose, onSave, initial }: Catego
                 {/* Fields */}
                 <div className="space-y-5">
                    <div className="space-y-2">
-                      <label className="px-1 text-[0.7rem] font-black text-gray-400 uppercase tracking-widest">Category Name</label>
+                      <label className="px-1 text-[0.7rem] font-bold text-gray-400 uppercase tracking-widest">Category Name</label>
                       <input 
                          {...register('name')}
                          placeholder="e.g. Traditional Starters"
-                         className="w-full h-14 rounded-2xl border-none bg-gray-50 px-5 text-[1rem] font-black text-gray-900 outline-none focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all"
+                         className="w-full h-14 rounded-2xl border-none bg-gray-50 px-5 text-[1rem] font-bold text-gray-900 outline-none focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all"
                       />
                       {errors.name && <p className="px-2 text-[0.7rem] font-bold text-red-500">{errors.name.message}</p>}
                    </div>
 
                    <div className="space-y-2">
-                      <label className="px-1 text-[0.7rem] font-black text-gray-400 uppercase tracking-widest">Narrative</label>
+                      <label className="px-1 text-[0.7rem] font-bold text-gray-400 uppercase tracking-widest">Narrative</label>
                       <textarea 
                          {...register('description')}
                          rows={2}
@@ -184,13 +184,13 @@ export default function CategoryModal({ open, onClose, onSave, initial }: Catego
                 <div className="flex items-center gap-3 pt-2">
                   <button
                     type="button" onClick={onClose}
-                    className="flex-1 h-14 rounded-2xl bg-gray-50 font-black text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition-all"
+                    className="flex-1 h-14 rounded-2xl bg-gray-50 font-bold text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit" disabled={saving}
-                    className="flex-[1.5] h-14 flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 font-black text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50"
+                    className="flex-[1.5] h-14 flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50"
                   >
                     {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={18} strokeWidth={3} />}
                     {initial ? 'Update Manifest' : 'Confirm Category'}

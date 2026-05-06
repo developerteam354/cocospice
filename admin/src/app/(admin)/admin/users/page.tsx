@@ -48,7 +48,7 @@ function UserAvatar({ user }: { user: IUser }) {
           onError={() => setErr(true)}
         />
       ) : (
-        <span className="text-[1rem] font-black text-[#10b981]">{user.name.charAt(0).toUpperCase()}</span>
+        <span className="text-[1rem] font-bold text-[#10b981]">{user.name.charAt(0).toUpperCase()}</span>
       )}
     </div>
   );
@@ -113,7 +113,7 @@ export default function UsersPage() {
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-[2.2rem] font-black text-gray-900 tracking-tighter">User Directory</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">User Directory</h1>
             <p className="text-[0.95rem] font-medium text-gray-500 mt-1">
               Maintain and monitor your restaurant's registered customers
             </p>
@@ -134,11 +134,11 @@ export default function UsersPage() {
               <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gray-50 group-hover:bg-gray-100 transition-colors" />
               <div className="relative z-10 flex items-center justify-between">
                 <div>
-                  <p className="text-[0.7rem] font-black uppercase tracking-widest text-gray-400">{label}</p>
+                  <p className="text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">{label}</p>
                   {statsLoading ? (
                     <div className="mt-2 h-9 w-16 animate-pulse rounded-xl bg-gray-50" />
                   ) : (
-                    <p className="mt-1 text-[2rem] font-black text-gray-900 leading-none">{value}</p>
+                    <p className="mt-1 text-[2rem] font-bold text-gray-900 leading-none">{value}</p>
                   )}
                 </div>
                 <div className={`rounded-2xl p-4 ${
@@ -174,7 +174,7 @@ export default function UsersPage() {
               <button
                 key={f}
                 onClick={() => setStatusFilter(f)}
-                className={`rounded-[18px] px-6 py-3 text-[0.8rem] font-black uppercase tracking-wider transition-all ${
+                className={`rounded-[18px] px-6 py-3 text-[0.8rem] font-bold uppercase tracking-wider transition-all ${
                   statusFilter === f
                     ? 'bg-white text-gray-900 shadow-sm'
                     : 'text-gray-400 hover:text-gray-600'
@@ -195,11 +195,11 @@ export default function UsersPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-gray-50 bg-gray-50/30">
-                  <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">User Identity</th>
-                  <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 hidden md:table-cell">Account Details</th>
-                  <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 hidden lg:table-cell">Membership</th>
-                  <th className="px-6 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400">Security Status</th>
-                  <th className="px-8 py-5 text-[0.7rem] font-black uppercase tracking-widest text-gray-400 text-right">Operations</th>
+                  <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">User Identity</th>
+                  <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 hidden md:table-cell">Account Details</th>
+                  <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 hidden lg:table-cell">Membership</th>
+                  <th className="px-6 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400">Security Status</th>
+                  <th className="px-8 py-5 text-[0.7rem] font-bold uppercase tracking-widest text-gray-400 text-right">Operations</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -214,7 +214,7 @@ export default function UsersPage() {
                           <div className="w-20 h-20 bg-gray-50 rounded-[24px] flex items-center justify-center mb-5 border border-gray-100">
                             <UsersIcon size={40} className="text-gray-200" />
                           </div>
-                          <p className="text-[1.1rem] font-black text-gray-900">No matching users</p>
+                          <p className="text-[1.1rem] font-bold text-gray-900">No matching users</p>
                           <p className="text-[0.9rem] font-medium text-gray-500 mt-1">Try refining your search terms or filters</p>
                        </div>
                     </td>
@@ -231,7 +231,7 @@ export default function UsersPage() {
                           <div className="flex items-center gap-4">
                             <UserAvatar user={user} />
                             <div className="min-w-0">
-                              <p className="font-black text-gray-900 group-hover:text-emerald-700 transition-colors leading-tight truncate">{user.name}</p>
+                              <p className="font-bold text-gray-900 group-hover:text-emerald-700 transition-colors leading-tight truncate">{user.name}</p>
                               <p className="text-[0.7rem] font-bold text-gray-400 truncate mt-1">UID: {user._id.slice(-8).toUpperCase()}</p>
                             </div>
                           </div>
@@ -249,7 +249,7 @@ export default function UsersPage() {
 
                         {/* Security Badge */}
                         <td className="px-6 py-5">
-                          <span className={`inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-[0.7rem] font-black uppercase tracking-wider border shadow-sm ${
+                          <span className={`inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-[0.7rem] font-bold uppercase tracking-wider border shadow-sm ${
                             user.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-red-100'
                           }`}>
                             <span className={`h-1.5 w-1.5 rounded-full ${user.isActive ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'}`} />
@@ -263,7 +263,7 @@ export default function UsersPage() {
                             <button
                               onClick={() => handleToggle(user)}
                               disabled={toggling === user._id}
-                              className={`flex items-center justify-center gap-2 rounded-2xl h-[46px] px-5 text-[0.8rem] font-black transition-all active:scale-95 border ${
+                              className={`flex items-center justify-center gap-2 rounded-2xl h-[46px] px-5 text-[0.8rem] font-bold transition-all active:scale-95 border ${
                                 user.isActive
                                   ? 'bg-white border-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100'
                                   : 'bg-emerald-500 border-emerald-400 text-white hover:bg-emerald-600 shadow-sm'

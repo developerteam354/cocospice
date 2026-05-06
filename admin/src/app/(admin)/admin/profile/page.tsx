@@ -110,7 +110,7 @@ export default function ProfilePage() {
         <div className="h-16 w-16 rounded-[24px] bg-gray-50 flex items-center justify-center mb-4 border border-gray-100">
            <Loader2 size={28} className="animate-spin text-emerald-500" />
         </div>
-        <p className="text-[1rem] font-black text-gray-900 tracking-tight">Authenticating Identity...</p>
+        <p className="text-[1rem] font-bold text-gray-900 tracking-tight">Authenticating Identity...</p>
       </div>
     );
   }
@@ -134,7 +134,7 @@ export default function ProfilePage() {
               {/* Header Interface */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
                 <div className="text-center sm:text-left">
-                  <h1 className="text-[2.5rem] font-black text-gray-900 tracking-tighter leading-none">Account</h1>
+                  <h1 className="text-[2.5rem] font-bold text-gray-900 tracking-tighter leading-none">Account</h1>
                   <p className="mt-2 text-[1rem] font-bold text-gray-400 uppercase tracking-widest">
                     Security & Identity Manifest
                   </p>
@@ -142,7 +142,7 @@ export default function ProfilePage() {
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-3 rounded-[20px] bg-emerald-500 px-7 py-4 text-[0.9rem] font-black text-white hover:bg-emerald-600 transition-all active:scale-95 shadow-md shadow-emerald-500/20"
+                    className="flex items-center gap-3 rounded-[20px] bg-emerald-500 px-7 py-4 text-[0.9rem] font-bold text-white hover:bg-emerald-600 transition-all active:scale-95 shadow-md shadow-emerald-500/20"
                   >
                     <Edit size={18} strokeWidth={3} />
                     Modify Profile
@@ -166,7 +166,7 @@ export default function ProfilePage() {
                     ) : profileImage ? (
                       <img src={profileImage} alt={fullName} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-emerald-50 text-[5rem] font-black text-emerald-600">
+                      <div className="flex h-full w-full items-center justify-center bg-emerald-50 text-[5rem] font-bold text-emerald-600">
                         {fullName.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -179,25 +179,25 @@ export default function ProfilePage() {
                   </div>
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                 </div>
-                {isEditing && <p className="text-[0.7rem] font-black text-emerald-600 uppercase tracking-widest">Update Visual Identity</p>}
+                {isEditing && <p className="text-[0.7rem] font-bold text-emerald-600 uppercase tracking-widest">Update Visual Identity</p>}
               </div>
 
               {/* Data Terminal */}
               <div className="grid grid-cols-1 gap-8">
                 {/* Name Control */}
                 <div className="space-y-3">
-                  <label className="flex items-center gap-2 px-1 text-[0.75rem] font-black text-gray-400 uppercase tracking-widest">
+                  <label className="flex items-center gap-2 px-1 text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest">
                     <User size={16} className="text-emerald-500" strokeWidth={3} />
                     Legal Identity
                   </label>
                   {isEditing ? (
                     <input
                       type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
-                      className="w-full h-16 rounded-[22px] border-none bg-gray-50 px-6 text-[1.1rem] font-black text-gray-900 outline-none focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all shadow-sm"
+                      className="w-full h-16 rounded-[22px] border-none bg-gray-50 px-6 text-[1.1rem] font-bold text-gray-900 outline-none focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all shadow-sm"
                     />
                   ) : (
                     <div className="h-16 flex items-center rounded-[22px] border border-gray-100 bg-gray-50/50 px-6">
-                      <p className="text-[1.1rem] font-black text-gray-900">{admin.fullName}</p>
+                      <p className="text-[1.1rem] font-bold text-gray-900">{admin.fullName}</p>
                     </div>
                   )}
                 </div>
@@ -205,7 +205,7 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Communication Interface */}
                   <div className="space-y-3">
-                    <label className="flex items-center gap-2 px-1 text-[0.75rem] font-black text-gray-400 uppercase tracking-widest">
+                    <label className="flex items-center gap-2 px-1 text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest">
                       <Mail size={16} className="text-blue-500" strokeWidth={3} />
                       Communication
                     </label>
@@ -216,12 +216,12 @@ export default function ProfilePage() {
 
                   {/* Permission Tier */}
                   <div className="space-y-3">
-                    <label className="flex items-center gap-2 px-1 text-[0.75rem] font-black text-gray-400 uppercase tracking-widest">
+                    <label className="flex items-center gap-2 px-1 text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest">
                       <Shield size={16} className="text-purple-500" strokeWidth={3} />
                       Authorization Tier
                     </label>
                     <div className="h-16 flex items-center rounded-[22px] border border-gray-50 bg-gray-50/30 px-6 opacity-60">
-                      <p className="text-[0.9rem] font-black text-gray-500 uppercase tracking-tighter">{admin.role}</p>
+                      <p className="text-[0.9rem] font-bold text-gray-500 uppercase tracking-tighter">{admin.role}</p>
                     </div>
                   </div>
                 </div>
@@ -232,14 +232,14 @@ export default function ProfilePage() {
                 <div className="flex flex-col sm:flex-row gap-4 pt-6">
                   <button
                     onClick={handleCancel} disabled={loading}
-                    className="flex-1 h-16 flex items-center justify-center gap-3 rounded-[22px] border border-gray-100 bg-white font-black text-gray-500 hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
+                    className="flex-1 h-16 flex items-center justify-center gap-3 rounded-[22px] border border-gray-100 bg-white font-bold text-gray-500 hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50"
                   >
                     <X size={20} strokeWidth={3} />
                     Abort
                   </button>
                   <button
                     onClick={handleSave} disabled={loading || isUploadingImage}
-                    className="flex-[2] h-16 flex items-center justify-center gap-3 rounded-[22px] bg-emerald-500 font-black text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 active:scale-95 disabled:opacity-50"
+                    className="flex-[2] h-16 flex items-center justify-center gap-3 rounded-[22px] bg-emerald-500 font-bold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-600 active:scale-95 disabled:opacity-50"
                   >
                     {loading ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} strokeWidth={3} />}
                     Sync Changes

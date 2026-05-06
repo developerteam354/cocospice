@@ -79,7 +79,7 @@ function getSessionId(): string {
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: MenuItem, selectedExtraOptions?: ExtraOption[]) => void;
+  addToCart: (item: MenuItem, selectedExtraOptions?: ExtraOption[], spiceLevel?: 'Low' | 'Medium' | 'Very Spicy') => void;
   updateQuantity: (index: number, delta: number) => void;
   clearCart: () => void;
   cartTotal: number;
@@ -126,8 +126,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // ── Public API ─────────────────────────────────────────────────────────────
 
-  const addToCart = (item: MenuItem, selectedExtraOptions?: ExtraOption[]) =>
-    dispatch(addToCartAction({ item, selectedExtraOptions }));
+  const addToCart = (item: MenuItem, selectedExtraOptions?: ExtraOption[], spiceLevel?: 'Low' | 'Medium' | 'Very Spicy') =>
+    dispatch(addToCartAction({ item, selectedExtraOptions, spiceLevel }));
 
   const updateQuantity = (index: number, delta: number) =>
     dispatch(updateQuantityAction({ index, delta }));

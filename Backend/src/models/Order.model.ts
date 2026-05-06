@@ -8,6 +8,7 @@ export interface IOrderItem {
   price: number;
   quantity: number;
   selectedExtraOptions?: Array<{ name: string; price: number }>;
+  spiceLevel?: string;
   subtotal: number;
 }
 
@@ -66,7 +67,8 @@ const orderItemSchema = new Schema({
   price:     { type: Number, required: true },
   quantity:  { type: Number, required: true, min: 1 },
   selectedExtraOptions: { type: [extraOptionSchema], default: [] },
-  subtotal:  { type: Number, required: true },
+  spiceLevel:           { type: String },
+  subtotal:             { type: Number, required: true },
 }, { _id: false });
 
 const shippingAddressSchema = new Schema({
