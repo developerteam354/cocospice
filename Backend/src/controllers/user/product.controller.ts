@@ -53,7 +53,7 @@ export const userProductController = {
    */
   getById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const product = await userProductRepository.findById(id);
 
       if (!product) {

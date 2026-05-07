@@ -1,7 +1,6 @@
 import { Product } from '../../models/Product.model.js';
-import mongoose from 'mongoose';
+import type { FilterQuery } from 'mongoose';
 import type { IProduct, IImageAsset } from '../../models/Product.model.js';
-type FilterQuery<T> = mongoose.FilterQuery<T>;
 
 // ─── URL normalisation ────────────────────────────────────────────────────────
 // Products saved by the admin store a backend proxy URL in thumbnail.url

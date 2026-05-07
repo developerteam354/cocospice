@@ -53,10 +53,10 @@ export const orderService = {
       totalAmount:           data.totalAmount,
       paymentMethod:         data.paymentMethod,
       paymentStatus,
-      stripePaymentIntentId: data.stripePaymentIntentId ?? null,
+      stripePaymentIntentId: data.stripePaymentIntentId || undefined,
       orderStatus:           'Pending',
       shippingAddress:       data.shippingAddress,
-    });
+    } as any);
 
     return order;
   },

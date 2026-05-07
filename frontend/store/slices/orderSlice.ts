@@ -8,6 +8,7 @@ export interface OrderItem {
   name: string;
   price: number;
   quantity: number;
+  spiceLevel?: string;
   selectedExtraOptions?: Array<{ name: string; price: number }>;
   subtotal: number;
 }
