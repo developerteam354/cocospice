@@ -183,7 +183,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth }) =>
                       initial={{ opacity: 0, y: 12, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
                       className="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-white rounded-3xl shadow-[0_16px_48px_rgba(0,0,0,0.12)] border border-gray-100 p-2 z-[200]"
                     >
                       {/* Header */}
@@ -267,7 +267,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth }) =>
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
               className="md:hidden overflow-hidden bg-white border-t border-gray-100 shadow-lg"
             >
               <nav className="flex flex-col p-4 gap-2">

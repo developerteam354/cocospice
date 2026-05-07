@@ -76,7 +76,7 @@ function ProductCard({ product, index, onView, onEdit, onToggleList }: ProductCa
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ delay: index * 0.04, duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+      transition={{ delay: index * 0.04, duration: 0.5, ease: [0.23, 1, 0.32, 1] as [number, number, number, number] }}
       className="group relative flex flex-col h-full rounded-[36px] border border-gray-100 bg-white p-4 shadow-sm hover:shadow-[0_30px_60px_rgba(0,0,0,0.08)] transition-all duration-500 cursor-pointer overflow-hidden"
       onClick={() => onView(product._id)}
     >

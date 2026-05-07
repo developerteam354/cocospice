@@ -105,7 +105,7 @@ function OrderCard({ order, index }: { order: Order; index: number }) {
       className="bg-white rounded-[24px] p-5 sm:p-7 flex flex-col gap-4 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-[#f1f5f9] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
     >
       {/* Top Header */}
       <div className="flex justify-between items-start gap-4 flex-wrap">
