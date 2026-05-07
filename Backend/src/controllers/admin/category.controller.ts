@@ -38,7 +38,7 @@ export const categoryController = {
 
   update: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const input = req.body as { name?: string; description?: string };
       
       // Trim values if provided
@@ -60,7 +60,7 @@ export const categoryController = {
 
   toggle: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const category = await categoryService.toggle(req.params.id);
+      const category = await categoryService.toggle(String(req.params.id));
       if (!category) { res.status(404).json({ message: 'Category not found' }); return; }
       res.status(200).json({ category, message: `Category ${category.isListed ? 'listed' : 'unlisted'}` });
     } catch (err) { next(err); }
@@ -68,7 +68,7 @@ export const categoryController = {
 
   delete: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await categoryService.delete(req.params.id);
+      await categoryService.delete(String(req.params.id));
       res.status(200).json({ message: 'Category deleted' });
     } catch (err) { next(err); }
   },

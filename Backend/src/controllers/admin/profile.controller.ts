@@ -5,7 +5,7 @@ export const profileController = {
   getProfile: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // Admin ID is attached to req by the protect middleware
-      const adminId = req.admin?.id;
+      const adminId = req.admin?._id?.toString();
 
       if (!adminId) {
         res.status(401).json({ message: 'Unauthorized' });

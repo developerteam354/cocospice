@@ -1,4 +1,6 @@
-import type { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
+import type { Document, Model, UpdateQuery } from 'mongoose';
+import mongoose from 'mongoose';
+type FilterQuery<T> = mongoose.FilterQuery<T>;
 
 export class BaseRepository<T extends Document> {
   constructor(protected readonly model: Model<T>) {}

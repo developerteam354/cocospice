@@ -94,7 +94,7 @@ export const productController = {
 
   toggleAvailability: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const { isAvailable } = req.body as { isAvailable: boolean };
       const product = await productService.toggleAvailability(id, isAvailable);
       if (!product) { res.status(404).json({ message: 'Product not found' }); return; }
@@ -106,7 +106,7 @@ export const productController = {
 
   getById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const product = await productService.getById(req.params.id);
+      const product = await productService.getById(String(req.params.id));
       if (!product) { res.status(404).json({ message: 'Product not found' }); return; }
       res.status(200).json({ product });
     } catch (err) {
@@ -116,7 +116,7 @@ export const productController = {
 
   update: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const body = req.body as Partial<ICreateProductBody>;
 
       // Normalize extraOptions if provided
@@ -136,7 +136,7 @@ export const productController = {
 
   delete: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await productService.delete(req.params.id);
+      await productService.delete(String(req.params.id));
       res.status(200).json({ message: 'Product deleted successfully' });
     } catch (err) {
       next(err);

@@ -53,7 +53,7 @@ export const adminOrderController = {
    */
   getOrderById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
 
       const order = await adminOrderService.getOrderById(id);
 
@@ -73,7 +73,7 @@ export const adminOrderController = {
    */
   updateOrderStatus: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const { status } = req.body as { status: OrderStatus };
 
       if (!status) {

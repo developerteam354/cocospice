@@ -73,7 +73,7 @@ export const userProductController = {
    */
   getByCategory: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { categoryId } = req.params;
+      const categoryId = String(req.params.categoryId);
       const { limit = '20' } = req.query;
 
       const products = await userProductRepository.findByCategory(

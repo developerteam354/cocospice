@@ -150,7 +150,7 @@ export const userOrderController = {
   getOrderById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = (req as any).userId; // Set by auth middleware
-      const { id } = req.params;
+      const id = String(req.params.id);
 
       const order = await orderService.getOrderById(id, userId);
 

@@ -29,7 +29,7 @@ export const userCategoryController = {
    */
   getById: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const category = await userCategoryRepository.findById(id);
 
       if (!category) {
