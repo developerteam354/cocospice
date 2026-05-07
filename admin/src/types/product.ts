@@ -37,6 +37,7 @@ export interface IProduct {
   soldCount: number;
   hasSpiceLevel: boolean;
   extraOptions: IExtraOption[];
+  productCode?: string;
   createdAt: string;
   updatedAt: string;
 }
