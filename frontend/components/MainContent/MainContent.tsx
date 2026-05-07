@@ -70,7 +70,7 @@ export default function MainContent({ categoryTitle, items, categories, onSelect
             style={{ animationDelay: `${index * 0.08}s`, cursor: onSelectItem ? 'pointer' : 'default' }}
             onClick={() => onSelectItem && onSelectItem(item)}
           >
-            {item.image ? (
+            {item.image && item.image.trim() !== '' ? (
               <img
                 src={item.image}
                 alt={item.name}
@@ -79,7 +79,6 @@ export default function MainContent({ categoryTitle, items, categories, onSelect
                 className={styles.productImage}
                 style={{ objectFit: 'cover' }}
                 onError={(e) => {
-                  console.error('Image load error for product:', item.name, item.image);
                   e.currentTarget.style.display = 'none';
                   e.currentTarget.parentElement?.querySelector('.fallback-icon')?.classList.remove('hidden');
                 }}
