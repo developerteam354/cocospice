@@ -11,6 +11,7 @@ import { fetchAddresses, addAddress } from '@/store/slices/addressSlice';
 import styles from '@/components/CheckoutPage/CheckoutPage.module.css';
 import { SavedAddress } from '@/types';
 import type { PickedLocation } from '@/components/MapPickerModal/MapPickerModal';
+import { checkDeliveryRadius, DELIVERY_RADIUS_KM } from '@/lib/deliveryRadius';
 
 // Lazy-load AddressModal to avoid CSS preload warning
 const AddressModal = lazy(() => import('@/components/AddressModal/AddressModal'));
@@ -165,6 +166,20 @@ export default function AddressPage() {
     if (!selectedId) { toast.error('Please select a delivery address'); return; }
     const chosen = addresses.find(a => a.id === selectedId);
     if (!chosen) { toast.error('Selected address not found'); return; }
+
+    // ── Delivery radius check (frontend guard) ────────────────────────────
+    // Only enforced when the user has confirmed GPS coordinates via the map.
+    // Manually typed addresses without coordinates bypass this check.
+    if (gpsLat != null && gpsLng != null) {
+      const { allowed, distanceKm } = checkDeliveryRadius(gpsLat, gpsLng);
+      if (!allowed) {
+        toast.error(
+          `Delivery Unavailable: We only deliver within ${DELIVERY_RADIUS_KM} km of our shop. Your location is ${distanceKm} km away.`,
+          { duration: 6000 }
+        );
+        return;
+      }
+    }
 
     setShippingAddress({
       id:               chosen.id,
