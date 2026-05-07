@@ -97,6 +97,7 @@ const transformOrder = (backendOrder: BackendOrder): IOrder => {
     } : undefined,
     date: backendOrder.createdAt,
     createdAt: backendOrder.createdAt,
+    updatedAt: backendOrder.updatedAt,
     timeline: generateTimeline(backendOrder),
   };
 };

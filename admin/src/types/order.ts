@@ -51,6 +51,7 @@ export interface IOrder {
   timeline?: IOrderTimeline[];
   date: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface IOrderStats {
