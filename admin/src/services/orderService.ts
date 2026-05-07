@@ -43,6 +43,9 @@ interface BackendOrder {
     postcode: string;
     phone: string;
     instructions?: string;
+    lat?: number;
+    lng?: number;
+    formattedAddress?: string;
   };
   createdAt: string;
   updatedAt: string;
@@ -82,12 +85,15 @@ const transformOrder = (backendOrder: BackendOrder): IOrder => {
     paymentMethod: backendOrder.paymentMethod as any,
     orderNote: backendOrder.orderNote || '',
     shippingAddress: backendOrder.shippingAddress ? {
-      street:       backendOrder.shippingAddress.line1,
-      city:         backendOrder.shippingAddress.city,
-      state:        '',
-      zipCode:      backendOrder.shippingAddress.postcode,
-      country:      'UK',
-      instructions: backendOrder.shippingAddress.instructions || '',
+      street:          backendOrder.shippingAddress.line1,
+      city:            backendOrder.shippingAddress.city,
+      state:           '',
+      zipCode:         backendOrder.shippingAddress.postcode,
+      country:         'UK',
+      instructions:    backendOrder.shippingAddress.instructions || '',
+      lat:             backendOrder.shippingAddress.lat,
+      lng:             backendOrder.shippingAddress.lng,
+      formattedAddress: backendOrder.shippingAddress.formattedAddress || '',
     } : undefined,
     date: backendOrder.createdAt,
     createdAt: backendOrder.createdAt,

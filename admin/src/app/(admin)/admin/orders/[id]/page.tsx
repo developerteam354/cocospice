@@ -216,6 +216,28 @@ export default function OrderDetailsPage() {
                   </p>
                 </div>
               )}
+              {/* GPS location — shown when user used "Use Current Location" */}
+              {currentOrder.shippingAddress?.lat && currentOrder.shippingAddress?.lng && (
+                <div className="pt-4 border-t border-gray-50">
+                  <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-2">GPS Location</p>
+                  {currentOrder.shippingAddress.formattedAddress && (
+                    <p className="text-[0.85rem] font-bold text-gray-600 mb-3 leading-snug">
+                      📍 {currentOrder.shippingAddress.formattedAddress}
+                    </p>
+                  )}
+                  <a
+                    href={`https://www.google.com/maps?q=${currentOrder.shippingAddress.lat},${currentOrder.shippingAddress.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 text-white text-[0.82rem] font-black hover:bg-emerald-600 transition-colors shadow-sm shadow-emerald-200"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    View on Google Maps
+                  </a>
+                </div>
+              )}
               {currentOrder.expectedDelivery && (
                 <div className="pt-4 border-t border-gray-50 flex items-center gap-2">
                    <Clock size={16} className="text-orange-500" />

@@ -25,6 +25,9 @@ export interface IShippingAddress {
   zipCode: string;
   country: string;
   instructions?: string;
+  lat?: number;
+  lng?: number;
+  formattedAddress?: string;
 }
 
 export interface IOrderTimeline {

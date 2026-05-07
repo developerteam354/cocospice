@@ -49,21 +49,10 @@ export const fetchProducts = createAsyncThunk(
     const response = await fetch(`${API_BASE_URL}/user/products?${params}`);
     if (!response.ok) throw new Error('Failed to fetch products');
     const data = await response.json();
-    
-    console.log('🔍 Fetched products from API:', data.products?.length || 0);
-    if (data.products && data.products.length > 0) {
-      console.log('📦 Sample product:', {
-        name: data.products[0].name,
-        thumbnail: data.products[0].thumbnail,
-        hasUrl: !!data.products[0].thumbnail?.url,
-        url: data.products[0].thumbnail?.url
-      });
-    }
-    
+
     // Transform backend response to match frontend MenuItem interface
     return {
-      products: data.products.map((p: any) => {
-        const transformed = {
+      products: data.products.map((p: any) => ({
           id: p._id,
           name: p.name,
           description: p.description,
@@ -81,14 +70,7 @@ export const fetchProducts = createAsyncThunk(
           ratings: p.ratings,
           soldCount: p.soldCount,
           hasSpiceLevel: p.hasSpiceLevel,
-        };
-        
-        if (!transformed.image) {
-          console.warn('⚠️ Product without image:', p.name, '- thumbnail:', p.thumbnail);
-        }
-        
-        return transformed;
-      }),
+        })),
       total: data.total,
       page: data.page,
       totalPages: data.totalPages,
