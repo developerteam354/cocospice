@@ -184,5 +184,3 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
     </div>
   );
 }
-  );
-}
