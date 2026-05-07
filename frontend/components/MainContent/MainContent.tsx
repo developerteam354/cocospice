@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { MenuItem, Category } from '../../types';
 import styles from './MainContent.module.css';
 
@@ -19,14 +18,37 @@ export default function MainContent({ categoryTitle, items, categories, onSelect
       <div className={styles.mainContent}>
         <div className={styles.categoryGrid}>
           {categories.map((cat, index) => {
-            const catImage = items.find(i => i.categoryId === cat.id)?.image || '/images/default.png';
             return (
               <div
                 key={cat.id}
                 className={styles.categoryItem}
                 onClick={() => onSelectCategory(cat.id)}
               >
-                <Image src={catImage} alt={cat.name} width={100} height={100} className={styles.categoryItemImage} priority={index < 4} />
+                {cat.categoryImage ? (
+                  <img
+                    src={cat.categoryImage}
+                    alt={cat.name}
+                    width={100}
+                    height={100}
+                    className={styles.categoryItemImage}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div style={{ 
+                    width: 100, 
+                    height: 100, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    fontSize: '3rem',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    borderRadius: '12px'
+                  }}>
+                    🍽️
+                  </div>
+                )}
                 <span style={{ color: '#000000', fontSize: '1rem', fontWeight: 'bold' }}>{cat.name}</span>
               </div>
             );
@@ -48,14 +70,35 @@ export default function MainContent({ categoryTitle, items, categories, onSelect
             style={{ animationDelay: `${index * 0.08}s`, cursor: onSelectItem ? 'pointer' : 'default' }}
             onClick={() => onSelectItem && onSelectItem(item)}
           >
-            <Image
-              src={item.image}
-              alt={item.name}
-              width={100}
-              height={100}
-              className={styles.productImage}
-              priority={index < 4}
-            />
+            {item.image && item.image.trim() !== '' ? (
+              <img
+                src={item.image}
+                alt={item.name}
+                width={100}
+                height={100}
+                className={styles.productImage}
+                style={{ objectFit: 'cover' }}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.parentElement?.querySelector('.fallback-icon')?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <div 
+              className="fallback-icon hidden" 
+              style={{ 
+                width: 100, 
+                height: 100, 
+                display: item.image ? 'none' : 'flex',
+                alignItems: 'center', 
+                justifyContent: 'center',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: '12px',
+                fontSize: '3rem'
+              }}
+            >
+              🍽️
+            </div>
             <div className={styles.productInfo}>
               <h3 style={{ color: '#000000', fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '1.1rem' }}>{item.name}</h3>
               {item.description && <p style={{ color: '#000000', margin: '0 0 8px 0', fontSize: '0.85rem' }}>{item.description}</p>}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './AuthModal.module.css';
 
@@ -8,34 +9,29 @@ interface AuthModalProps {
   initialMode?: 'login' | 'signup';
   onClose: () => void;
   onSuccess?: () => void;
+  /** If set, navigate here after successful auth instead of /profile */
+  intendedPath?: string | null;
 }
 
-export default function AuthModal({ initialMode = 'login', onClose, onSuccess }: AuthModalProps) {
-  const { login, signup } = useAuth();
+export default function AuthModal({ initialMode = 'login', onClose, onSuccess, intendedPath }: AuthModalProps) {
+  const { login, signup, setIntended } = useAuth();
+  const router = useRouter();
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Form fields
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name,     setName]     = useState('');
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone,    setPhone]    = useState('');
 
   const resetForm = () => {
-    setName('');
-    setEmail('');
-    setPassword('');
-    setPhone('');
-    setError('');
-    setShowPassword(false);
+    setName(''); setEmail(''); setPassword(''); setPhone('');
+    setError(''); setShowPassword(false);
   };
 
-  const switchMode = () => {
-    setMode(mode === 'login' ? 'signup' : 'login');
-    resetForm();
-  };
+  const switchMode = () => { setMode(m => m === 'login' ? 'signup' : 'login'); resetForm(); };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,21 +39,29 @@ export default function AuthModal({ initialMode = 'login', onClose, onSuccess }:
     setIsSubmitting(true);
 
     try {
-      let result;
+      let result: { success: boolean; error?: string };
+
       if (mode === 'login') {
         result = await login(email, password);
       } else {
-        if (!name.trim()) {
-          setError('Please enter your name');
-          setIsSubmitting(false);
-          return;
-        }
+        if (!name.trim()) { setError('Please enter your name'); setIsSubmitting(false); return; }
         result = await signup(name, email, password, phone || undefined);
       }
 
       if (result.success) {
+        // Clear intended path after successful login
+        setIntended(null);
+        
+        // Call onSuccess callback
         onSuccess?.();
+        
+        // Close modal
         onClose();
+        
+        // Navigate to intended path if provided and onSuccess didn't handle it
+        if (intendedPath && !onSuccess) {
+          router.push(intendedPath);
+        }
       } else {
         setError(result.error || 'Something went wrong');
       }
@@ -68,15 +72,21 @@ export default function AuthModal({ initialMode = 'login', onClose, onSuccess }:
     }
   };
 
+  const handleClose = () => {
+    // Clear intended path when modal is closed without logging in
+    setIntended(null);
+    onClose();
+  };
+
   const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
+    if (e.target === e.currentTarget) handleClose();
   };
 
   return (
     <div className={styles.overlay} onClick={handleOverlayClick}>
       <div className={styles.modal}>
         {/* Close Button */}
-        <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+        <button className={styles.closeBtn} onClick={handleClose} aria-label="Close">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
           </svg>

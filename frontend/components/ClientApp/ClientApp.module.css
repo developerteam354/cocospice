@@ -236,8 +236,122 @@
   box-shadow: 0 0 8px var(--primary-color);
 }
 
-.mobileCartBanner {
-  display: none;
+.floatingCartBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  min-width: 450px;
+  max-width: 90%;
+  background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+  color: white;
+  padding: 12px 14px 12px 18px;
+  border-radius: 22px;
+  z-index: 9999;
+  box-shadow: 0 15px 50px rgba(6, 78, 59, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  animation: slideAndBounceDesktop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+@keyframes slideAndBounceDesktop {
+  0% { transform: translate(-50%, 120px) scale(0.9); opacity: 0; }
+  60% { transform: translate(-50%, -15px) scale(1.02); opacity: 1; }
+  100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+}
+
+/* Stacked item thumbnails */
+.floatingCartThumbsWrap {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.floatingCartThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #065f46;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.floatingCartThumb:hover {
+  transform: scale(1.1) translateY(-2px);
+  z-index: 10 !important;
+}
+
+.floatingCartThumbMore {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #065f46;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin-left: -12px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Cart info (count + total) */
+.floatingCartInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  pointer-events: none;
+  min-width: 120px;
+  padding: 0 10px;
+}
+
+.floatingCartCount {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.floatingCartTotal {
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+/* Order Now button */
+.floatingCheckoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #065f46;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: btnAttract 5s infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.floatingCartBanner:hover .floatingCheckoutBtn {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -276,12 +390,10 @@
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 60px;
-    /* Adjust for mobile header height */
     z-index: 90;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     scrollbar-width: none;
-    /* Hide for Firefox */
     scroll-snap-type: x mandatory;
     width: 100%;
     background: transparent;
@@ -289,7 +401,6 @@
 
   .categoryScrollContainer::-webkit-scrollbar {
     display: none;
-    /* Hide for Chrome/Safari/Edge */
   }
 
   .sidebarToggle,
@@ -321,99 +432,59 @@
     color: #fff !important;
   }
 
-  .mobileCartBanner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: fixed;
-    bottom: 16px;
-    top: auto;
+  .floatingCartBanner {
     left: 4%;
     width: 92%;
-    background: #111827;
-    color: white;
-    padding: 10px 10px 10px 14px;
-    border-radius: 18px;
-    z-index: 9999;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    animation: slideAndBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  /* Stacked item thumbnails */
-  .mobileCartThumbsWrap {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .mobileCartThumb {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    object-fit: cover;
-    border: 2px solid #111827;
-    position: relative;
-  }
-
-  .mobileCartThumbMore {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid #111827;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 800;
-    margin-left: -10px;
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  /* Cart info (count + total) */
-  .mobileCartInfo {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    pointer-events: none;
+    transform: none;
     min-width: 0;
-    padding-left: 2px;
+    bottom: 16px;
+    padding: 8px 8px 8px 12px;
+    gap: 6px;
+    animation: slideAndBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    justify-content: space-between;
   }
 
-  .mobileCartCount {
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.45);
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-
-  .mobileCartTotal {
-    font-weight: 900;
-    font-size: 1.05rem;
-    color: #ffffff;
-    line-height: 1.2;
-  }
-
-  /* Order Now button */
-  .mobileCheckoutBtn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--primary-color);
-    color: #fff;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 0.88rem;
-    cursor: pointer;
+  .floatingCartThumbsWrap {
+    gap: 0;
     flex-shrink: 0;
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45);
-    pointer-events: none;
+  }
+
+  .floatingCartThumb, .floatingCartThumbMore {
+    width: 36px;
+    height: 36px;
+    border-color: #065f46;
+  }
+
+  .floatingCartThumbMore {
+    margin-left: -12px;
+    font-size: 0.6rem;
+  }
+
+  .floatingCartInfo {
+    min-width: 0;
+    padding: 0 6px;
+    gap: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .floatingCartCount {
+    font-size: 0.6rem;
     white-space: nowrap;
-    animation: btnShake 10s infinite;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .floatingCartTotal {
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .floatingCheckoutBtn {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    gap: 4px;
+    flex-shrink: 0;
   }
 }
 
@@ -474,36 +545,50 @@
 }
 
 /* Order Now button shake — subtle, fires every 10s */
-@keyframes btnShake {
-
-  0%,
-  88% {
-    transform: translateX(0) scale(1);
+/* Order Now button attraction animation — breathing pulse + periodic pop */
+@keyframes btnAttract {
+  0%, 80%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-
+  40% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+  }
+  85% {
+    transform: scale(1.1) translateY(-4px);
+    box-shadow: 0 12px 24px rgba(16, 185, 129, 0.5);
+  }
   90% {
-    transform: translateX(-4px) scale(1.03);
+    transform: scale(0.95) translateY(0);
   }
+  95% {
+    transform: scale(1.02);
+  }
+}
 
-  92% {
-    transform: translateX(4px) scale(1.03);
-  }
+/* Shimmer shine effect across the button */
+.floatingCheckoutBtn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  animation: btnShimmer 3s infinite;
+  pointer-events: none;
+}
 
-  94% {
-    transform: translateX(-4px) scale(1.03);
-  }
-
-  96% {
-    transform: translateX(4px) scale(1.03);
-  }
-
-  98% {
-    transform: translateX(-2px) scale(1.01);
-  }
-
-  100% {
-    transform: translateX(0) scale(1);
-  }
+@keyframes btnShimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
 }
 
 .toastContainer {

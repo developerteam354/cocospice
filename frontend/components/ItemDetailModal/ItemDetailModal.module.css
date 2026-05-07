@@ -1,56 +1,54 @@
+/* ── Overlay ── */
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
   align-items: flex-end;
   z-index: 10000;
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.25s ease-out;
 }
 
 @media (min-width: 768px) {
-  .modalOverlay {
-    align-items: center;
-  }
+  .modalOverlay { align-items: center; }
 }
 
+/* ── Sheet ── */
 .modalContent {
-  background: var(--surface-color);
+  background: var(--surface-color, #fff);
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   border-radius: 24px 24px 0 0;
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  max-height: 90vh;
+  box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.22);
+  animation: slideUp 0.38s cubic-bezier(0.2, 0.8, 0.2, 1);
+  max-height: 92vh;
 }
 
 @media (min-width: 768px) {
   .modalContent {
     border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
   }
 }
 
+/* ── Close ── */
 .closeBtn {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 36px;
-  height: 36px;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(4px);
   border: none;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -58,93 +56,101 @@
   cursor: pointer;
   z-index: 10;
   color: #333;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.18s;
 }
+.closeBtn:hover { transform: scale(1.08); }
+.closeBtn:active { transform: scale(0.92); }
 
-.closeBtn:active {
-  transform: scale(0.9);
-}
-
+/* ── Image Carousel ── */
 .imageCarousel {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: 280px;
   background: #f0f0f0;
+  flex-shrink: 0;
 }
 
 .mainImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  animation: fadeImage 0.3s ease-in-out;
+  animation: fadeImage 0.28s ease-in-out;
+}
+
+.imageFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-size: 5rem;
 }
 
 .navBtn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.82);
   border: none;
-  font-size: 24px;
+  font-size: 22px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #333;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+  transition: background 0.18s;
 }
-
-.navBtn:hover {
-  background: #ffffff;
-}
+.navBtn:hover { background: #fff; }
 
 .dots {
   position: absolute;
-  bottom: 15px;
+  bottom: 12px;
   left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.28s ease;
 }
 
 .activeDot {
-  background: #ffffff;
-  width: 24px;
+  background: #fff;
+  width: 22px;
   border-radius: 4px;
 }
 
+/* ── Details ── */
 .detailsContainer {
-  padding: 24px;
+  padding: 22px 22px 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: 14px;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   font-weight: 800;
   margin: 0;
   color: var(--text-primary);
@@ -152,83 +158,162 @@
 }
 
 .price {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 900;
-  color: var(--primary-color);
+  color: var(--primary-color, #10b981);
   background: rgba(16, 185, 129, 0.1);
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 12px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .description {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
+/* ── Ingredients ── */
 .ingredientsSection h3 {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px;
   color: var(--text-primary);
 }
 
 .ingredientsList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
 .ingredientBadge {
-  background: var(--surface-hover);
+  background: var(--surface-hover, #f3f4f6);
   color: var(--text-primary);
-  padding: 6px 12px;
+  padding: 5px 11px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e5e7eb);
 }
 
-.addToCartBtn {
-  margin-top: 10px;
-  width: 100%;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 16px;
+/* ── Extra Options — VIEW ONLY ── */
+.extrasViewSection {
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.18);
   border-radius: 16px;
-  font-size: 1.1rem;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.extrasViewTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6366f1;
+  margin: 0;
+}
+
+.extrasViewList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.extrasViewItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  pointer-events: none; /* view-only */
+}
+
+.extrasViewDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6366f1;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.extrasViewName {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.extrasViewPrice {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6366f1;
+  white-space: nowrap;
+}
+
+.extrasHint {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+/* ── Add to Cart Button ── */
+.addToCartBtn {
+  width: 100%;
+  background: var(--primary-color, #10b981);
+  color: #fff;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 16px;
+  font-size: 1.05rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .addToCartBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 22px rgba(16, 185, 129, 0.42);
 }
 
-.addToCartBtn:active {
-  transform: scale(0.98);
+.addToCartBtn:active { transform: scale(0.98); }
+
+.addToCartArrow {
+  font-size: 1.1rem;
+  transition: transform 0.18s;
 }
 
+.addToCartBtn:hover .addToCartArrow { transform: translateX(3px); }
+
+/* ── Animations ── */
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @keyframes slideUp {
   from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  to   { transform: translateY(0); }
 }
 
 @keyframes fadeImage {
   from { opacity: 0.5; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }

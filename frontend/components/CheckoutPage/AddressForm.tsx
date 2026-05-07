@@ -5,13 +5,14 @@ import styles from './CheckoutPage.module.css';
 
 /* ─── Types ─────────────────────────────────── */
 export interface Address {
+  id?: string;
   fullName: string;
   line1: string;
   line2: string;
   city: string;
   postcode: string;
   phone: string;
-  instructions: string;
+  instructions?: string;
 }
 
 export const EMPTY_ADDRESS: Address = {

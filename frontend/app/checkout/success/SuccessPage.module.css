@@ -1,0 +1,226 @@
+.container {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.5s ease;
+}
+
+.card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 600px; /* Reduced max-width for a more compact simple look */
+  padding: 48px 32px;
+  border-radius: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+/* ── Simple Success Animation ── */
+.simpleAnimation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  min-height: 200px;
+}
+
+.checkmarkWrapper {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkmarkRing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 4px solid var(--primary-color);
+  border-radius: 50%;
+  opacity: 0;
+  animation: ringExpand 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+}
+
+.checkmark {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 3;
+  stroke: #ffffff;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px var(--primary-color);
+  animation: fill .4s ease-in-out .4s forwards, scaleSpring .6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.8s both;
+  z-index: 2;
+}
+
+.checkmarkCircle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 3;
+  stroke-miterlimit: 10;
+  stroke: var(--primary-color);
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmarkCheck {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke: #ffffff;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.9s forwards;
+}
+
+@keyframes stroke {
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes scaleSpring {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ringExpand {
+  0% { transform: scale(0.5); opacity: 0; }
+  30% { opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes fill {
+  100% { box-shadow: inset 0px 0px 0px 40px var(--primary-color); }
+}
+
+.loadingText {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 10px;
+  animation: pulseText 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ── UI Components ── */
+.confettiPopper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.popperPiece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--color);
+  border-radius: 2px;
+  opacity: 0;
+  animation: popperBlast 2s cubic-bezier(0.1, 0.8, 0.3, 1) var(--delay) forwards;
+}
+
+@keyframes popperBlast {
+  0% { transform: translate(0, 0) rotate(0deg) scale(0); opacity: 1; }
+  20% { opacity: 1; }
+  100% { transform: translate(var(--x), var(--y)) rotate(var(--rot)) scale(1); opacity: 0; }
+}
+
+.detailsReveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+}
+
+.detailsReveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  height: auto;
+  padding-top: 10px;
+}
+
+.successIcon { font-size: 3rem; margin-bottom: 16px; display: block; }
+.title { font-size: 2rem; font-weight: 900; color: var(--text-primary); margin-bottom: 12px; }
+.message { font-size: 1.05rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 32px; }
+
+.orderInfo {
+  background: var(--surface-hover);
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow { display: flex; justify-content: space-between; font-size: 0.95rem; color: var(--text-primary); }
+.infoRow strong { color: var(--primary-color); font-weight: 800; }
+
+.actions { display: flex; flex-direction: column; gap: 16px; }
+.continueBtn {
+  background: var(--primary-color);
+  color: #fff;
+  text-decoration: none;
+  padding: 16px;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+.viewOrderBtn {
+  display: block;
+  background: #fff;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  padding: 16px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.support {
+  margin-top: 24px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.support a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 480px) {
+  .card { padding: 32px 12px; border-radius: 24px; }
+  .title { font-size: 1.6rem; }
+  .message { font-size: 0.9rem; }
+}

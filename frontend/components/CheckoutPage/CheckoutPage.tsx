@@ -27,6 +27,7 @@ export default function CheckoutPage({ cart, onClose, onOrderPlaced, userName, o
   const [payment, setPayment]               = useState<PaymentMethod>('card');
   const [placing, setPlacing]               = useState(false);
   const [placed, setPlaced]                 = useState(false);
+  const [orderNote, setOrderNote]           = useState('');
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const total    = subtotal + (orderType === 'delivery' ? DELIVERY_FEE : 0);
@@ -119,7 +120,7 @@ export default function CheckoutPage({ cart, onClose, onOrderPlaced, userName, o
 
         {/* ── Body — each step is its own component ── */}
         <div className={styles.body}>
-          {step === 0 && <OrderReview cart={cart} />}
+          {step === 0 && <OrderReview cart={cart} note={orderNote} onNoteChange={setOrderNote} />}
 
           {orderType === 'delivery' && step === 1 && (
             <AddressForm
