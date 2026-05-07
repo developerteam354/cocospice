@@ -1,4 +1,8 @@
-import type { Document, Model, UpdateQuery, FilterQuery } from 'mongoose';
+import type { Document, Model, UpdateQuery } from 'mongoose';
+
+// Extract the filter type directly from Model.find() — avoids importing
+// FilterQuery which has inconsistent named-export support across mongoose versions.
+type ModelFilter<T> = Parameters<Model<T>['find']>[0];
 
 export class BaseRepository<T extends Document> {
   constructor(protected readonly model: Model<T>) {}
@@ -7,11 +11,11 @@ export class BaseRepository<T extends Document> {
     return this.model.findById(id).exec();
   }
 
-  async findOne(filter: FilterQuery<T>): Promise<T | null> {
+  async findOne(filter: ModelFilter<T>): Promise<T | null> {
     return this.model.findOne(filter).exec();
   }
 
-  async findAll(filter: FilterQuery<T> = {}): Promise<T[]> {
+  async findAll(filter: ModelFilter<T> = {}): Promise<T[]> {
     return this.model.find(filter).exec();
   }
 

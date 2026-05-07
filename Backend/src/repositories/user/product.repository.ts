@@ -1,6 +1,9 @@
 import { Product } from '../../models/Product.model.js';
-import type { FilterQuery } from 'mongoose';
 import type { IProduct, IImageAsset } from '../../models/Product.model.js';
+
+// Use Record<string, unknown> for query objects — avoids importing FilterQuery
+// which has inconsistent named-export support across mongoose versions on Render.
+type MongoQuery = Record<string, unknown>;
 
 // ─── URL normalisation ────────────────────────────────────────────────────────
 // Products saved by the admin store a backend proxy URL in thumbnail.url
@@ -42,7 +45,7 @@ export const userProductRepository = {
     limit?: number;
     skip?: number;
   }) => {
-    const query: FilterQuery<IProduct> = {
+    const query: MongoQuery = {
       isAvailable: true, // Only show available products to users
     };
 
@@ -66,13 +69,10 @@ export const userProductRepository = {
 
     // Price range filter
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-      query.finalPrice = {};
-      if (filters.minPrice !== undefined) {
-        query.finalPrice.$gte = filters.minPrice;
-      }
-      if (filters.maxPrice !== undefined) {
-        query.finalPrice.$lte = filters.maxPrice;
-      }
+      const finalPrice: Record<string, number> = {};
+      if (filters.minPrice !== undefined) finalPrice.$gte = filters.minPrice;
+      if (filters.maxPrice !== undefined) finalPrice.$lte = filters.maxPrice;
+      query.finalPrice = finalPrice;
     }
 
     // Build sort object
