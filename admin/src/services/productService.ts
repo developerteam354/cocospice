@@ -19,6 +19,7 @@ export interface ICreateProductPayload {
   stock: number;
   isAvailable: boolean;
   category: string;
+  hasSpiceLevel: boolean;
   extraOptions: IExtraOption[];
   thumbnail: IImageAsset;
   gallery: IImageAsset[];
