@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { Types } from 'mongoose';
 import { orderService } from '../../services/user/order.service.js';
 import type { IOrderItem, IShippingAddress } from '../../models/Order.model.js';
+import { checkDeliveryRadius, DELIVERY_RADIUS_KM } from '../../utils/deliveryRadius.js';
 
 export const userOrderController = {
   /**
@@ -67,6 +68,30 @@ export const userOrderController = {
       if (orderType === 'delivery' && !shippingAddress) {
         res.status(400).json({ message: 'Shipping address is required for delivery orders' });
         return;
+      }
+
+      // ── Delivery radius check (backend security layer) ──────────────────
+      // Only runs when the user provided GPS coordinates. If no coordinates
+      // are present (e.g. manually typed address) we skip the check — the
+      // frontend already enforces this for GPS-confirmed locations.
+      if (
+        orderType === 'delivery' &&
+        shippingAddress?.lat != null &&
+        shippingAddress?.lng != null
+      ) {
+        const { allowed, distanceKm } = checkDeliveryRadius(
+          shippingAddress.lat,
+          shippingAddress.lng
+        );
+        if (!allowed) {
+          res.status(422).json({
+            message: `Delivery Unavailable: We only deliver within ${DELIVERY_RADIUS_KM} km of our shop. Your location is ${distanceKm} km away.`,
+            code:        'OUTSIDE_DELIVERY_RADIUS',
+            distanceKm,
+            radiusKm:    DELIVERY_RADIUS_KM,
+          });
+          return;
+        }
       }
 
       // ── Idempotency: prevent duplicate orders for the same payment ──────────

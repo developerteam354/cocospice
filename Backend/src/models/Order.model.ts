@@ -20,6 +20,9 @@ export interface IShippingAddress {
   postcode: string;
   phone: string;
   instructions?: string;
+  lat?: number;
+  lng?: number;
+  formattedAddress?: string;
 }
 
 export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Cancelled';
@@ -72,13 +75,17 @@ const orderItemSchema = new Schema({
 }, { _id: false });
 
 const shippingAddressSchema = new Schema({
-  fullName:     { type: String, required: true },
-  line1:        { type: String, required: true },
-  line2:        { type: String },
-  city:         { type: String, required: true },
-  postcode:     { type: String, required: true },
-  phone:        { type: String, required: true },
-  instructions: { type: String, default: '' },   // delivery instructions from checkout
+  fullName:         { type: String, required: true },
+  line1:            { type: String, required: true },
+  line2:            { type: String },
+  city:             { type: String, required: true },
+  postcode:         { type: String, required: true },
+  phone:            { type: String, required: true },
+  instructions:     { type: String, default: '' },
+  // GPS coordinates from "Use Current Location" on the checkout address page
+  lat:              { type: Number, default: null },
+  lng:              { type: Number, default: null },
+  formattedAddress: { type: String, default: '' },
 }, { _id: false });
 
 const orderSchema = new Schema<IOrder>(

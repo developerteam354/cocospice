@@ -41,6 +41,10 @@ export interface Address {
   postcode: string;
   phone: string;
   instructions?: string;
+  // GPS coordinates captured via "Use Current Location"
+  lat?: number;
+  lng?: number;
+  formattedAddress?: string;
 }
 
 export const EMPTY_ADDRESS: Address = {

@@ -1,6 +1,32 @@
 import { Product } from '../../models/Product.model.js';
 import type { FilterQuery } from 'mongoose';
-import type { IProduct } from '../../models/Product.model.js';
+import type { IProduct, IImageAsset } from '../../models/Product.model.js';
+
+// ─── URL normalisation ────────────────────────────────────────────────────────
+// Products saved by the admin store a backend proxy URL in thumbnail.url
+// (e.g. http://localhost:5000/api/admin/upload/image?key=products/...).
+// The user frontend cannot hit that admin-only route, so we reconstruct the
+// direct public S3 URL from the stored key before returning to the client.
+
+const bucket = process.env.AWS_S3_BUCKET!;
+const region = process.env.AWS_REGION!;
+
+function toS3Url(asset: IImageAsset): IImageAsset {
+  if (!asset?.key) return asset;
+  return {
+    key: asset.key,
+    url: `https://${bucket}.s3.${region}.amazonaws.com/${asset.key}`,
+  };
+}
+
+function normaliseProduct(p: any): any {
+  if (!p) return p;
+  return {
+    ...p,
+    thumbnail: p.thumbnail ? toS3Url(p.thumbnail) : p.thumbnail,
+    gallery:   Array.isArray(p.gallery) ? p.gallery.map(toS3Url) : p.gallery,
+  };
+}
 
 export const userProductRepository = {
   /**
@@ -68,37 +94,40 @@ export const userProductRepository = {
 
     const total = await Product.countDocuments(query);
 
-    return { products, total };
+    return { products: products.map(normaliseProduct), total };
   },
 
   /**
    * Find a single product by ID (only if available)
    */
   findById: async (id: string) => {
-    return Product.findOne({ _id: id, isAvailable: true })
+    const product = await Product.findOne({ _id: id, isAvailable: true })
       .populate('category', 'name')
       .lean();
+    return normaliseProduct(product);
   },
 
   /**
    * Find products by category
    */
   findByCategory: async (categoryId: string, limit = 20) => {
-    return Product.find({ category: categoryId, isAvailable: true })
+    const products = await Product.find({ category: categoryId, isAvailable: true })
       .populate('category', 'name')
       .sort({ soldCount: -1 })
       .limit(limit)
       .lean();
+    return products.map(normaliseProduct);
   },
 
   /**
    * Find featured/popular products
    */
   findFeatured: async (limit = 10) => {
-    return Product.find({ isAvailable: true })
+    const products = await Product.find({ isAvailable: true })
       .populate('category', 'name')
       .sort({ soldCount: -1, 'ratings.average': -1 })
       .limit(limit)
       .lean();
+    return products.map(normaliseProduct);
   },
 };

@@ -20,6 +20,9 @@ export interface ShippingAddress {
   postcode: string;
   phone: string;
   instructions?: string;
+  lat?: number;
+  lng?: number;
+  formattedAddress?: string;
 }
 
 export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Cancelled';
