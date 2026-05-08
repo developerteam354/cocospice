@@ -11,7 +11,7 @@ import { fetchAddresses, addAddress } from '@/store/slices/addressSlice';
 import styles from '@/components/CheckoutPage/CheckoutPage.module.css';
 import { SavedAddress } from '@/types';
 import type { PickedLocation } from '@/components/MapPickerModal/MapPickerModal';
-import { checkDeliveryRadius, DELIVERY_RADIUS_KM } from '@/lib/deliveryRadius';
+import { checkDeliveryRadius, DELIVERY_RADIUS_KM, haversineKm, SHOP_LAT, SHOP_LNG } from '@/lib/deliveryRadius';
 
 // Lazy-load AddressModal to avoid CSS preload warning
 const AddressModal = lazy(() => import('@/components/AddressModal/AddressModal'));
@@ -22,31 +22,48 @@ const MapPickerModal = dynamic(
   { ssr: false }
 );
 
+// ─── Postcode geocoding (postcodes.io — free, no API key, UK only) ────────────
+
+async function geocodePostcode(postcode: string): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const clean = postcode.trim().replace(/\s+/g, '');
+    const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(clean)}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.status !== 200 || !data.result) return null;
+    return { lat: data.result.latitude, lng: data.result.longitude };
+  } catch {
+    return null;
+  }
+}
+
 export default function AddressPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { orderType, shippingAddress, setShippingAddress } = useCart();
 
-  const dispatch   = useAppDispatch();
+  const dispatch = useAppDispatch();
   const { items: addresses, loading, saving, error } = useAppSelector(s => s.addresses);
 
   const [selectedId,   setSelectedId]   = useState<string | null>(null);
   const [instructions, setInstructions] = useState('');
   const [showModal,    setShowModal]    = useState(false);
+  const [continuing,   setContinuing]   = useState(false); // geocoding in progress
 
-  // GPS state
-  const [gpsLoading,    setGpsLoading]    = useState(false);
-  const [gpsSaving,     setGpsSaving]     = useState(false);
-  const [gpsLat,        setGpsLat]        = useState<number | null>(null);
-  const [gpsLng,        setGpsLng]        = useState<number | null>(null);
-  const [gpsAddress,    setGpsAddress]    = useState('');
-  const [gpsLine1,      setGpsLine1]      = useState('');
-  const [gpsCity,       setGpsCity]       = useState('');
-  const [gpsPostcode,   setGpsPostcode]   = useState('');
+  // GPS / map-pin state
+  const [gpsLoading,  setGpsLoading]  = useState(false);
+  const [gpsSaving,   setGpsSaving]   = useState(false);
+  const [gpsLat,      setGpsLat]      = useState<number | null>(null);
+  const [gpsLng,      setGpsLng]      = useState<number | null>(null);
+  const [gpsAddress,  setGpsAddress]  = useState('');
+  const [gpsLine1,    setGpsLine1]    = useState('');
+  const [gpsCity,     setGpsCity]     = useState('');
+  const [gpsPostcode, setGpsPostcode] = useState('');
+
   // Map picker
-  const [showMap,       setShowMap]       = useState(false);
-  const [mapLat,        setMapLat]        = useState(51.5074);
-  const [mapLng,        setMapLng]        = useState(-0.1278);
+  const [showMap, setShowMap] = useState(false);
+  const [mapLat,  setMapLat]  = useState(53.2215);  // default: Lincoln shop
+  const [mapLng,  setMapLng]  = useState(-0.5422);
 
   // ── Fetch addresses on mount ──────────────────────────────────────────────
   useEffect(() => {
@@ -68,13 +85,13 @@ export default function AddressPage() {
     if (error) toast.error(error);
   }, [error]);
 
-  // ── Redirect collection orders (after all hooks) ──────────────────────────
+  // ── Redirect collection orders ────────────────────────────────────────────
   if (orderType !== 'delivery') {
     router.replace('/checkout/payment');
     return null;
   }
 
-  // ── Use Current Location — get GPS then open map for fine-tuning ────────
+  // ── Use Current Location — get GPS then open map for fine-tuning ─────────
   const handleUseCurrentLocation = () => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
       toast.error('Geolocation is not supported by your browser.');
@@ -86,7 +103,7 @@ export default function AddressPage() {
         setGpsLoading(false);
         setMapLat(coords.latitude);
         setMapLng(coords.longitude);
-        setShowMap(true);   // open the Leaflet map modal
+        setShowMap(true);
       },
       (err) => {
         setGpsLoading(false);
@@ -101,7 +118,7 @@ export default function AddressPage() {
     );
   };
 
-  // ── Map confirm — user dragged pin to exact spot ──────────────────────────
+  // ── Map confirm ───────────────────────────────────────────────────────────
   const handleMapConfirm = (loc: PickedLocation) => {
     setGpsLat(loc.lat);
     setGpsLng(loc.lng);
@@ -150,6 +167,9 @@ export default function AddressPage() {
   const handleSelect = (addr: SavedAddress) => {
     setSelectedId(addr.id);
     setInstructions('');
+    // Clear GPS pin when user switches to a saved address so the radius
+    // check will use the saved address's postcode instead.
+    clearGps();
   };
 
   const handleAddNew = async (newAddr: SavedAddress) => {
@@ -162,40 +182,75 @@ export default function AddressPage() {
     }
   };
 
-  const handleContinue = () => {
+  // ── Continue to Payment ───────────────────────────────────────────────────
+  const handleContinue = async () => {
     if (!selectedId) { toast.error('Please select a delivery address'); return; }
     const chosen = addresses.find(a => a.id === selectedId);
     if (!chosen) { toast.error('Selected address not found'); return; }
 
-    // ── Delivery radius check (frontend guard) ────────────────────────────
-    // Only enforced when the user has confirmed GPS coordinates via the map.
-    // Manually typed addresses without coordinates bypass this check.
-    if (gpsLat != null && gpsLng != null) {
-      const { allowed, distanceKm } = checkDeliveryRadius(gpsLat, gpsLng);
+    setContinuing(true);
+
+    try {
+      let checkLat: number;
+      let checkLng: number;
+
+      if (gpsLat != null && gpsLng != null) {
+        // ── Path A: user pinned their location on the map — most accurate ──
+        checkLat = gpsLat;
+        checkLng = gpsLng;
+      } else {
+        // ── Path B: saved address — geocode the postcode via postcodes.io ──
+        const postcode = chosen.postcode?.trim();
+        if (!postcode) {
+          toast.error('The selected address has no postcode. Please add one or pin your location on the map.');
+          return;
+        }
+
+        toast.loading('Checking delivery availability…', { id: 'geocode' });
+        const coords = await geocodePostcode(postcode);
+        toast.dismiss('geocode');
+
+        if (!coords) {
+          toast.error(
+            `We couldn't verify the postcode "${postcode}". Please pin your location on the map instead.`,
+            { duration: 7000 }
+          );
+          return;
+        }
+
+        checkLat = coords.lat;
+        checkLng = coords.lng;
+      }
+
+      // ── Haversine radius check ────────────────────────────────────────────
+      const { allowed, distanceKm } = checkDeliveryRadius(checkLat, checkLng);
       if (!allowed) {
         toast.error(
-          `Delivery Unavailable: We only deliver within ${DELIVERY_RADIUS_KM} km of our shop. Your location is ${distanceKm} km away.`,
-          { duration: 6000 }
+          `Sorry, we don't deliver to this address. We deliver within ${DELIVERY_RADIUS_KM} km of our Lincoln shop. Your address is ${distanceKm} km away.`,
+          { duration: 8000 }
         );
         return;
       }
+
+      // ── All good — set shipping address and proceed ───────────────────────
+      setShippingAddress({
+        id:               chosen.id,
+        fullName:         chosen.fullName,
+        line1:            gpsLine1    || chosen.line1,
+        line2:            chosen.line2 || '',
+        city:             gpsCity     || chosen.city,
+        postcode:         gpsPostcode || chosen.postcode,
+        phone:            chosen.phone,
+        instructions,
+        lat:              gpsLat  ?? undefined,
+        lng:              gpsLng  ?? undefined,
+        formattedAddress: gpsAddress || undefined,
+      });
+
+      router.push('/checkout/payment');
+    } finally {
+      setContinuing(false);
     }
-
-    setShippingAddress({
-      id:               chosen.id,
-      fullName:         chosen.fullName,
-      line1:            gpsLine1    || chosen.line1,
-      line2:            chosen.line2 || '',
-      city:             gpsCity     || chosen.city,
-      postcode:         gpsPostcode || chosen.postcode,
-      phone:            chosen.phone,
-      instructions,
-      lat:              gpsLat  ?? undefined,
-      lng:              gpsLng  ?? undefined,
-      formattedAddress: gpsAddress || undefined,
-    });
-
-    router.push('/checkout/payment');
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -273,11 +328,25 @@ export default function AddressPage() {
           </div>
         )}
 
-        {/* ── Use Current Location ── */}
+        {/* ── Use Current Location (optional — for more precise pinning) ── */}
         {!loading && (
           <div style={{ marginTop: 16 }}>
 
-            {/* Button */}
+            {/* Info banner */}
+            <div style={{
+              marginBottom: 10, padding: '10px 14px',
+              background: '#f0f9ff', border: '1.5px solid #bae6fd',
+              borderRadius: 12, display: 'flex', alignItems: 'flex-start', gap: 8,
+            }}>
+              <span style={{ fontSize: '1rem', flexShrink: 0 }}>ℹ️</span>
+              <p style={{ margin: 0, fontSize: '0.82rem', color: '#0369a1', fontWeight: 600, lineHeight: 1.5 }}>
+                We deliver within <strong>{DELIVERY_RADIUS_KM} km</strong> of our Lincoln shop.
+                Your address postcode will be checked automatically.
+                For more precise location, you can also pin your exact spot on the map below.
+              </p>
+            </div>
+
+            {/* Map pin button */}
             <button
               type="button"
               onClick={handleUseCurrentLocation}
@@ -290,9 +359,9 @@ export default function AddressPage() {
                 width:          '100%',
                 padding:        '12px 20px',
                 borderRadius:   14,
-                border:         '1.5px solid #10b981',
-                background:     gpsAddress ? '#f0fdf4' : '#ffffff',
-                color:          '#059669',
+                border:         gpsAddress ? '1.5px solid #10b981' : '1.5px solid #d1d5db',
+                background:     gpsAddress ? '#f0fdf4' : '#f9fafb',
+                color:          gpsAddress ? '#059669' : '#6b7280',
                 fontSize:       '0.9rem',
                 fontWeight:     700,
                 cursor:         gpsLoading ? 'not-allowed' : 'pointer',
@@ -317,12 +386,12 @@ export default function AddressPage() {
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                     <circle cx="12" cy="10" r="3"/>
                   </svg>
-                  {gpsAddress ? '📍 Re-detect My Location' : '📍 Use My Current Location'}
+                  {gpsAddress ? '📍 Re-pin My Location' : '📍 Pin Exact Location on Map (Optional)'}
                 </>
               )}
             </button>
 
-            {/* Detected address result card */}
+            {/* Pinned location card */}
             {gpsAddress && (
               <div style={{
                 marginTop: 10, padding: '14px 16px',
@@ -331,7 +400,7 @@ export default function AddressPage() {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                   <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#065f46', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    📍 Your Current Location
+                    📍 Pinned Location
                   </span>
                   <button
                     type="button"
@@ -380,10 +449,6 @@ export default function AddressPage() {
                     </>
                   )}
                 </button>
-
-                <p style={{ margin: '8px 0 0', fontSize: '0.74rem', color: '#6b7280', lineHeight: 1.4 }}>
-                  Coordinates are saved with your order so the admin can see your exact delivery point on a map.
-                </p>
               </div>
             )}
           </div>
@@ -420,9 +485,11 @@ export default function AddressPage() {
         <button
           className={styles.ctaBtn}
           onClick={handleContinue}
-          disabled={loading || (!selectedId && addresses.length > 0)}
+          disabled={loading || continuing || (!selectedId && addresses.length > 0)}
         >
-          {loading ? (
+          {continuing ? (
+            <><div className={styles.spinner} />Checking delivery area…</>
+          ) : loading ? (
             <><div className={styles.spinner} />Loading...</>
           ) : (
             <>
