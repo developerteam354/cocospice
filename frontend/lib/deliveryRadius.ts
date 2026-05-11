@@ -10,8 +10,8 @@
  *   NEXT_PUBLIC_DELIVERY_RADIUS_KM  — maximum delivery distance in km
  */
 
-export const SHOP_LAT           = parseFloat(process.env.NEXT_PUBLIC_SHOP_LAT           ?? '11.2775');
-export const SHOP_LNG           = parseFloat(process.env.NEXT_PUBLIC_SHOP_LNG           ?? '76.2274');
+export const SHOP_LAT           = parseFloat(process.env.NEXT_PUBLIC_SHOP_LAT           ?? '53.2215');
+export const SHOP_LNG           = parseFloat(process.env.NEXT_PUBLIC_SHOP_LNG           ?? '-0.5422');
 export const DELIVERY_RADIUS_KM = parseFloat(process.env.NEXT_PUBLIC_DELIVERY_RADIUS_KM ?? '11');
 
 // ─── Haversine formula ────────────────────────────────────────────────────────

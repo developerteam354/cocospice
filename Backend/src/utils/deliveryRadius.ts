@@ -12,8 +12,8 @@
 
 // ─── Shop config (read once at startup) ──────────────────────────────────────
 
-export const SHOP_LAT          = parseFloat(process.env.SHOP_LAT           ?? '11.2775');
-export const SHOP_LNG          = parseFloat(process.env.SHOP_LNG           ?? '76.2274');
+export const SHOP_LAT          = parseFloat(process.env.SHOP_LAT           ?? '53.2215');
+export const SHOP_LNG          = parseFloat(process.env.SHOP_LNG           ?? '-0.5422');
 export const DELIVERY_RADIUS_KM = parseFloat(process.env.DELIVERY_RADIUS_KM ?? '11');
 
 // ─── Haversine formula ────────────────────────────────────────────────────────
