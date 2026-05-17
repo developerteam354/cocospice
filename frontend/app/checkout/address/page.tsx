@@ -712,7 +712,7 @@ export default function AddressPage() {
         <button
           className={styles.ctaBtn}
           onClick={handleContinue}
-          disabled={loading || continuing || (!selectedId && addresses.length > 0) || (gpsAddress && !gpsSaved)}
+          disabled={loading || continuing || (!selectedId && addresses.length > 0) || Boolean(gpsAddress && !gpsSaved)}
           style={{
             opacity: (gpsAddress && !gpsSaved) ? 0.5 : 1,
             cursor: (gpsAddress && !gpsSaved) ? 'not-allowed' : 'pointer',
