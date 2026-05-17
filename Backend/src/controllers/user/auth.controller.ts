@@ -5,11 +5,13 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure:   isProduction,  // true in production (HTTPS), false in development
-  sameSite: isProduction ? 'none' as const : 'lax' as const,  // 'none' for cross-domain in production
-  path:     '/api/user',  // Restrict cookie to user routes only
+  secure:   isProduction,
+  sameSite: isProduction ? 'none' as const : 'lax' as const,
+  path:     '/',
   maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days
 };
+
+const NO_CACHE = { 'Cache-Control': 'no-store, no-cache, must-revalidate', Pragma: 'no-cache' };
 
 export const userAuthController = {
   register: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -87,9 +89,9 @@ export const userAuthController = {
 
       const { user, accessToken, refreshToken: newRefreshToken } = await userAuthService.refresh(token);
       res.cookie('userRefreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
-      res.status(200).json({ user, accessToken });
+      res.set(NO_CACHE).status(200).json({ user, accessToken });
     } catch (err: unknown) {
-      res.clearCookie('userRefreshToken', { path: '/api/user' });
+      res.clearCookie('userRefreshToken', { path: '/' });
       if (err instanceof Error && err.message === 'ACCOUNT_BLOCKED') {
         res.status(403).json({
           code:    'USER_BLOCKED',
@@ -110,7 +112,7 @@ export const userAuthController = {
         const user = await User.findOne({ refreshToken: token }).select('+refreshToken').exec();
         if (user) await userAuthService.logout(user._id.toString());
       }
-      res.clearCookie('userRefreshToken', { path: '/api/user' });
+      res.clearCookie('userRefreshToken', { path: '/' });
       res.status(200).json({ message: 'Logged out successfully' });
     } catch (err) {
       next(err);
@@ -138,9 +140,9 @@ export const userAuthController = {
 
       const { user, accessToken, refreshToken: newRefreshToken } = await userAuthService.refresh(token);
       res.cookie('userRefreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
-      res.status(200).json({ user, accessToken });
+      res.set(NO_CACHE).status(200).json({ user, accessToken });
     } catch (err: unknown) {
-      res.clearCookie('userRefreshToken', { path: '/api/user' });
+      res.clearCookie('userRefreshToken', { path: '/' });
       if (err instanceof Error && err.message === 'ACCOUNT_BLOCKED') {
         res.status(403).json({
           code:    'USER_BLOCKED',
