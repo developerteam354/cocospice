@@ -29,6 +29,8 @@ const PORT = process.env.PORT ?? 5000;
 const allowedOrigins = [
   process.env.USER_FRONTEND_URL,
   process.env.ADMIN_FRONTEND_URL,
+  'https://cocospice.uk',
+  'https://www.cocospice.uk',
 ].filter(Boolean) as string[];
 
 app.use(cors({

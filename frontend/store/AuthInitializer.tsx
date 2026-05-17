@@ -18,7 +18,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import type { AppDispatch } from './store';
-import { checkAuth, refreshToken, getAccessToken } from './slices/userAuthSlice';
+import { checkAuth } from './slices/userAuthSlice';
 
 const BLOCKED_MSG = 'Your account has been blocked by the Administrator. Please contact support.';
 
@@ -30,24 +30,18 @@ export default function AuthInitializer() {
     if (initialized.current) return;
     initialized.current = true;
 
-    const token = getAccessToken();
-
     const handleBlocked = () => {
       toast.error(BLOCKED_MSG, { duration: 8000 });
     };
 
-    if (token) {
-      dispatch(checkAuth()).unwrap().catch((reason: unknown) => {
-        if (reason === 'USER_BLOCKED') { handleBlocked(); return; }
-        dispatch(refreshToken()).unwrap().catch((r: unknown) => {
-          if (r === 'USER_BLOCKED') handleBlocked();
-        });
-      });
-    } else {
-      dispatch(refreshToken()).unwrap().catch((reason: unknown) => {
-        if (reason === 'USER_BLOCKED') handleBlocked();
-      });
-    }
+    // Always try to restore session using HttpOnly cookie first
+    // The /auth/me endpoint will use the refresh cookie to restore the session
+    dispatch(checkAuth()).unwrap().catch((reason: unknown) => {
+      if (reason === 'USER_BLOCKED') {
+        handleBlocked();
+      }
+      // checkAuth failed, session is not valid - user stays logged out
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;
