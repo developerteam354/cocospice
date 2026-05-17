@@ -27,6 +27,8 @@ import type { RootState } from '@/store/store';
 import { fetchOrderById, updateOrderStatus } from '@/store/slices/orderSlice';
 import type { IOrder, OrderStatus } from '@/types/order';
 import Badge from '@/components/ui/Badge';
+import CancellationModal from '@/components/admin/CancellationModal';
+import { toProxyUrl } from '@/services/productService'; // ✅ Import toProxyUrl
 
 export default function OrderDetailsPage() {
   const router = useRouter();
@@ -36,11 +38,28 @@ export default function OrderDetailsPage() {
 
   const { currentOrder, loading, updating } = useAppSelector((state: RootState) => state.orders);
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>('Pending');
+  const [showCancellationModal, setShowCancellationModal] = useState(false);
 
   // Fetch order by ID
   useEffect(() => {
     dispatch(fetchOrderById(orderId));
   }, [dispatch, orderId]);
+
+  // Debug: Log the order data to see what we're getting
+  useEffect(() => {
+    if (currentOrder) {
+      console.log('📦 Order Data:', {
+        orderId: currentOrder.orderId,
+        orderType: currentOrder.orderType,
+        shippingAddress: currentOrder.shippingAddress,
+        user: currentOrder.user,
+      });
+      console.log('📞 Phone Numbers:', {
+        'shippingAddress.phone': currentOrder.shippingAddress?.phone,
+        'user.phone': currentOrder.user?.phone,
+      });
+    }
+  }, [currentOrder]);
 
   // Update selected status when order loads
   useEffect(() => {
@@ -70,12 +89,14 @@ export default function OrderDetailsPage() {
 
   const safeBadgeVariant = (status: OrderStatus) => {
     switch(status) {
-      case 'Pending': return 'amber';
-      case 'Confirmed': return 'slate';
-      case 'On the Way': return 'orange';
-      case 'Delivered': return 'green';
-      case 'Cancelled': return 'red';
-      default: return 'slate';
+      case 'Pending':               return 'amber';
+      case 'Confirmed':             return 'slate';
+      case 'On the Way':            return 'orange';
+      case 'Ready for Collection':  return 'orange';
+      case 'Delivered':             return 'green';
+      case 'Collected':             return 'green';
+      case 'Cancelled':             return 'red';
+      default:                      return 'slate';
     }
   };
 
@@ -83,18 +104,43 @@ export default function OrderDetailsPage() {
   const handleStatusChange = async (newStatus: OrderStatus) => {
     if (!currentOrder) return;
     
+    // If status is Cancelled, show modal instead of updating directly
+    if (newStatus === 'Cancelled') {
+      setShowCancellationModal(true);
+      setSelectedStatus(currentOrder.status); // Reset dropdown to current status
+      return;
+    }
+    
     try {
       const toastId = toast.loading('Updating order status...');
       await dispatch(updateOrderStatus({ orderId: currentOrder._id, status: newStatus })).unwrap();
       toast.success(`Status updated to ${newStatus}`, { id: toastId });
       
-      if (newStatus === 'Delivered') {
+      if (newStatus === 'Delivered' || newStatus === 'Collected') {
         setTimeout(() => {
           router.push('/admin/orders/delivered');
         }, 1500);
       }
     } catch (error) {
       toast.error('Failed to update status');
+    }
+  };
+
+  // Handle cancellation with reason
+  const handleCancellation = async (reason: string) => {
+    if (!currentOrder) return;
+    
+    try {
+      const toastId = toast.loading('Cancelling order...');
+      await dispatch(updateOrderStatus({ 
+        orderId: currentOrder._id, 
+        status: 'Cancelled',
+        cancellationReason: reason 
+      })).unwrap();
+      toast.success('Order cancelled successfully', { id: toastId });
+      setShowCancellationModal(false);
+    } catch (error) {
+      toast.error('Failed to cancel order');
     }
   };
 
@@ -114,6 +160,15 @@ export default function OrderDetailsPage() {
   return (
     <>
       <Toaster position="top-right" />
+      
+      {/* Cancellation Modal */}
+      <CancellationModal
+        isOpen={showCancellationModal}
+        onClose={() => setShowCancellationModal(false)}
+        onConfirm={handleCancellation}
+        orderNumber={currentOrder?.orderId || ''}
+        isLoading={updating}
+      />
 
       <div className="space-y-8 pb-20">
         {/* Header */}
@@ -156,8 +211,26 @@ export default function OrderDetailsPage() {
               <h3 className="text-[0.8rem] font-bold uppercase tracking-widest text-gray-400">Customer</h3>
             </div>
             <div className="flex items-center gap-4">
-              <div className="relative h-14 w-14 rounded-2xl overflow-hidden border border-gray-100">
-                <Image src={currentOrder.user.avatar} alt={currentOrder.user.name} fill className="object-cover" />
+              <div className="relative h-14 w-14 rounded-2xl overflow-hidden border border-gray-100 bg-gradient-to-br from-blue-400 to-blue-600">
+                {currentOrder.user.avatar && !currentOrder.user.avatar.includes('ui-avatars.com') ? (
+                  <img
+                    src={toProxyUrl(currentOrder.user.avatar)}
+                    alt={currentOrder.user.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to letter avatar if image fails to load
+                      e.currentTarget.style.display = 'none';
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-center;color:white;font-size:1.2rem;font-weight:900">${currentOrder.user.name.charAt(0).toUpperCase()}</div>`;
+                      }
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white text-[1.2rem] font-black">
+                    {currentOrder.user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
               <div>
                 <p className="text-[1.1rem] font-bold text-gray-900 leading-tight">{currentOrder.user.name}</p>
@@ -201,12 +274,75 @@ export default function OrderDetailsPage() {
               <h3 className="text-[0.8rem] font-black uppercase tracking-widest text-gray-400">Shipping</h3>
             </div>
             <div className="space-y-4">
+              {/* Customer Name */}
               <div>
-                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Address</p>
-                <p className="text-[0.95rem] font-black text-gray-900 leading-snug">{currentOrder.shippingAddress?.street}</p>
-                <p className="text-[0.85rem] font-bold text-gray-400 mt-1">
-                  {currentOrder.shippingAddress?.city}, {currentOrder.shippingAddress?.zipCode}
+                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Customer Name</p>
+                <p className="text-[0.95rem] font-black text-gray-900 leading-snug">{currentOrder.shippingAddress?.fullName}</p>
+              </div>
+              
+              {/* Address Line 1 */}
+              <div>
+                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Address Line 1</p>
+                <p className="text-[0.95rem] font-black text-gray-900 leading-snug">
+                  {currentOrder.shippingAddress?.line1}
                 </p>
+              </div>
+              
+              {/* Address Line 2 (if exists) */}
+              {currentOrder.shippingAddress?.line2 && (
+                <div>
+                  <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Address Line 2</p>
+                  <p className="text-[0.95rem] font-black text-gray-900 leading-snug">
+                    {currentOrder.shippingAddress.line2}
+                  </p>
+                </div>
+              )}
+              
+              {/* City */}
+              <div>
+                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">City</p>
+                <p className="text-[0.95rem] font-black text-gray-900 leading-snug">
+                  {currentOrder.shippingAddress?.city}
+                </p>
+              </div>
+              
+              {/* Postcode */}
+              <div>
+                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Postcode</p>
+                <p className="text-[0.95rem] font-black text-gray-900 leading-snug">
+                  {currentOrder.shippingAddress?.postcode}
+                </p>
+              </div>
+              
+              {/* Contact Number */}
+              <div>
+                <p className="text-[0.75rem] font-black text-gray-400 uppercase tracking-widest mb-1">Contact Number</p>
+                {currentOrder.shippingAddress?.phone ? (
+                  <a 
+                    href={`tel:${currentOrder.shippingAddress.phone}`}
+                    className="text-[1rem] font-black text-black hover:text-emerald-600 leading-snug inline-flex items-center gap-2 transition-colors"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-600">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    {currentOrder.shippingAddress.phone}
+                  </a>
+                ) : currentOrder.user?.phone ? (
+                  <div>
+                    <a 
+                      href={`tel:${currentOrder.user.phone}`}
+                      className="text-[1rem] font-black text-amber-600 hover:text-amber-700 leading-snug inline-flex items-center gap-2 transition-colors"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                      </svg>
+                      {currentOrder.user.phone}
+                    </a>
+                    <p className="text-[0.7rem] text-amber-600 font-bold mt-1 italic">⚠️ Using customer profile number (delivery contact not provided)</p>
+                  </div>
+                ) : (
+                  <p className="text-[0.9rem] font-bold text-gray-400 italic">Not provided</p>
+                )}
               </div>
               {currentOrder.shippingAddress?.instructions && (
                 <div className="pt-4 border-t border-gray-50">
@@ -267,8 +403,17 @@ export default function OrderDetailsPage() {
                   >
                     <option value="Pending">Pending</option>
                     <option value="Confirmed">Confirmed</option>
-                    <option value="On the Way">On the Way</option>
-                    <option value="Delivered">Delivered</option>
+                    {currentOrder.orderType === 'collection' ? (
+                      <>
+                        <option value="Ready for Collection">Ready for Collection</option>
+                        <option value="Collected">Collected</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="On the Way">On the Way</option>
+                        <option value="Delivered">Delivered</option>
+                      </>
+                    )}
                     <option value="Cancelled">Cancelled</option>
                   </select>
                   {updating && <Loader2 size={24} className="animate-spin text-emerald-500" />}
@@ -330,6 +475,23 @@ export default function OrderDetailsPage() {
                 </div>
                 <p className="text-[0.95rem] font-bold text-gray-700 leading-relaxed bg-blue-50 rounded-xl px-5 py-4 border border-blue-100">
                   {currentOrder.orderNote}
+                </p>
+              </div>
+            )}
+
+            {/* Cancellation Reason */}
+            {currentOrder.status === 'Cancelled' && currentOrder.cancellationReason && (
+              <div className="rounded-[32px] border border-red-100 bg-white p-8 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-10 w-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-[0.8rem] font-black uppercase tracking-widest text-gray-400">Cancellation Reason</h3>
+                </div>
+                <p className="text-[0.95rem] font-bold text-gray-700 leading-relaxed bg-red-50 rounded-xl px-5 py-4 border border-red-100">
+                  {currentOrder.cancellationReason}
                 </p>
               </div>
             )}

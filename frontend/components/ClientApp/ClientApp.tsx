@@ -16,6 +16,9 @@ import AuthModal from '../AuthModal/AuthModal';
 import ItemDetailModal from '../ItemDetailModal/ItemDetailModal';
 import OrderTypeModal from '../OrderTypeModal/OrderTypeModal';
 import ExtrasModal from '../ExtrasModal/ExtrasModal';
+import ShopClosedModal from '../ShopClosedModal/ShopClosedModal';
+import { fetchShopStatus } from '../../services/shopService';
+import type { ShopStatusResponse } from '../../services/shopService';
 
 import styles from './ClientApp.module.css';
 import { useRouter } from 'next/navigation';
@@ -51,11 +54,48 @@ export default function ClientApp() {
   // Extras customisation modal
   const [extrasItem, setExtrasItem] = useState<MenuItem | null>(null);
 
+  // Shop status
+  const [shopStatus,         setShopStatus]         = useState<ShopStatusResponse | null>(null);
+  const [showShopClosedModal, setShowShopClosedModal] = useState(false);
+
   // Fetch initial data
   useEffect(() => {
     dispatch(fetchCategories(true));   // withProductCount=true — $project now includes categoryImage
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  // Fetch shop status on mount, re-fetch every 15 s, and immediately on
+  // tab-focus / visibility-change so admin changes reflect without delay.
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const status = await fetchShopStatus();
+        if (!cancelled) setShopStatus(status);
+      } catch {
+        // silently ignore — shop status is non-critical
+      }
+    };
+
+    load();
+    const interval = setInterval(load, 15_000);
+
+    // Re-fetch the moment the user switches back to this tab or window
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') load();
+    };
+    const handleFocus = () => load();
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   // Handle errors
   useEffect(() => {
@@ -85,7 +125,7 @@ export default function ClientApp() {
    * - If the product has extras AND no extras have been chosen yet → open ExtrasModal.
    * - Otherwise add directly.
    */
-  const handleAddToCart = (item: MenuItem, selectedExtras?: ExtraOption[], spiceLevel?: 'Low' | 'Medium' | 'Very Spicy') => {
+  const handleAddToCart = (item: MenuItem, selectedExtras?: ExtraOption[], spiceLevel?: 'Normal' | 'Hot' | 'Extra Hot') => {
     // If spice level selection is enabled and none is provided → open modal
     if (item.hasSpiceLevel && !spiceLevel) {
       setExtrasItem(item);
@@ -104,14 +144,19 @@ export default function ClientApp() {
   };
 
   /** Called when user confirms selection inside SpiceLevelModal */
-  const handleSpiceLevelConfirm = (item: MenuItem, spiceLevel: 'Low' | 'Medium' | 'Very Spicy') => {
+  const handleSpiceLevelConfirm = (item: MenuItem, spiceLevel: 'Normal' | 'Hot' | 'Extra Hot') => {
     addItemToCart(item, undefined, spiceLevel);
     toast.success(`${item.name} added to cart (${spiceLevel})`);
     setExtrasItem(null);
   };
 
-  // Checkout handler — checks auth before proceeding
+  // Checkout handler — checks shop status, then auth before proceeding
   const handleCheckout = () => {
+    // Block only if admin has manually closed the shop
+    if (shopStatus && !shopStatus.isOpen) {
+      setShowShopClosedModal(true);
+      return;
+    }
     if (!user) {
       setLoginOrigin('checkout');
       setIntended(null); // no page navigation needed — just open OrderTypeModal after login
@@ -161,6 +206,7 @@ export default function ClientApp() {
           cartCount={totalItemsInCart}
           onOpenCart={() => setIsCartOpen(true)}
           onOpenAuth={handleOpenAuth}
+          shopStatus={shopStatus}
         />
         <div style={{ 
           display: 'flex', 
@@ -189,6 +235,7 @@ export default function ClientApp() {
         cartCount={totalItemsInCart}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenAuth={handleOpenAuth}
+        shopStatus={shopStatus}
       />
 
       {/* Floating Cart Bouncing Banner */}
@@ -384,6 +431,13 @@ export default function ClientApp() {
         />
       )}
 
+      {/* Shop Closed Modal */}
+      {showShopClosedModal && (
+        <ShopClosedModal
+          closingReason={shopStatus?.closingReason}
+          onClose={() => setShowShopClosedModal(false)}
+        />
+      )}
 
     </div>
   );

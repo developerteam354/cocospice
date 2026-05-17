@@ -6,11 +6,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAppSelector } from '@/store/hooks';
 import type { RootState } from '@/store/store';
+import { fetchShopStatus } from '@/services/shopService';
+import type { ShopStatusResponse } from '@/services/shopService';
 
 interface HeaderProps {
-  cartCount: number;
-  onOpenCart: () => void;
-  onOpenAuth: (mode: 'login' | 'signup') => void;
+  cartCount:    number;
+  onOpenCart:   () => void;
+  onOpenAuth:   (mode: 'login' | 'signup') => void;
+  shopStatus?:  ShopStatusResponse | null;
 }
 
 // ─── Proxy URL helper ─────────────────────────────────────────────────────────
@@ -64,7 +67,7 @@ function Avatar({ name, profileImage, size = 40, fontSize = '0.85rem' }: AvatarP
 
 // ─── Header ───────────────────────────────────────────────────────────────────
 
-const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth }) => {
+const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shopStatus }) => {
   const { logout } = useAuth();
   const router = useRouter();
   const reduxUser = useAppSelector((s: RootState) => s.userAuth.user);
@@ -85,32 +88,32 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth }) =>
 
   return (
     <>
-      <style>{`
-        @keyframes custom-marquee {
-          0% { transform: translateX(100vw); }
-          100% { transform: translateX(-100%); }
-        }
-        .animate-custom-marquee {
-          animation: custom-marquee 25s linear infinite;
-        }
-      `}</style>
-
       <header className="sticky top-0 z-[100] w-full flex flex-col bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
         
-        {/* ── Marquee Top Bar ── */}
-        <div className="bg-[#10b981] py-2 px-6 text-[0.8rem] text-white font-semibold flex items-center overflow-hidden w-full shadow-[0_2px_10px_rgba(16,185,129,0.2)]">
-          <div className="flex gap-8 items-center animate-custom-marquee whitespace-nowrap min-w-full">
-            <span className="flex items-center gap-1.5 drop-shadow-sm">
+        {/* ── Static Info Top Bar ── */}
+        <div className={`py-2 px-4 text-[0.8rem] text-white font-semibold shadow-[0_2px_10px_rgba(16,185,129,0.2)] transition-colors duration-500 ${
+          shopStatus?.isOpen === false ? 'bg-[#dc2626]' : 'bg-[#10b981]'
+        }`}>
+          <div className="w-full max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-6 gap-y-1">
+            <span className="flex items-center gap-1.5 drop-shadow-sm whitespace-nowrap">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
               370 High Street, Lincoln LN5 7RU
             </span>
-            <span className="flex items-center gap-1.5 drop-shadow-sm">
+            <span className="hidden sm:block w-px h-3 bg-white/30" />
+            <span className="flex items-center gap-1.5 drop-shadow-sm whitespace-nowrap">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               01522 534 202
             </span>
-            <span className="bg-white text-[#10b981] px-4 py-1 rounded-full font-black uppercase tracking-widest text-[0.65rem] shadow-[0_0_15px_rgba(255,255,255,0.4)] border-2 border-white animate-pulse">
-              We are now open
-            </span>
+            <span className="hidden sm:block w-px h-3 bg-white/30" />
+            {shopStatus?.isOpen === false ? (
+              <span className="bg-white text-[#dc2626] px-3 py-0.5 rounded-full font-black uppercase tracking-widest text-[0.65rem] border-2 border-white whitespace-nowrap">
+                🔒 Shop Closed
+              </span>
+            ) : (
+              <span className="bg-white text-[#10b981] px-3 py-0.5 rounded-full font-black uppercase tracking-widest text-[0.65rem] shadow-[0_0_15px_rgba(255,255,255,0.4)] border-2 border-white animate-pulse whitespace-nowrap">
+                We are now open
+              </span>
+            )}
           </div>
         </div>
 

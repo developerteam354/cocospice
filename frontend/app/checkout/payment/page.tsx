@@ -132,7 +132,7 @@ function StripePaymentForm({ total, cartTotal }: { total: number; cartTotal: num
 
   const buildShippingAddress = () => {
     if (!shippingAddress?.line1) return undefined;
-    return {
+    const address = {
       fullName:         shippingAddress.fullName,
       line1:            shippingAddress.line1,
       line2:            shippingAddress.line2 ?? '',
@@ -144,6 +144,11 @@ function StripePaymentForm({ total, cartTotal }: { total: number; cartTotal: num
       lng:              shippingAddress.lng,
       formattedAddress: shippingAddress.formattedAddress ?? '',
     };
+    console.log('📦 [Card Payment] Building shipping address:', {
+      phone: address.phone,
+      fullAddress: address,
+    });
+    return address;
   };
 
   const handlePay = async () => {
@@ -292,7 +297,7 @@ export default function PaymentPage() {
 
   const buildShippingAddress = () => {
     if (!shippingAddress?.line1) return undefined;
-    return {
+    const address = {
       fullName:         shippingAddress.fullName,
       line1:            shippingAddress.line1,
       line2:            shippingAddress.line2 ?? '',
@@ -304,6 +309,11 @@ export default function PaymentPage() {
       lng:              shippingAddress.lng,
       formattedAddress: shippingAddress.formattedAddress ?? '',
     };
+    console.log('📦 [COD] Building shipping address:', {
+      phone: address.phone,
+      fullAddress: address,
+    });
+    return address;
   };
 
   const buildItems = () =>

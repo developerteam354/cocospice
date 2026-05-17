@@ -10,6 +10,7 @@ import type { RootState } from '@/store/store';
 import { fetchNewOrders, updateOrderStatus, fetchOrderStats } from '@/store/slices/orderSlice';
 import type { IOrder, OrderStatus } from '@/types/order';
 import Badge from '@/components/ui/Badge';
+import CancellationModal from '@/components/admin/CancellationModal';
 
 // ─── Row Animation Variants ───────────────────────────────────────────────────
 
@@ -32,6 +33,8 @@ export default function NewOrdersPage() {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'All'>('All');
+  const [showCancellationModal, setShowCancellationModal] = useState(false);
+  const [selectedOrderForCancellation, setSelectedOrderForCancellation] = useState<{ id: string; orderId: string } | null>(null);
 
   // Fetch data on mount
   useEffect(() => {
@@ -63,16 +66,43 @@ export default function NewOrdersPage() {
   }, [newOrders, search, statusFilter]);
 
   // Handle status update
-  const handleStatusUpdate = async (orderId: string, status: OrderStatus) => {
+  const handleStatusUpdate = async (orderId: string, status: OrderStatus, orderNumber?: string) => {
+    // If status is Cancelled, show modal instead
+    if (status === 'Cancelled') {
+      setSelectedOrderForCancellation({ id: orderId, orderId: orderNumber || orderId });
+      setShowCancellationModal(true);
+      return;
+    }
+
     try {
       await dispatch(updateOrderStatus({ orderId, status })).unwrap();
       toast.success(`Order status updated to ${status}`);
       dispatch(fetchOrderStats());
-      if (status === 'Delivered') {
+      if (status === 'Delivered' || status === 'Collected') {
         dispatch(fetchNewOrders());
       }
     } catch (error) {
       toast.error('Failed to update order status');
+    }
+  };
+
+  // Handle cancellation with reason
+  const handleCancellation = async (reason: string) => {
+    if (!selectedOrderForCancellation) return;
+    
+    try {
+      await dispatch(updateOrderStatus({ 
+        orderId: selectedOrderForCancellation.id, 
+        status: 'Cancelled',
+        cancellationReason: reason 
+      })).unwrap();
+      toast.success('Order cancelled successfully');
+      setShowCancellationModal(false);
+      setSelectedOrderForCancellation(null);
+      dispatch(fetchOrderStats());
+      dispatch(fetchNewOrders());
+    } catch (error) {
+      toast.error('Failed to cancel order');
     }
   };
 
@@ -92,14 +122,29 @@ export default function NewOrdersPage() {
       case 'Pending': return 'amber';
       case 'Confirmed': return 'slate';
       case 'On the Way': return 'orange';
+      case 'Ready for Collection': return 'orange';
       case 'Delivered': return 'green';
+      case 'Collected': return 'green';
       case 'Cancelled': return 'red';
       default: return 'slate';
     }
   };
 
   return (
-    <div className="space-y-8">
+    <>
+      {/* Cancellation Modal */}
+      <CancellationModal
+        isOpen={showCancellationModal}
+        onClose={() => {
+          setShowCancellationModal(false);
+          setSelectedOrderForCancellation(null);
+        }}
+        onConfirm={handleCancellation}
+        orderNumber={selectedOrderForCancellation?.orderId || ''}
+        isLoading={updating}
+      />
+
+      <div className="space-y-8">
       {/* ── Page Header ── */}
       <motion.div
         initial={{ opacity: 0, y: -12 }}
@@ -163,7 +208,7 @@ export default function NewOrdersPage() {
         </div>
 
         <div className="flex bg-gray-100/50 p-1.5 rounded-[22px] gap-1 shrink-0 overflow-x-auto max-w-full">
-          {(['All', 'Pending', 'Confirmed', 'On the Way'] as const).map(f => (
+          {(['All', 'Pending', 'Confirmed', 'On the Way', 'Ready for Collection'] as const).map(f => (
             <button
               key={f}
               onClick={() => setStatusFilter(f)}
@@ -284,7 +329,7 @@ export default function NewOrdersPage() {
                                 <CheckCircle size={18} strokeWidth={2.5} />
                               </button>
                               <button
-                                onClick={() => handleStatusUpdate(order._id, 'Cancelled')}
+                                onClick={() => handleStatusUpdate(order._id, 'Cancelled', order.orderId)}
                                 disabled={updating}
                                 className="rounded-[14px] p-3 bg-white text-red-400 border border-gray-100 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all active:scale-95 shadow-sm"
                               >
@@ -293,7 +338,7 @@ export default function NewOrdersPage() {
                             </div>
                           )}
 
-                          {order.status === 'Confirmed' && (
+                          {order.status === 'Confirmed' && order.orderType === 'delivery' && (
                             <button
                               onClick={() => handleStatusUpdate(order._id, 'On the Way')}
                               disabled={updating}
@@ -301,6 +346,17 @@ export default function NewOrdersPage() {
                             >
                               <Truck size={18} strokeWidth={2.5} />
                               <span>Dispatch</span>
+                            </button>
+                          )}
+
+                          {order.status === 'Confirmed' && order.orderType === 'collection' && (
+                            <button
+                              onClick={() => handleStatusUpdate(order._id, 'Ready for Collection')}
+                              disabled={updating}
+                              className="flex items-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 text-[0.8rem] font-bold text-white hover:bg-emerald-600 transition-all active:scale-95 shadow-md shadow-emerald-500/20"
+                            >
+                              <Package size={18} strokeWidth={2.5} />
+                              <span>Mark Ready</span>
                             </button>
                           )}
 
@@ -314,6 +370,17 @@ export default function NewOrdersPage() {
                               <span>Complete</span>
                             </button>
                           )}
+
+                          {order.status === 'Ready for Collection' && (
+                            <button
+                              onClick={() => handleStatusUpdate(order._id, 'Collected')}
+                              disabled={updating}
+                              className="flex items-center gap-2 rounded-2xl bg-white border border-gray-100 px-5 py-3 text-[0.8rem] font-bold text-emerald-600 hover:bg-emerald-50 hover:border-emerald-100 transition-all active:scale-95 shadow-sm"
+                            >
+                              <CheckCircle size={18} strokeWidth={2.5} />
+                              <span>Mark Collected</span>
+                            </button>
+                          )}
                         </div>
                       </td>
                     </motion.tr>
@@ -325,5 +392,6 @@ export default function NewOrdersPage() {
         </div>
       </motion.div>
     </div>
+    </>
   );
 }

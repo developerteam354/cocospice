@@ -26,7 +26,9 @@ export const authController = {
 
   refresh: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      console.log('[Auth] Refresh — cookies received:', Object.keys(req.cookies));
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Auth] Refresh — cookies received:', Object.keys(req.cookies));
+      }
       const token = req.cookies?.refreshToken as string | undefined;
 
       if (!token) {
@@ -60,7 +62,9 @@ export const authController = {
 
   getMe: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      console.log('[Auth] getMe — cookies received:', Object.keys(req.cookies));
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Auth] getMe — cookies received:', Object.keys(req.cookies));
+      }
       const { password: _, refreshToken: __, ...adminData } =
         (req.admin as any).toObject();
       res.status(200).json({ admin: adminData });

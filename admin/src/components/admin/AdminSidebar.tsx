@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Package, Tag, Users, ShoppingCart,
-  UserCircle, LogOut, ChevronLeft, ChevronRight, X,
+  UserCircle, LogOut, ChevronLeft, ChevronRight, X, MessageSquare,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import type { RootState } from '@/store/store';
@@ -15,12 +15,13 @@ import { useRouter } from 'next/navigation';
 import { toProxyUrl } from '@/services/productService';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard',  href: '/admin/dashboard',  icon: LayoutDashboard },
-  { label: 'Products',   href: '/admin/products',   icon: Package },
-  { label: 'Categories', href: '/admin/category', icon: Tag },
-  { label: 'Orders',     href: '/admin/orders',     icon: ShoppingCart },
-  { label: 'Users',      href: '/admin/users',      icon: Users },
-  { label: 'Profile',    href: '/admin/profile',    icon: UserCircle },
+  { label: 'Dashboard',  href: '/admin/dashboard',  activeBase: '/admin/dashboard',  icon: LayoutDashboard },
+  { label: 'Products',   href: '/admin/products',   activeBase: '/admin/products',   icon: Package },
+  { label: 'Categories', href: '/admin/category',   activeBase: '/admin/category',   icon: Tag },
+  { label: 'Orders',     href: '/admin/orders/new', activeBase: '/admin/orders',     icon: ShoppingCart },
+  { label: 'Feedbacks',  href: '/admin/feedbacks',  activeBase: '/admin/feedbacks',  icon: MessageSquare },
+  { label: 'Users',      href: '/admin/users',      activeBase: '/admin/users',      icon: Users },
+  { label: 'Profile',    href: '/admin/profile',    activeBase: '/admin/profile',    icon: UserCircle },
 ];
 
 interface AdminSidebarProps {
@@ -121,8 +122,8 @@ export default function AdminSidebar({
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2 scrollbar-hide">
-        {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-          const active = pathname === href || pathname.startsWith(href + '/');
+        {NAV_ITEMS.map(({ label, href, activeBase, icon: Icon }) => {
+          const active = pathname === activeBase || pathname.startsWith(activeBase + '/');
           return (
             <Link
               key={href}

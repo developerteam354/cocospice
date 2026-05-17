@@ -20,7 +20,7 @@ export class BaseRepository<T extends Document> {
   }
 
   async updateById(id: string, update: UpdateQuery<T>): Promise<T | null> {
-    return this.model.findByIdAndUpdate(id, update, { new: true }).exec();
+    return this.model.findByIdAndUpdate(id, update, { returnDocument: 'after' }).exec();
   }
 
   async deleteById(id: string): Promise<T | null> {

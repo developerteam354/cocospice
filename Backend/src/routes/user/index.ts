@@ -8,6 +8,8 @@ import orderRoutes from './order.routes.js';
 import profileRoutes from './profile.routes.js';
 import uploadRoutes from './upload.routes.js';
 import paymentRoutes from './payment.route.js';
+import settingsRoutes from './settings.routes.js';
+import reviewRoutes from './review.routes.js';
 
 const router = Router();
 
@@ -21,5 +23,7 @@ router.use('/orders',     orderRoutes);
 router.use('/profile',    profileRoutes);
 router.use('/upload',     uploadRoutes);
 router.use('/payment',    paymentRoutes);
+router.use('/settings',   settingsRoutes);
+router.use('/reviews',    reviewRoutes);
 
 export default router;

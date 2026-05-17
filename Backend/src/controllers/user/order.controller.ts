@@ -107,6 +107,8 @@ export const userOrderController = {
       }
 
       // ── Create order ─────────────────────────────────────────────────────
+      console.log('📝 Creating order with shippingAddress:', JSON.stringify(shippingAddress, null, 2));
+      
       const order = await orderService.createOrder({
         userId,
         items: items as unknown as IOrderItem[],
@@ -120,6 +122,8 @@ export const userOrderController = {
         stripePaymentIntentId,
         shippingAddress,
       });
+
+      console.log('✅ Order created:', order.orderId, 'Phone:', order.shippingAddress?.phone);
 
       res.status(201).json({ message: 'Order placed successfully', order });
     } catch (err: unknown) {

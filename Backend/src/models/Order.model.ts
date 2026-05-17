@@ -25,7 +25,7 @@ export interface IShippingAddress {
   formattedAddress?: string;
 }
 
-export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Ready for Collection' | 'Collected' | 'Cancelled';
 export type PaymentMethod = 'Cash on Delivery' | 'Card' | 'Online';
 export type PaymentStatus = 'Pending' | 'Paid' | 'Failed';
 
@@ -48,6 +48,7 @@ export interface IOrder extends Document {
   
   // Status
   orderStatus: OrderStatus;
+  cancellationReason?: string;
   
   // Delivery
   shippingAddress?: IShippingAddress;
@@ -156,9 +157,13 @@ const orderSchema = new Schema<IOrder>(
     // Status
     orderStatus: { 
       type: String, 
-      enum: ['Pending', 'Confirmed', 'On the Way', 'Delivered', 'Cancelled'], 
+      enum: ['Pending', 'Confirmed', 'On the Way', 'Delivered', 'Ready for Collection', 'Collected', 'Cancelled'], 
       default: 'Pending',
       index: true,
+    },
+    cancellationReason: {
+      type: String,
+      default: null,
     },
     
     // Delivery
