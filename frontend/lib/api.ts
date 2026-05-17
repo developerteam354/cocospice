@@ -7,7 +7,11 @@ interface StoreShape {
   dispatch: (action: unknown) => Promise<unknown>;
 }
 
-const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/user`;
+// Route through Next.js rewrite proxy when no explicit API URL is set (production),
+// so cookies are same-site. Locally NEXT_PUBLIC_API_URL points to localhost:5000.
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL
+  ? `${process.env.NEXT_PUBLIC_API_URL}/api/user`
+  : '/backend/api/user';
 
 // ─── Public Instance ──────────────────────────────────────────────────────────
 // Unauthenticated: login, refresh, register
