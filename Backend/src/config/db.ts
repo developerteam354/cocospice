@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+// Set Mongoose options to avoid deprecation warnings
+mongoose.set('strictQuery', false);
+
 const connectDB = async (): Promise<void> => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);

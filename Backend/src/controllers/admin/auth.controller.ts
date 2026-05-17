@@ -1,10 +1,12 @@
 import type { Request, Response, NextFunction } from 'express';
 import { authService } from '../../services/admin/auth.service.js';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure:   process.env.NODE_ENV === 'production',
-  sameSite: 'lax' as const,   // 'strict' blocks cross-port requests on localhost
+  secure:   isProduction,  // true in production (HTTPS), false in development
+  sameSite: isProduction ? 'none' as const : 'lax' as const,  // 'none' for cross-domain in production
   path:     '/api/admin',      // Restrict cookie to admin routes only
   maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days in ms
 };
