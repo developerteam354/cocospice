@@ -5,7 +5,7 @@ const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
   secure:   process.env.NODE_ENV === 'production',
   sameSite: 'lax' as const,
-  path:     '/',
+  path:     '/api/user',  // Restrict cookie to user routes only
   maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
@@ -66,6 +66,17 @@ export const userAuthController = {
 
   refresh: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // Log all cookies for debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.log('═══════════════════════════════════════════════════════');
+        console.log('[USER AUTH CONTROLLER] Refresh endpoint called');
+        console.log('[USER AUTH CONTROLLER] Request URL:', req.originalUrl);
+        console.log('[USER AUTH CONTROLLER] Request path:', req.path);
+        console.log('[USER AUTH CONTROLLER] Cookies received:', Object.keys(req.cookies || {}));
+        console.log('[USER AUTH CONTROLLER] userRefreshToken present:', !!req.cookies?.userRefreshToken);
+        console.log('═══════════════════════════════════════════════════════');
+      }
+
       const token = req.cookies?.userRefreshToken as string | undefined;
       if (!token) {
         res.status(401).json({ message: 'No refresh token' });
@@ -76,7 +87,7 @@ export const userAuthController = {
       res.cookie('userRefreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
       res.status(200).json({ user, accessToken });
     } catch (err: unknown) {
-      res.clearCookie('userRefreshToken', { path: '/' });
+      res.clearCookie('userRefreshToken', { path: '/api/user' });
       if (err instanceof Error && err.message === 'ACCOUNT_BLOCKED') {
         res.status(403).json({
           code:    'USER_BLOCKED',
@@ -97,7 +108,7 @@ export const userAuthController = {
         const user = await User.findOne({ refreshToken: token }).select('+refreshToken').exec();
         if (user) await userAuthService.logout(user._id.toString());
       }
-      res.clearCookie('userRefreshToken', { path: '/' });
+      res.clearCookie('userRefreshToken', { path: '/api/user' });
       res.status(200).json({ message: 'Logged out successfully' });
     } catch (err) {
       next(err);
@@ -106,6 +117,17 @@ export const userAuthController = {
 
   getMe: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      // Log all cookies for debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.log('═══════════════════════════════════════════════════════');
+        console.log('[USER AUTH CONTROLLER] getMe endpoint called');
+        console.log('[USER AUTH CONTROLLER] Request URL:', req.originalUrl);
+        console.log('[USER AUTH CONTROLLER] Request path:', req.path);
+        console.log('[USER AUTH CONTROLLER] Cookies received:', Object.keys(req.cookies || {}));
+        console.log('[USER AUTH CONTROLLER] userRefreshToken present:', !!req.cookies?.userRefreshToken);
+        console.log('═══════════════════════════════════════════════════════');
+      }
+
       const token = req.cookies?.userRefreshToken as string | undefined;
       if (!token) {
         res.status(401).json({ message: 'Not authenticated' });
@@ -116,7 +138,7 @@ export const userAuthController = {
       res.cookie('userRefreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
       res.status(200).json({ user, accessToken });
     } catch (err: unknown) {
-      res.clearCookie('userRefreshToken', { path: '/' });
+      res.clearCookie('userRefreshToken', { path: '/api/user' });
       if (err instanceof Error && err.message === 'ACCOUNT_BLOCKED') {
         res.status(403).json({
           code:    'USER_BLOCKED',
