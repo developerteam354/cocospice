@@ -4,15 +4,19 @@ import productReducer from './slices/productSlice';
 import categoryReducer from './slices/categorySlice';
 import orderReducer from './slices/orderSlice';
 import userReducer from './slices/userSlice';
+import settingsReducer from './slices/settingsSlice';
+import reviewReducer from './slices/reviewSlice';
 import { injectStore } from '@/services/api';
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
+    auth:     authReducer,
     products: productReducer,
     category: categoryReducer,
-    orders: orderReducer,
-    users: userReducer,
+    orders:   orderReducer,
+    users:    userReducer,
+    settings: settingsReducer,
+    reviews:  reviewReducer,
   },
 });
 

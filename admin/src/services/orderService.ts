@@ -10,6 +10,7 @@ interface BackendOrder {
     name: string;
     email: string;
     phone: string;
+    profileImage?: string; // ✅ Add profileImage field
   };
   items: Array<{
     productId: string | {
@@ -29,6 +30,7 @@ interface BackendOrder {
   }>;
   orderType: 'delivery' | 'collection';
   orderNote: string;
+  cancellationReason?: string;
   subtotal: number;
   codCharge: number;
   totalAmount: number;
@@ -53,6 +55,22 @@ interface BackendOrder {
 
 // Transform backend order to frontend format
 const transformOrder = (backendOrder: BackendOrder): IOrder => {
+  console.log('🔄 Transforming order:', {
+    orderId: backendOrder.orderId,
+    userName: backendOrder.userId.name,
+    userProfileImage: backendOrder.userId.profileImage,
+    hasProfileImage: !!backendOrder.userId.profileImage,
+    backendPhone: backendOrder.shippingAddress?.phone,
+    backendFullName: backendOrder.shippingAddress?.fullName,
+  });
+
+  // ✅ Use actual profile image if available, otherwise fallback to avatar
+  const userAvatar = backendOrder.userId.profileImage && backendOrder.userId.profileImage.trim() !== ''
+    ? backendOrder.userId.profileImage 
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(backendOrder.userId.name)}&background=6366f1&color=fff`;
+
+  console.log('👤 Avatar URL:', userAvatar);
+
   return {
     _id: backendOrder._id,
     orderId: backendOrder.orderId,
@@ -60,7 +78,7 @@ const transformOrder = (backendOrder: BackendOrder): IOrder => {
       name: backendOrder.userId.name,
       email: backendOrder.userId.email,
       phone: backendOrder.userId.phone,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(backendOrder.userId.name)}&background=6366f1&color=fff`,
+      avatar: userAvatar, // ✅ Use actual profile image or fallback
     },
     item: backendOrder.items.map(item => item.name).join(', '), // For list view
     items: backendOrder.items.map(item => {
@@ -82,17 +100,20 @@ const transformOrder = (backendOrder: BackendOrder): IOrder => {
     }),
     price: backendOrder.totalAmount,
     status: backendOrder.orderStatus as any,
+    orderType: backendOrder.orderType,
     paymentMethod: backendOrder.paymentMethod as any,
     orderNote: backendOrder.orderNote || '',
+    cancellationReason: backendOrder.cancellationReason,
     shippingAddress: backendOrder.shippingAddress ? {
-      street:          backendOrder.shippingAddress.line1,
-      city:            backendOrder.shippingAddress.city,
-      state:           '',
-      zipCode:         backendOrder.shippingAddress.postcode,
-      country:         'UK',
-      instructions:    backendOrder.shippingAddress.instructions || '',
-      lat:             backendOrder.shippingAddress.lat,
-      lng:             backendOrder.shippingAddress.lng,
+      fullName:         backendOrder.shippingAddress.fullName,
+      line1:            backendOrder.shippingAddress.line1,
+      line2:            backendOrder.shippingAddress.line2 || '',
+      city:             backendOrder.shippingAddress.city,
+      postcode:         backendOrder.shippingAddress.postcode,
+      phone:            backendOrder.shippingAddress.phone, // ✅ CRITICAL: Include phone number
+      instructions:     backendOrder.shippingAddress.instructions || '',
+      lat:              backendOrder.shippingAddress.lat,
+      lng:              backendOrder.shippingAddress.lng,
       formattedAddress: backendOrder.shippingAddress.formattedAddress || '',
     } : undefined,
     date: backendOrder.createdAt,
@@ -102,11 +123,16 @@ const transformOrder = (backendOrder: BackendOrder): IOrder => {
   };
 };
 
-// Generate timeline based on order status
+// Generate timeline based on order status and type
 const generateTimeline = (order: BackendOrder) => {
-  const statuses = ['Pending', 'Confirmed', 'On the Way', 'Delivered'];
+  const isCollection = order.orderType === 'collection';
+  const statuses = isCollection
+    ? ['Pending', 'Confirmed', 'Ready for Collection', 'Collected']
+    : ['Pending', 'Confirmed', 'On the Way', 'Delivered'];
+
+  // Map collection-specific statuses to their index
   const currentStatusIndex = statuses.indexOf(order.orderStatus);
-  
+
   return statuses.map((status, index) => ({
     status,
     timestamp: index <= currentStatusIndex ? order.createdAt : '',
@@ -140,8 +166,12 @@ const orderService = {
   },
 
   // Update order status
-  updateStatus: async (id: string, status: string): Promise<IOrder> => {
-    const { data } = await privateApi.patch<{ order: BackendOrder }>(`/orders/${id}/status`, { status });
+  updateStatus: async (id: string, status: string, cancellationReason?: string): Promise<IOrder> => {
+    const payload: { status: string; cancellationReason?: string } = { status };
+    if (cancellationReason) {
+      payload.cancellationReason = cancellationReason;
+    }
+    const { data } = await privateApi.patch<{ order: BackendOrder }>(`/orders/${id}/status`, payload);
     return transformOrder(data.order);
   },
 

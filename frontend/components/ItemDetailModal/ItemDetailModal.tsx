@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MenuItem, ExtraOption } from '../../types';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchApprovedReviews, clearReviews } from '@/store/slices/reviewSlice';
+import type { RootState } from '@/store/store';
 
 interface ItemDetailModalProps {
   item: MenuItem;
@@ -11,9 +14,53 @@ interface ItemDetailModalProps {
   onAddToCart: (item: MenuItem, selectedExtras?: ExtraOption[]) => void;
 }
 
+// ─── Proxy URL helper (user-side) ─────────────────────────────────────────────
+const toUserProxyUrl = (urlOrKey: string): string => {
+  if (!urlOrKey) return '';
+  if (urlOrKey.includes('/upload/image')) return urlOrKey;
+  const s3Match = urlOrKey.match(/amazonaws\.com\/(.+)$/);
+  const key = s3Match ? s3Match[1] : urlOrKey;
+  return `${process.env.NEXT_PUBLIC_API_URL}/api/user/upload/image?key=${encodeURIComponent(key)}`;
+};
+
+// ─── Star display helper ──────────────────────────────────────────────────────
+
+function Stars({ rating, size = 16 }: { rating: number; size?: number }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <svg
+          key={s}
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill={s <= Math.round(rating) ? '#FBBF24' : 'none'}
+          stroke={s <= Math.round(rating) ? '#FBBF24' : '#d1d5db'}
+          strokeWidth="2"
+        >
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ))}
+    </div>
+  );
+}
+
 export default function ItemDetailModal({ item, onClose, onAddToCart }: ItemDetailModalProps) {
+  const dispatch = useAppDispatch();
+  const { reviews, loading: reviewsLoading } = useAppSelector((s: RootState) => s.review);
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
+
+  // Fetch approved reviews when modal opens, clear on close
+  useEffect(() => {
+    if (item.id) {
+      dispatch(fetchApprovedReviews(item.id));
+    }
+    return () => {
+      dispatch(clearReviews());
+    };
+  }, [dispatch, item.id]);
 
   // Normalize extraOptions
   const extraOptions: ExtraOption[] = (item.extraOptions ?? []).map((opt) =>
@@ -56,6 +103,12 @@ export default function ItemDetailModal({ item, onClose, onAddToCart }: ItemDeta
       document.body.style.overflow = '';
     };
   }, []);
+
+  // Compute average rating from fetched reviews
+  const avgRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
 
   return (
     <AnimatePresence>
@@ -147,6 +200,19 @@ export default function ItemDetailModal({ item, onClose, onAddToCart }: ItemDeta
               </span>
             </div>
 
+            {/* Inline rating summary (if reviews exist) */}
+            {reviews.length > 0 && (
+              <div className="flex items-center gap-2 mb-3">
+                <Stars rating={avgRating} size={15} />
+                <span className="text-[0.85rem] font-bold text-[#374151]">
+                  {avgRating.toFixed(1)}
+                </span>
+                <span className="text-[0.8rem] text-[#9ca3af] font-medium">
+                  ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+                </span>
+              </div>
+            )}
+
             <p className="text-[0.95rem] font-medium text-[#475569] leading-[1.6] m-0">
               {item.description}
             </p>
@@ -191,6 +257,61 @@ export default function ItemDetailModal({ item, onClose, onAddToCart }: ItemDeta
                   <p className="text-[0.85rem] font-bold text-[#059669] m-0 leading-snug">
                     ✨ You can customise this item with the extras listed above after clicking Add to Cart.
                   </p>
+                </div>
+              </div>
+            )}
+
+            {/* ── Customer Reviews — only shown when reviews exist ── */}
+            {!reviewsLoading && reviews.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-[#f1f5f9]">
+                <h3 className="text-[0.8rem] font-bold text-[#64748b] uppercase tracking-[0.05em] mb-4">
+                  Customer Reviews
+                </h3>
+                <div className="space-y-3">
+                  {reviews.map((review) => (
+                    <div
+                      key={review._id}
+                      className="rounded-2xl bg-[#f8fafc] border border-[#f1f5f9] p-4"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[0.75rem] font-black shrink-0 overflow-hidden">
+                            {review.userId?.profileImage ? (
+                              <img
+                                src={toUserProxyUrl(review.userId.profileImage)}
+                                alt={review.userId.name || 'User'}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  const parent = e.currentTarget.parentElement;
+                                  if (parent) {
+                                    const initial = review.userId?.name?.charAt(0)?.toUpperCase() || 'U';
+                                    parent.innerHTML = `<span style="font-size:0.75rem;font-weight:900;color:white">${initial}</span>`;
+                                  }
+                                }}
+                              />
+                            ) : (
+                              review.userId?.name?.charAt(0)?.toUpperCase() || 'U'
+                            )}
+                          </div>
+                          <span className="text-[0.85rem] font-bold text-[#111827]">
+                            {review.userId?.name || 'Customer'}
+                          </span>
+                        </div>
+                        <span className="text-[0.75rem] text-[#9ca3af] font-medium shrink-0">
+                          {new Date(review.createdAt).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </span>
+                      </div>
+                      <Stars rating={review.rating} size={14} />
+                      <p className="text-[0.875rem] font-medium text-[#374151] leading-relaxed mt-2">
+                        {review.comment}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

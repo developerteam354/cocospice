@@ -1,4 +1,4 @@
-export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Ready for Collection' | 'Collected' | 'Cancelled';
 export type PaymentMethod = 'Cash on Delivery' | 'Card' | 'Online';
 
 export interface IOrderUser {
@@ -19,11 +19,12 @@ export interface IOrderItem {
 }
 
 export interface IShippingAddress {
-  street: string;
+  fullName: string;
+  line1: string;
+  line2?: string;
   city: string;
-  state: string;
-  zipCode: string;
-  country: string;
+  postcode: string;
+  phone: string;
   instructions?: string;
   lat?: number;
   lng?: number;
@@ -44,8 +45,10 @@ export interface IOrder {
   items?: IOrderItem[]; // Detailed items for details page
   price: number; // Total price
   status: OrderStatus;
+  orderType: 'delivery' | 'collection';
   paymentMethod?: PaymentMethod;
   orderNote?: string;           // "Your Instructions" from checkout review
+  cancellationReason?: string;  // Admin's reason for cancellation
   shippingAddress?: IShippingAddress;
   expectedDelivery?: string;
   timeline?: IOrderTimeline[];

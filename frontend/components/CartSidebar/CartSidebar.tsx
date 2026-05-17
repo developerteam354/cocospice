@@ -100,7 +100,7 @@ export default function CartSidebar({ cart, onUpdateQuantity, onClearCart, onClo
                 {item.spiceLevel && (
                   <div className={styles.itemOptions}>
                     <span className={styles.spiceBadge}>
-                      🌶️ {item.spiceLevel}
+                      {item.spiceLevel === 'Normal' ? '🌶️' : item.spiceLevel === 'Hot' ? '🌶️🌶️' : '🌶️🌶️🌶️'} {item.spiceLevel}
                     </span>
                   </div>
                 )}

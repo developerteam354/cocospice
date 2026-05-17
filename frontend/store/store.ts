@@ -17,6 +17,7 @@ import cartReducer from './slices/cartSlice';
 import addressReducer from './slices/addressSlice';
 import userAuthReducer from './slices/userAuthSlice';
 import orderReducer from './slices/orderSlice';
+import reviewReducer from './slices/reviewSlice';
 import { injectStore } from '../lib/api';
 
 // ─── Persist config — only cart is persisted ─────────────────────────────────
@@ -54,6 +55,7 @@ const rootReducer = combineReducers({
   addresses:  addressReducer,
   userAuth:   userAuthReducer,
   order:      orderReducer,
+  review:     reviewReducer,
 });
 
 // ─── Store ────────────────────────────────────────────────────────────────────

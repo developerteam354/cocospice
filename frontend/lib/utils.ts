@@ -42,12 +42,14 @@ export const formatCurrency = (amount: number): string => {
  * @param backendStatus - Backend status string
  * @returns Frontend status
  */
-export const mapOrderStatus = (backendStatus: string): 'pending' | 'confirmed' | 'on-the-way' | 'delivered' | 'cancelled' => {
-  const statusMap: Record<string, 'pending' | 'confirmed' | 'on-the-way' | 'delivered' | 'cancelled'> = {
+export const mapOrderStatus = (backendStatus: string): 'pending' | 'confirmed' | 'on-the-way' | 'delivered' | 'ready-for-collection' | 'collected' | 'cancelled' => {
+  const statusMap: Record<string, 'pending' | 'confirmed' | 'on-the-way' | 'delivered' | 'ready-for-collection' | 'collected' | 'cancelled'> = {
     'Pending': 'pending',
     'Confirmed': 'confirmed',
     'On the Way': 'on-the-way',
     'Delivered': 'delivered',
+    'Ready for Collection': 'ready-for-collection',
+    'Collected': 'collected',
     'Cancelled': 'cancelled',
   };
   

@@ -9,7 +9,7 @@ export const adminOrderService = {
     
     const orders = await Order.find(query)
       .sort({ createdAt: -1 })
-      .populate('userId', 'name email phone')
+      .populate('userId', 'name email phone profileImage')
       .populate('items.productId', 'name thumbnail')
       .exec();
 
@@ -21,10 +21,10 @@ export const adminOrderService = {
    */
   getActiveOrders: async (): Promise<IOrder[]> => {
     const orders = await Order.find({
-      orderStatus: { $in: ['Pending', 'Confirmed', 'On the Way'] },
+      orderStatus: { $in: ['Pending', 'Confirmed', 'On the Way', 'Ready for Collection'] },
     })
       .sort({ createdAt: -1 })
-      .populate('userId', 'name email phone')
+      .populate('userId', 'name email phone profileImage')
       .populate('items.productId', 'name thumbnail')
       .exec();
 
@@ -32,12 +32,12 @@ export const adminOrderService = {
   },
 
   /**
-   * Get delivered orders (for "Delivered Orders" page)
+   * Get delivered/collected orders (for "Delivered Orders" page)
    */
   getDeliveredOrders: async (): Promise<IOrder[]> => {
-    const orders = await Order.find({ orderStatus: 'Delivered' })
+    const orders = await Order.find({ orderStatus: { $in: ['Delivered', 'Collected'] } })
       .sort({ createdAt: -1 })
-      .populate('userId', 'name email phone')
+      .populate('userId', 'name email phone profileImage')
       .populate('items.productId', 'name thumbnail')
       .exec();
 
@@ -49,30 +49,47 @@ export const adminOrderService = {
    */
   getOrderById: async (orderId: string): Promise<IOrder> => {
     const order = await Order.findById(orderId)
-      .populate('userId', 'name email phone')
+      .populate('userId', 'name email phone profileImage')
       .populate('items.productId', 'name thumbnail')
       .exec();
 
     if (!order) throw new Error('Order not found');
+    
+    // Debug logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📦 [Backend Service] Order fetched from DB:', {
+        orderId: order.orderId,
+        hasShippingAddress: !!order.shippingAddress,
+        shippingPhone: order.shippingAddress?.phone,
+        shippingFullName: order.shippingAddress?.fullName,
+        shippingLine1: order.shippingAddress?.line1,
+      });
+    }
+    
     return order;
   },
 
   /**
    * Update order status
    */
-  updateOrderStatus: async (orderId: string, status: OrderStatus): Promise<IOrder> => {
+  updateOrderStatus: async (orderId: string, status: OrderStatus, cancellationReason?: string): Promise<IOrder> => {
     const order = await Order.findById(orderId);
     if (!order) throw new Error('Order not found');
 
     order.orderStatus = status;
 
-    // If status is Delivered, mark payment as Paid (for COD orders)
-    if (status === 'Delivered' && order.paymentMethod === 'Cash on Delivery') {
+    // If status is Cancelled, save the cancellation reason
+    if (status === 'Cancelled' && cancellationReason) {
+      order.cancellationReason = cancellationReason;
+    }
+
+    // If status is Delivered or Collected, mark payment as Paid (for COD orders)
+    if ((status === 'Delivered' || status === 'Collected') && order.paymentMethod === 'Cash on Delivery') {
       order.paymentStatus = 'Paid';
     }
 
     await order.save();
-    await order.populate('userId', 'name email phone');
+    await order.populate('userId', 'name email phone profileImage');
     await order.populate('items.productId', 'name thumbnail');
 
     return order;
@@ -86,8 +103,8 @@ export const adminOrderService = {
       Order.countDocuments(),
       Order.countDocuments({ orderStatus: 'Pending' }),
       Order.countDocuments({ orderStatus: 'Confirmed' }),
-      Order.countDocuments({ orderStatus: 'On the Way' }),
-      Order.countDocuments({ orderStatus: 'Delivered' }),
+      Order.countDocuments({ orderStatus: { $in: ['On the Way', 'Ready for Collection'] } }),
+      Order.countDocuments({ orderStatus: { $in: ['Delivered', 'Collected'] } }),
       Order.countDocuments({ orderStatus: 'Cancelled' }),
     ]);
 

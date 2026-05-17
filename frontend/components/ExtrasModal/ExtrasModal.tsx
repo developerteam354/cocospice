@@ -6,14 +6,14 @@ import { MenuItem } from '../../types';
 
 interface ExtrasModalProps {
   item: MenuItem;
-  onConfirm: (item: MenuItem, spiceLevel: 'Low' | 'Medium' | 'Very Spicy') => void;
+  onConfirm: (item: MenuItem, spiceLevel: 'Normal' | 'Hot' | 'Extra Hot') => void;
   onClose: () => void;
 }
 
 export default function ExtrasModal({ item, onConfirm, onClose }: ExtrasModalProps) {
-  const [selectedLevel, setSelectedLevel] = useState<'Low' | 'Medium' | 'Very Spicy'>('Medium');
+  const [selectedLevel, setSelectedLevel] = useState<'Normal' | 'Hot' | 'Extra Hot'>('Normal');
 
-  const spiceLevels: ('Low' | 'Medium' | 'Very Spicy')[] = ['Low', 'Medium', 'Very Spicy'];
+  const spiceLevels: ('Normal' | 'Hot' | 'Extra Hot')[] = ['Normal', 'Hot', 'Extra Hot'];
 
   const handleConfirm = () => {
     onConfirm(item, selectedLevel);
@@ -30,19 +30,19 @@ export default function ExtrasModal({ item, onConfirm, onClose }: ExtrasModalPro
 
   const getSpiceColor = (level: string) => {
     switch (level) {
-      case 'Low': return '#10b981'; // Emerald
-      case 'Medium': return '#f59e0b'; // Amber
-      case 'Very Spicy': return '#ef4444'; // Red
-      default: return '#10b981';
+      case 'Normal':    return '#10b981'; // Emerald
+      case 'Hot':       return '#f59e0b'; // Amber
+      case 'Extra Hot': return '#ef4444'; // Red
+      default:          return '#10b981';
     }
   };
 
   const getSpiceIcon = (level: string) => {
     switch (level) {
-      case 'Low': return '🌱';
-      case 'Medium': return '🔥';
-      case 'Very Spicy': return '🔥🔥🔥';
-      default: return '🌶️';
+      case 'Normal':    return '🌶️';
+      case 'Hot':       return '🌶️🌶️';
+      case 'Extra Hot': return '🌶️🌶️🌶️';
+      default:          return '🌶️';
     }
   };
 
@@ -129,7 +129,7 @@ export default function ExtrasModal({ item, onConfirm, onClose }: ExtrasModalPro
                           {level}
                         </span>
                         <span className="text-[0.8rem] text-[#64748b] font-medium">
-                          {level === 'Low' ? 'Mild & family friendly' : level === 'Medium' ? 'Perfect balance of heat' : 'Extra hot for spice lovers'}
+                          {level === 'Normal' ? 'Mild and flavorful' : level === 'Hot' ? 'A noticeable spicy kick' : 'Intense heat for brave souls'}
                         </span>
                       </div>
                       <span className="text-[1.4rem] grayscale-[0.5] group-hover:grayscale-0 transition-all">

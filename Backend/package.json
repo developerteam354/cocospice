@@ -9,6 +9,9 @@
     "start": "npm run build && node dist/index.js",
     "seed:admin": "tsx src/scripts/seedAdmin.ts",
     "migrate:extraOptions": "tsx src/scripts/migrateExtraOptions.ts",
+    "check:orderPhones": "tsx src/scripts/checkOrderPhones.ts",
+    "migrate:orderPhones": "tsx src/scripts/migrateOrderPhones.ts",
+    "check:order": "tsx src/scripts/checkSpecificOrder.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

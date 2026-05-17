@@ -57,6 +57,15 @@ export const adminOrderController = {
 
       const order = await adminOrderService.getOrderById(id);
 
+      // Debug logging to verify phone number is in the response
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📦 [Admin] Sending order to frontend:', {
+          orderId: order.orderId,
+          shippingPhone: order.shippingAddress?.phone,
+          userPhone: (order.userId as any)?.phone,
+        });
+      }
+
       res.status(200).json({ order });
     } catch (err: unknown) {
       if (err instanceof Error && err.message === 'Order not found') {
@@ -74,20 +83,26 @@ export const adminOrderController = {
   updateOrderStatus: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const id = String(req.params.id);
-      const { status } = req.body as { status: OrderStatus };
+      const { status, cancellationReason } = req.body as { status: OrderStatus; cancellationReason?: string };
 
       if (!status) {
         res.status(400).json({ message: 'Status is required' });
         return;
       }
 
-      const validStatuses: OrderStatus[] = ['Pending', 'Confirmed', 'On the Way', 'Delivered', 'Cancelled'];
+      const validStatuses: OrderStatus[] = ['Pending', 'Confirmed', 'On the Way', 'Delivered', 'Ready for Collection', 'Collected', 'Cancelled'];
       if (!validStatuses.includes(status)) {
         res.status(400).json({ message: 'Invalid status' });
         return;
       }
 
-      const order = await adminOrderService.updateOrderStatus(id, status);
+      // If status is Cancelled, cancellationReason is mandatory
+      if (status === 'Cancelled' && (!cancellationReason || cancellationReason.trim() === '')) {
+        res.status(400).json({ message: 'Cancellation reason is required when cancelling an order' });
+        return;
+      }
+
+      const order = await adminOrderService.updateOrderStatus(id, status, cancellationReason);
 
       res.status(200).json({
         message: 'Order status updated successfully',

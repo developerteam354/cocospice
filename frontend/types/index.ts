@@ -37,7 +37,7 @@ export interface Category {
 export interface CartItem extends MenuItem {
   quantity: number;
   selectedExtraOptions?: ExtraOption[]; // selected extras, each adds to price
-  spiceLevel?: 'Low' | 'Medium' | 'Very Spicy';
+  spiceLevel?: 'Normal' | 'Hot' | 'Extra Hot';
 }
 
 export interface User {

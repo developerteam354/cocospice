@@ -6,6 +6,8 @@ import categoryRoutes from './category.routes.js';
 import profileRoutes  from './profile.routes.js';
 import orderRoutes    from './order.routes.js';
 import userRoutes     from './user.routes.js';
+import settingsRoutes from './settings.routes.js';
+import reviewRoutes   from './review.routes.js';
 
 const adminRouter = Router();
 
@@ -16,5 +18,7 @@ adminRouter.use('/categories', categoryRoutes);
 adminRouter.use('/profile',    profileRoutes);
 adminRouter.use('/orders',     orderRoutes);
 adminRouter.use('/users',      userRoutes);
+adminRouter.use('/settings',   settingsRoutes);
+adminRouter.use('/reviews',    reviewRoutes);
 
 export default adminRouter;

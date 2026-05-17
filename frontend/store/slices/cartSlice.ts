@@ -126,7 +126,7 @@ const cartSlice = createSlice({
     /** Add item to cart. Same product + same extras + same spice → increment quantity */
     addToCart: (
       state,
-      action: PayloadAction<{ item: MenuItem; selectedExtraOptions?: ExtraOption[]; spiceLevel?: 'Low' | 'Medium' | 'Very Spicy' }>
+      action: PayloadAction<{ item: MenuItem; selectedExtraOptions?: ExtraOption[]; spiceLevel?: 'Normal' | 'Hot' | 'Extra Hot' }>
     ) => {
       const { item, selectedExtraOptions, spiceLevel } = action.payload;
       const key = extrasKey(selectedExtraOptions);

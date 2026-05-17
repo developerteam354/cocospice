@@ -26,7 +26,7 @@ export interface ShippingAddress {
   formattedAddress?: string;
 }
 
-export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Confirmed' | 'On the Way' | 'Delivered' | 'Ready for Collection' | 'Collected' | 'Cancelled';
 export type PaymentMethod = 'Cash on Delivery' | 'Card' | 'Online';
 export type PaymentStatus = 'Pending' | 'Paid' | 'Failed';
 
@@ -37,6 +37,7 @@ export interface Order {
   items: OrderItem[];
   orderType: 'delivery' | 'collection';
   orderNote: string;
+  cancellationReason?: string;
   subtotal: number;
   codCharge: number;
   totalAmount: number;

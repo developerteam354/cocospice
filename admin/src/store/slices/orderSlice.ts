@@ -43,12 +43,12 @@ export const fetchOrderById = createAsyncThunk<IOrder, string>(
 
 export const updateOrderStatus = createAsyncThunk<
   IOrder,
-  { orderId: string; status: OrderStatus }
+  { orderId: string; status: OrderStatus; cancellationReason?: string }
 >(
   'orders/updateOrderStatus',
-  async ({ orderId, status }, { rejectWithValue }) => {
+  async ({ orderId, status, cancellationReason }, { rejectWithValue }) => {
     try {
-      return await orderService.updateStatus(orderId, status);
+      return await orderService.updateStatus(orderId, status, cancellationReason);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to update order status';
       return rejectWithValue(message);
@@ -192,8 +192,8 @@ const orderSlice = createSlice({
           state.currentOrder = updatedOrder;
         }
 
-        // If order is now delivered, remove from newOrders and add to deliveredOrders
-        if (updatedOrder.status === 'Delivered') {
+        // If order is now delivered or collected, remove from newOrders and add to deliveredOrders
+        if (updatedOrder.status === 'Delivered' || updatedOrder.status === 'Collected') {
           state.newOrders = state.newOrders.filter((o) => o._id !== updatedOrder._id);
           // Add to delivered orders if not already there
           if (!state.deliveredOrders.find((o) => o._id === updatedOrder._id)) {

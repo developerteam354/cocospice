@@ -1,17 +1,22 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowLeft, Edit2, Package, Leaf, 
-  ShoppingCart, Tag, ChefHat, Loader2, Plus, Eye, EyeOff
+  ShoppingCart, Tag, ChefHat, Loader2, Plus, Eye, EyeOff,
+  Star, MessageSquare, CheckCircle, Clock, Trash2, TrendingUp,
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import type { RootState } from '@/store/store';
 import { fetchProductById, toggleProductAvailability } from '@/store/slices/productSlice';
+import { fetchReviewsByProduct, fetchReviewOverallStats, toggleReviewApproval, deleteReview } from '@/store/slices/reviewSlice';
+import adminReviewService from '@/services/reviewService';
+import { toProxyUrl } from '@/services/productService';
+import type { IReviewStats } from '@/types/review';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 
@@ -24,13 +29,27 @@ export default function ProductDetailsPage() {
   const { currentProduct, currentProductLoading, error } = useAppSelector(
     (state: RootState) => state.products
   );
+  const { reviews, updating: reviewUpdating } = useAppSelector(
+    (state: RootState) => state.reviews
+  );
 
-  // Fetch product data
+  const [productStats, setProductStats] = useState<IReviewStats | null>(null);
+
+  // Fetch product and reviews
   useEffect(() => {
     if (productId) {
       dispatch(fetchProductById(productId));
+      dispatch(fetchReviewsByProduct(productId));
+      adminReviewService.getProductStats(productId).then(setProductStats).catch(() => {});
     }
   }, [dispatch, productId]);
+
+  // Refresh stats when reviews change
+  useEffect(() => {
+    if (productId) {
+      adminReviewService.getProductStats(productId).then(setProductStats).catch(() => {});
+    }
+  }, [reviews, productId]);
 
   // Handle toggle list/unlist
   const handleToggleList = async () => {
@@ -50,6 +69,26 @@ export default function ProductDetailsPage() {
       );
     } else {
       toast.error('Failed to update product status');
+    }
+  };
+
+  const handleToggleReview = async (reviewId: string) => {
+    try {
+      const result = await dispatch(toggleReviewApproval(reviewId)).unwrap();
+      toast.success(result.isApproved ? 'Review approved' : 'Review hidden');
+      adminReviewService.getProductStats(productId).then(setProductStats).catch(() => {});
+    } catch {
+      toast.error('Failed to update review');
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    try {
+      await dispatch(deleteReview(reviewId)).unwrap();
+      toast.success('Review deleted');
+      adminReviewService.getProductStats(productId).then(setProductStats).catch(() => {});
+    } catch {
+      toast.error('Failed to delete review');
     }
   };
 
@@ -396,6 +435,184 @@ export default function ProductDetailsPage() {
                 </div>
               )}
             </div>
+          </div>
+        </motion.div>
+
+        {/* ── Reviews Section ─────────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-6"
+        >
+          {/* Reviews Header + Stats */}
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-yellow-50 text-yellow-600 border border-yellow-100">
+              <Star size={20} strokeWidth={2.5} />
+            </div>
+            <h2 className="text-[1.3rem] font-black text-gray-900">Customer Reviews</h2>
+            {productStats && (
+              <span className="ml-auto text-[0.85rem] font-bold text-gray-500">
+                {productStats.totalReviews} approved review{productStats.totalReviews !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+
+          {/* Rating Stats Card */}
+          {productStats && productStats.totalReviews > 0 && (
+            <div className="bg-white rounded-[32px] border border-gray-100 p-8 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-center gap-8">
+                {/* Big Average */}
+                <div className="text-center shrink-0">
+                  <p className="text-[4rem] font-black text-gray-900 leading-none">{productStats.averageRating}</p>
+                  <div className="flex items-center justify-center gap-1 mt-2">
+                    {[1,2,3,4,5].map(s => (
+                      <svg key={s} width="20" height="20" viewBox="0 0 24 24"
+                        fill={s <= Math.round(productStats.averageRating) ? '#facc15' : 'none'}
+                        stroke={s <= Math.round(productStats.averageRating) ? '#facc15' : '#d1d5db'}
+                        strokeWidth="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-[0.8rem] font-bold text-gray-400 mt-1">out of 5</p>
+                </div>
+
+                {/* Distribution Bars */}
+                <div className="flex-1 w-full space-y-2">
+                  {[5,4,3,2,1].map(star => {
+                    const count = productStats.ratingDistribution[star] || 0;
+                    const pct = productStats.totalReviews > 0 ? (count / productStats.totalReviews) * 100 : 0;
+                    return (
+                      <div key={star} className="flex items-center gap-3">
+                        <span className="text-[0.8rem] font-bold text-gray-500 w-4 shrink-0">{star}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" strokeWidth="2">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-yellow-400 rounded-full transition-all duration-700"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="text-[0.8rem] font-bold text-gray-400 w-6 text-right shrink-0">{count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Reviews List */}
+          <div className="space-y-4">
+            {reviews.length === 0 ? (
+              <div className="bg-white rounded-[32px] border border-gray-100 py-16 text-center">
+                <div className="w-16 h-16 bg-gray-50 rounded-[20px] flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                  <MessageSquare size={32} className="text-gray-200" />
+                </div>
+                <p className="text-[1rem] font-bold text-gray-900">No reviews yet</p>
+                <p className="text-[0.85rem] font-medium text-gray-400 mt-1">
+                  Reviews will appear here once customers submit them
+                </p>
+              </div>
+            ) : (
+              <AnimatePresence mode="popLayout">
+                {reviews.map((review) => (
+                  <motion.div
+                    key={review._id}
+                    layout
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -16 }}
+                    className={`bg-white rounded-[24px] p-6 border shadow-sm ${
+                      review.isApproved ? 'border-emerald-100' : 'border-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[0.85rem] font-black shrink-0 overflow-hidden">
+                          {review.userId?.profileImage ? (
+                            <img
+                              src={toProxyUrl(review.userId.profileImage)}
+                              alt={review.userId.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const parent = e.currentTarget.parentElement;
+                                if (parent) parent.innerHTML = `<span style="font-size:0.85rem;font-weight:900;color:white">${review.userId?.name?.charAt(0)?.toUpperCase() ?? 'U'}</span>`;
+                              }}
+                            />
+                          ) : (
+                            review.userId?.name?.charAt(0)?.toUpperCase() || 'U'
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900 text-[0.95rem]">{review.userId?.name || 'Unknown'}</p>
+                          <p className="text-[0.75rem] text-gray-400 font-medium">
+                            {new Date(review.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            {' · '}Order #{review.orderId?.orderId || 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[0.75rem] font-bold ${
+                          review.isApproved
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-amber-50 text-amber-700 border border-amber-200'
+                        }`}>
+                          {review.isApproved ? <><CheckCircle size={11} /> Approved</> : <><Clock size={11} /> Pending</>}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Stars + Comment */}
+                    <div className="mt-4">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        {[1,2,3,4,5].map(s => (
+                          <svg key={s} width="16" height="16" viewBox="0 0 24 24"
+                            fill={s <= review.rating ? '#facc15' : 'none'}
+                            stroke={s <= review.rating ? '#facc15' : '#d1d5db'}
+                            strokeWidth="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                          </svg>
+                        ))}
+                        <span className="text-[0.8rem] font-bold text-gray-500 ml-1">{review.rating}/5</span>
+                      </div>
+                      <p className="text-[0.9rem] text-gray-700 font-medium leading-relaxed">{review.comment}</p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[0.8rem] font-bold text-gray-400">
+                          {review.isApproved ? 'Visible to users' : 'Hidden from users'}
+                        </span>
+                        <button
+                          onClick={() => handleToggleReview(review._id)}
+                          disabled={reviewUpdating === review._id}
+                          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none disabled:opacity-60 ${
+                            review.isApproved ? 'bg-emerald-500' : 'bg-gray-200'
+                          }`}
+                        >
+                          <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
+                            review.isApproved ? 'translate-x-6' : 'translate-x-1'
+                          }`} />
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteReview(review._id)}
+                        disabled={reviewUpdating === review._id}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-red-500 text-[0.8rem] font-bold hover:bg-red-50 border border-transparent hover:border-red-100 transition-all disabled:opacity-50"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
           </div>
         </motion.div>
       </div>
