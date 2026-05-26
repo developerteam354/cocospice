@@ -68,19 +68,21 @@ export default function AdminSidebar({
           title={collapsed ? 'Click to expand sidebar' : 'Click to collapse sidebar'}
         >
           {admin?.profileImage ? (
-            <img
-              src={toProxyUrl(admin.profileImage)}
-              alt={admin.fullName}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                const target = e.currentTarget;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.innerHTML = `<span class="text-sm font-bold text-white">${admin?.fullName?.[0]?.toUpperCase() ?? 'A'}</span>`;
-                }
-              }}
-            />
+            <div className="h-full w-full flex items-center justify-center overflow-hidden">
+              <img
+                src={toProxyUrl(admin.profileImage)}
+                alt={admin.fullName}
+                className="min-h-full min-w-full object-cover"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    parent.innerHTML = `<span class="text-sm font-bold text-white">${admin?.fullName?.[0]?.toUpperCase() ?? 'A'}</span>`;
+                  }
+                }}
+              />
+            </div>
           ) : (
             <span className="text-sm font-bold text-white">
               {admin?.fullName?.[0]?.toUpperCase() ?? 'A'}

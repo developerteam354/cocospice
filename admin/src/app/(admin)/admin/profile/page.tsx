@@ -87,6 +87,9 @@ export default function ProfilePage() {
         profileImage: s3Url || undefined,
       })).unwrap();
 
+      // Force refresh the admin data to update header and sidebar
+      await dispatch(getMe()).unwrap();
+
       toast.success('Security manifest updated!', { id: updateToast });
       setIsEditing(false);
       setProfileImageKey('');
@@ -156,7 +159,7 @@ export default function ProfilePage() {
                   <div className="absolute inset-0 rounded-full bg-emerald-100 opacity-30 blur-2xl group-hover:opacity-60 transition-opacity" />
                   
                   <div 
-                    className={`relative h-44 w-44 overflow-hidden rounded-full border-[8px] border-white bg-gray-50 shadow-2xl transition-all ${isEditing ? 'cursor-pointer ring-8 ring-emerald-50 hover:ring-emerald-100' : ''}`}
+                    className={`relative h-44 w-44 overflow-hidden rounded-full border-[8px] border-white bg-gray-50 shadow-2xl transition-all flex items-center justify-center ${isEditing ? 'cursor-pointer ring-8 ring-emerald-50 hover:ring-emerald-100' : ''}`}
                     onClick={handleImageClick}
                   >
                     {isUploadingImage ? (
@@ -164,7 +167,13 @@ export default function ProfilePage() {
                         <Loader2 size={44} className="animate-spin text-emerald-500" />
                       </div>
                     ) : profileImage ? (
-                      <img src={profileImage} alt={fullName} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      <div className="h-full w-full flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={profileImage} 
+                          alt={fullName} 
+                          className="min-h-full min-w-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                        />
+                      </div>
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-emerald-50 text-[5rem] font-bold text-emerald-600">
                         {fullName.charAt(0).toUpperCase()}

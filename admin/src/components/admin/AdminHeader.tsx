@@ -66,19 +66,21 @@ export default function AdminHeader({ onMobileMenuOpen }: AdminHeaderProps) {
         <div className="flex items-center gap-3 rounded-full border border-gray-100 bg-white p-1 pr-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
           <div className="relative flex h-[38px] w-[38px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#10b981] to-[#059669] text-sm font-extrabold text-white border-[2.5px] border-white shadow-sm">
             {admin?.profileImage ? (
-              <img
-                src={toProxyUrl(admin.profileImage)}
-                alt={admin.fullName}
-                className="h-full w-full object-cover"
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  target.style.display = 'none';
-                  const parent = target.parentElement;
-                  if (parent) {
-                    parent.innerHTML = `<span>${admin?.fullName?.[0]?.toUpperCase() ?? 'A'}</span>`;
-                  }
-                }}
-              />
+              <div className="h-full w-full flex items-center justify-center overflow-hidden">
+                <img
+                  src={toProxyUrl(admin.profileImage)}
+                  alt={admin.fullName}
+                  className="min-h-full min-w-full object-cover"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `<span class="text-sm font-extrabold text-white">${admin?.fullName?.[0]?.toUpperCase() ?? 'A'}</span>`;
+                    }
+                  }}
+                />
+              </div>
             ) : (
               <span>{admin?.fullName?.[0]?.toUpperCase() ?? 'A'}</span>
             )}
