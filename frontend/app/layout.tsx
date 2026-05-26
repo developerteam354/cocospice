@@ -17,6 +17,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cocospice | Premium Indian Cuisine",
   description: "Authentic Indian flavours delivered to your doorstep.",
+  icons: {
+    icon: '/coco-logo.jpeg',
+    apple: '/coco-logo.jpeg',
+  },
 };
 
 export default function RootLayout({

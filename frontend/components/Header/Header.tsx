@@ -14,6 +14,7 @@ interface HeaderProps {
   onOpenCart:   () => void;
   onOpenAuth:   (mode: 'login' | 'signup') => void;
   shopStatus?:  ShopStatusResponse | null;
+  activePage?:  'menu' | 'about' | 'contact';
 }
 
 // ─── Proxy URL helper ─────────────────────────────────────────────────────────
@@ -67,7 +68,7 @@ function Avatar({ name, profileImage, size = 40, fontSize = '0.85rem' }: AvatarP
 
 // ─── Header ───────────────────────────────────────────────────────────────────
 
-const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shopStatus }) => {
+const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shopStatus, activePage = 'menu' }) => {
   const { logout } = useAuth();
   const router = useRouter();
   const reduxUser = useAppSelector((s: RootState) => s.userAuth.user);
@@ -100,10 +101,10 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shop
               370 High Street, Lincoln LN5 7RU
             </span>
             <span className="hidden sm:block w-px h-3 bg-white/30" />
-            <span className="flex items-center gap-1.5 drop-shadow-sm whitespace-nowrap">
+            <a href="tel:+441522534202" className="flex items-center gap-1.5 drop-shadow-sm whitespace-nowrap hover:underline">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              01522 534 202
-            </span>
+              01522 534202
+            </a>
             <span className="hidden sm:block w-px h-3 bg-white/30" />
             {shopStatus?.isOpen === false ? (
               <span className="bg-white text-[#dc2626] px-3 py-0.5 rounded-full font-black uppercase tracking-widest text-[0.65rem] border-2 border-white whitespace-nowrap">
@@ -122,8 +123,12 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shop
           
           {/* Logo */}
           <a href="/" className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 group">
-            <div className="w-[42px] h-[42px] sm:w-[48px] sm:h-[48px] rounded-[14px] bg-gradient-to-br from-[#10b981] to-[#059669] flex items-center justify-center shadow-[0_6px_20px_rgba(16,185,129,0.35)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
-              <span className="text-[1.3rem] sm:text-[1.5rem]">🍛</span>
+            <div className="w-[42px] h-[42px] sm:w-[52px] sm:h-[52px] rounded-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_8px_24px_rgba(232,215,168,0.4)] group-active:scale-95 p-1.5 sm:p-2 overflow-hidden">
+              <img 
+                src="/coco-logo.jpeg" 
+                alt="Cocospice Logo" 
+                className="w-full h-full object-cover rounded-full"
+              />
             </div>
             <div className="flex flex-col">
               <h1 className="text-[1.4rem] sm:text-[1.7rem] font-black text-gray-900 leading-[1.1] font-serif tracking-tight">
@@ -137,13 +142,34 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shop
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1.5 bg-gray-50/80 p-1.5 rounded-2xl border border-gray-100 shadow-inner">
-            <a href="/" className="px-5 py-2 rounded-[12px] bg-white text-[#10b981] font-extrabold text-[0.9rem] shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+            <a 
+              href="/" 
+              className={`px-5 py-2 rounded-[12px] font-extrabold text-[0.9rem] transition-all ${
+                activePage === 'menu' 
+                  ? 'bg-white text-[#10b981] shadow-[0_2px_8px_rgba(0,0,0,0.06)]' 
+                  : 'text-gray-600 hover:bg-gray-100/80'
+              }`}
+            >
               Menu
             </a>
-            <a href="#" className="px-5 py-2 rounded-[12px] text-gray-600 font-bold text-[0.9rem] hover:bg-gray-100/80 transition-colors">
+            <a 
+              href="/about" 
+              className={`px-5 py-2 rounded-[12px] font-bold text-[0.9rem] transition-all ${
+                activePage === 'about' 
+                  ? 'bg-white text-[#10b981] shadow-[0_2px_8px_rgba(0,0,0,0.06)]' 
+                  : 'text-gray-600 hover:bg-gray-100/80'
+              }`}
+            >
               About
             </a>
-            <a href="#" className="px-5 py-2 rounded-[12px] text-gray-600 font-bold text-[0.9rem] hover:bg-gray-100/80 transition-colors">
+            <a 
+              href="/contact" 
+              className={`px-5 py-2 rounded-[12px] font-bold text-[0.9rem] transition-all ${
+                activePage === 'contact' 
+                  ? 'bg-white text-[#10b981] shadow-[0_2px_8px_rgba(0,0,0,0.06)]' 
+                  : 'text-gray-600 hover:bg-gray-100/80'
+              }`}
+            >
               Contact
             </a>
           </nav>
@@ -274,7 +300,14 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shop
               className="md:hidden overflow-hidden bg-white border-t border-gray-100 shadow-lg"
             >
               <nav className="flex flex-col p-4 gap-2">
-                <a href="/" className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50/50 text-[#10b981] font-bold text-[0.95rem]">
+                <a 
+                  href="/" 
+                  className={`flex items-center gap-3 p-3 rounded-xl font-bold text-[0.95rem] ${
+                    activePage === 'menu' 
+                      ? 'bg-emerald-50/50 text-[#10b981]' 
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
                   <span className="text-[1.2rem]">🍽️</span> Menu
                 </a>
                 
@@ -297,10 +330,24 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shop
                   </>
                 )}
 
-                <a href="#" className="flex items-center gap-3 p-3 rounded-xl text-gray-700 hover:bg-gray-50 font-bold text-[0.95rem]">
+                <a 
+                  href="/about" 
+                  className={`flex items-center gap-3 p-3 rounded-xl font-bold text-[0.95rem] ${
+                    activePage === 'about' 
+                      ? 'bg-emerald-50/50 text-[#10b981]' 
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
                   <span className="text-[1.2rem]">ℹ️</span> About
                 </a>
-                <a href="#" className="flex items-center gap-3 p-3 rounded-xl text-gray-700 hover:bg-gray-50 font-bold text-[0.95rem]">
+                <a 
+                  href="/contact" 
+                  className={`flex items-center gap-3 p-3 rounded-xl font-bold text-[0.95rem] ${
+                    activePage === 'contact' 
+                      ? 'bg-emerald-50/50 text-[#10b981]' 
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
                   <span className="text-[1.2rem]">📞</span> Contact
                 </a>
               </nav>

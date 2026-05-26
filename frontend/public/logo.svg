@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Outer Circle -->
+  <circle cx="100" cy="100" r="95" stroke="#E8D7A8" stroke-width="8" fill="none"/>
+  
+  <!-- Top Curve -->
+  <path d="M 65 60 Q 80 45, 100 45 Q 120 45, 135 60" 
+        stroke="#E8D7A8" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        fill="none"/>
+  
+  <!-- S Shape -->
+  <path d="M 120 75 Q 135 75, 135 90 Q 135 100, 120 105 L 80 105 Q 65 105, 65 120 Q 65 135, 80 135 L 110 135" 
+        stroke="#E8D7A8" 
+        stroke-width="14" 
+        stroke-linecap="round" 
+        fill="none"/>
+  
+  <!-- Bottom Curve -->
+  <path d="M 65 150 Q 80 165, 100 165 Q 120 165, 135 150" 
+        stroke="#E8D7A8" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        fill="none"/>
+</svg>

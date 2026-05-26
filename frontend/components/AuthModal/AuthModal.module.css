@@ -57,8 +57,18 @@
 }
 
 .brandIcon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(232, 215, 168, 0.1);
   animation: brandBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.2s both;
 }
 
@@ -333,6 +343,12 @@
 
   .header {
     padding: 28px 24px 16px;
+  }
+
+  .brandIcon {
+    width: 70px;
+    height: 70px;
+    padding: 10px;
   }
 
   .tabSwitcher {

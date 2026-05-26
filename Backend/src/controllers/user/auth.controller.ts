@@ -49,8 +49,13 @@ export const userAuthController = {
         return;
       }
 
+      console.log('[USER AUTH CONTROLLER] Login attempt for:', email);
       const { user, accessToken, refreshToken } = await userAuthService.login(email, password);
+      
+      console.log('[USER AUTH CONTROLLER] Login successful, setting cookie with options:', REFRESH_COOKIE_OPTIONS);
       res.cookie('userRefreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+      console.log('[USER AUTH CONTROLLER] Cookie set, sending response');
+      
       res.status(200).json({ user, accessToken, message: 'Login successful' });
     } catch (err: unknown) {
       if (err instanceof Error && err.message === 'Invalid email or password') {
@@ -121,27 +126,35 @@ export const userAuthController = {
 
   getMe: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // Log all cookies for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('═══════════════════════════════════════════════════════');
-        console.log('[USER AUTH CONTROLLER] getMe endpoint called');
-        console.log('[USER AUTH CONTROLLER] Request URL:', req.originalUrl);
-        console.log('[USER AUTH CONTROLLER] Request path:', req.path);
-        console.log('[USER AUTH CONTROLLER] Cookies received:', Object.keys(req.cookies || {}));
-        console.log('[USER AUTH CONTROLLER] userRefreshToken present:', !!req.cookies?.userRefreshToken);
-        console.log('═══════════════════════════════════════════════════════');
+      // Enhanced logging for debugging
+      console.log('═══════════════════════════════════════════════════════');
+      console.log('[USER AUTH CONTROLLER] getMe endpoint called');
+      console.log('[USER AUTH CONTROLLER] Request URL:', req.originalUrl);
+      console.log('[USER AUTH CONTROLLER] Request path:', req.path);
+      console.log('[USER AUTH CONTROLLER] Request origin:', req.headers.origin);
+      console.log('[USER AUTH CONTROLLER] Cookie header:', req.headers.cookie);
+      console.log('[USER AUTH CONTROLLER] All cookies:', req.cookies);
+      console.log('[USER AUTH CONTROLLER] Cookies received:', Object.keys(req.cookies || {}));
+      console.log('[USER AUTH CONTROLLER] userRefreshToken present:', !!req.cookies?.userRefreshToken);
+      if (req.cookies?.userRefreshToken) {
+        console.log('[USER AUTH CONTROLLER] Token preview:', req.cookies.userRefreshToken.substring(0, 20) + '...');
       }
+      console.log('═══════════════════════════════════════════════════════');
 
       const token = req.cookies?.userRefreshToken as string | undefined;
       if (!token) {
+        console.log('[USER AUTH CONTROLLER] ❌ No refresh token found - returning 401');
         res.status(401).json({ message: 'Not authenticated' });
         return;
       }
 
+      console.log('[USER AUTH CONTROLLER] ✅ Token found, calling refresh service...');
       const { user, accessToken, refreshToken: newRefreshToken } = await userAuthService.refresh(token);
       res.cookie('userRefreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
+      console.log('[USER AUTH CONTROLLER] ✅ Session refreshed successfully for:', user.email);
       res.set(NO_CACHE).status(200).json({ user, accessToken });
     } catch (err: unknown) {
+      console.log('[USER AUTH CONTROLLER] ❌ Error in getMe:', err);
       res.clearCookie('userRefreshToken', { path: '/' });
       if (err instanceof Error && err.message === 'ACCOUNT_BLOCKED') {
         res.status(403).json({

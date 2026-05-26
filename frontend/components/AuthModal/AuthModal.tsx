@@ -94,7 +94,13 @@ export default function AuthModal({ initialMode = 'login', onClose, onSuccess, i
 
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.brandIcon}>🍛</div>
+          <div className={styles.brandIcon}>
+            <img 
+              src="/coco-logo.jpeg" 
+              alt="Cocospice Logo" 
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
           <h2 className={styles.title}>
             {mode === 'login' ? 'Welcome Back' : 'Create Account'}
           </h2>

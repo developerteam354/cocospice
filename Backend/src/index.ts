@@ -33,11 +33,16 @@ const allowedOrigins = [
   'https://www.cocospice.uk',
 ].filter(Boolean) as string[];
 
+console.log('🔐 [CORS] Allowed origins:', allowedOrigins);
+
 app.use(cors({
   origin: (origin, callback) => {
+    console.log('🔐 [CORS] Request from origin:', origin);
     if (!origin || allowedOrigins.includes(origin)) {
+      console.log('🔐 [CORS] ✅ Origin allowed');
       callback(null, true);
     } else {
+      console.log('🔐 [CORS] ❌ Origin blocked');
       callback(new Error(`CORS: origin ${origin} not allowed`));
     }
   },
