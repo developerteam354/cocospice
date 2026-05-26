@@ -68,7 +68,7 @@ export default function AboutPage() {
           >
             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 mb-6 shadow-2xl p-2 overflow-hidden">
               <img 
-                src="/coco-logo.jpeg" 
+                src="/coco-logo.png" 
                 alt="Cocospice Logo" 
                 className="w-full h-full object-cover rounded-full"
               />
@@ -100,7 +100,7 @@ export default function AboutPage() {
                 <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 sm:p-12 shadow-2xl">
                   <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-2 border-2 border-emerald-400/30 overflow-hidden">
                     <img 
-                      src="/coco-logo.jpeg" 
+                      src="/coco-logo.png" 
                       alt="Cocospice Logo" 
                       className="w-full h-full object-cover rounded-full"
                     />
@@ -267,7 +267,7 @@ export default function AboutPage() {
                   >
                     <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center">
                       <img 
-                        src="/coco-logo.jpeg" 
+                        src="/coco-logo.png" 
                         alt="Cocospice" 
                         className="w-full h-full object-cover"
                       />
@@ -294,7 +294,7 @@ export default function AboutPage() {
           <div className="flex flex-col items-center gap-6">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-2 overflow-hidden border-2 border-emerald-400/30">
               <img 
-                src="/coco-logo.jpeg" 
+                src="/coco-logo.png" 
                 alt="Cocospice Logo" 
                 className="w-full h-full object-cover rounded-full"
               />

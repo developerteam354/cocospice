@@ -125,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart, onOpenAuth, shop
           <a href="/" className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 group">
             <div className="w-[42px] h-[42px] sm:w-[52px] sm:h-[52px] rounded-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center shadow-[0_6px_20px_rgba(0,0,0,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_8px_24px_rgba(232,215,168,0.4)] group-active:scale-95 p-1.5 sm:p-2 overflow-hidden">
               <img 
-                src="/coco-logo.jpeg" 
+                src="/coco-logo.png" 
                 alt="Cocospice Logo" 
                 className="w-full h-full object-cover rounded-full"
               />

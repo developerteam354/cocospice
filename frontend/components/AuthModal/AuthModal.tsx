@@ -96,7 +96,7 @@ export default function AuthModal({ initialMode = 'login', onClose, onSuccess, i
         <div className={styles.header}>
           <div className={styles.brandIcon}>
             <img 
-              src="/coco-logo.jpeg" 
+              src="/coco-logo.png" 
               alt="Cocospice Logo" 
               className="w-full h-full object-cover rounded-full"
             />
