@@ -260,7 +260,7 @@ export default function OrderDetailsPage() {
               </div>
               <div className="pt-4 border-t border-gray-50">
                 <p className="text-[0.75rem] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Amount</p>
-                <p className="text-[1.8rem] font-bold text-emerald-600 tracking-tight">₹{currentOrder.price.toLocaleString()}</p>
+                <p className="text-[1.8rem] font-bold text-emerald-600 tracking-tight">£{currentOrder.price.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -449,17 +449,17 @@ export default function OrderDetailsPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-[0.85rem] font-bold text-gray-400 mt-0.5">₹{item.price.toFixed(2)} × {item.quantity}</p>
+                      <p className="text-[0.85rem] font-bold text-gray-400 mt-0.5">£{item.price.toFixed(2)} × {item.quantity}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[1.1rem] font-black text-gray-900">₹{item.subtotal.toLocaleString()}</p>
+                      <p className="text-[1.1rem] font-black text-gray-900">£{item.subtotal.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
 
                 <div className="mt-8 pt-8 border-t border-gray-100 flex items-center justify-between">
                    <p className="text-[1.1rem] font-black text-gray-900">Total Amount</p>
-                   <p className="text-[2rem] font-black text-emerald-600 tracking-tight">₹{currentOrder.price.toLocaleString()}</p>
+                   <p className="text-[2rem] font-black text-emerald-600 tracking-tight">£{currentOrder.price.toLocaleString()}</p>
                 </div>
               </div>
             </div>

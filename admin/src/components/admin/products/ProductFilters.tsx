@@ -57,7 +57,7 @@ export default function ProductFilters({ filters, categories, onChange }: Produc
       <div className="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-2xl border border-gray-100">
         <input
           type="number"
-          placeholder="Min ₹"
+          placeholder="Min £"
           value={filters.minPrice ?? ''}
           onChange={(e) => onChange({ minPrice: e.target.value ? Number(e.target.value) : undefined })}
           className="w-20 bg-transparent border-none p-2 text-[0.9rem] font-bold text-gray-900 placeholder:text-gray-400 outline-none"
@@ -65,7 +65,7 @@ export default function ProductFilters({ filters, categories, onChange }: Produc
         <span className="text-gray-300 font-bold">/</span>
         <input
           type="number"
-          placeholder="Max ₹"
+          placeholder="Max £"
           value={filters.maxPrice ?? ''}
           onChange={(e) => onChange({ maxPrice: e.target.value ? Number(e.target.value) : undefined })}
           className="w-20 bg-transparent border-none p-2 text-[0.9rem] font-bold text-gray-900 placeholder:text-gray-400 outline-none"

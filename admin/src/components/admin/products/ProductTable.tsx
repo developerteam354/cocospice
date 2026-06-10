@@ -120,12 +120,12 @@ export default function ProductTable({ products, loading, onToggle, onDelete, on
                   <td className="px-6 py-5">
                     <div className="flex flex-col">
                       <span className="text-[1.1rem] font-bold text-gray-900">
-                        ₹{product.finalPrice.toFixed(2)}
+                        £{product.finalPrice.toFixed(2)}
                       </span>
                       {product.offerPercentage > 0 && (
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-[0.75rem] font-bold text-gray-400 line-through">
-                            ₹{product.price.toFixed(2)}
+                            £{product.price.toFixed(2)}
                           </span>
                           <span className="text-[0.7rem] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-md">
                             -{product.offerPercentage}%

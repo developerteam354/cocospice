@@ -250,7 +250,7 @@ export default function CreateProductPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input 
-                  label="Base Price (₹)" 
+                  label="Base Price (£)" 
                   type="number" 
                   placeholder="299.00"
                   error={errors.price?.message} 
@@ -268,11 +268,11 @@ export default function CreateProductPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between rounded-3xl border-2 border-dashed border-emerald-100 bg-emerald-50/30 p-5 sm:p-6 gap-4 sm:gap-0">
                 <div>
                   <p className="text-[0.8rem] font-bold text-emerald-600/60 uppercase tracking-wider">Estimated Selling Price</p>
-                  <p className="text-3xl sm:text-[2.2rem] font-bold text-emerald-600 tracking-tight">₹{finalPrice}</p>
+                  <p className="text-3xl sm:text-[2.2rem] font-bold text-emerald-600 tracking-tight">£{finalPrice}</p>
                 </div>
                 {offerNum > 0 && (
                   <div className="sm:text-right">
-                    <p className="text-[1rem] font-bold text-gray-400 line-through">₹{priceNum.toFixed(2)}</p>
+                    <p className="text-[1rem] font-bold text-gray-400 line-through">£{priceNum.toFixed(2)}</p>
                     <p className="text-[0.95rem] font-bold text-orange-600 bg-orange-100 px-3 py-1 rounded-lg mt-1">{offerNum}% OFF SAVINGS</p>
                   </div>
                 )}

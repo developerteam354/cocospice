@@ -174,7 +174,7 @@ export default function NewOrdersPage() {
          {[
            { label: 'Active', value: newOrders.length, color: 'bg-amber-500', iconColor: 'text-white', icon: Clock },
            { label: 'Pending', value: newOrders.filter(o => o.status === 'Pending').length, color: 'bg-red-500', iconColor: 'text-white', icon: Package },
-           { label: 'Revenue', value: `₹${newOrders.reduce((acc, o) => acc + o.price, 0).toFixed(0)}`, color: 'bg-emerald-500', iconColor: 'text-white', icon: CheckCircle },
+           { label: 'Revenue', value: `£${newOrders.reduce((acc, o) => acc + o.price, 0).toFixed(0)}`, color: 'bg-emerald-500', iconColor: 'text-white', icon: CheckCircle },
            { label: 'Capacity', value: '84%', color: 'bg-blue-600', iconColor: 'text-white', icon: Truck },
          ].map((stat, i) => (
            <div key={i} className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm transition-all hover:shadow-md">
@@ -296,7 +296,7 @@ export default function NewOrdersPage() {
 
                       {/* Transaction */}
                       <td className="px-6 py-5">
-                        <p className="text-[1.1rem] font-bold text-gray-900">₹{order.price.toFixed(2)}</p>
+                        <p className="text-[1.1rem] font-bold text-gray-900">£{order.price.toFixed(2)}</p>
                         <p className="text-[0.65rem] font-bold text-emerald-600/70 uppercase tracking-widest mt-1">Total Paid</p>
                       </td>
 

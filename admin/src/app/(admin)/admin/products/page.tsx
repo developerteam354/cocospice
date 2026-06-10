@@ -143,9 +143,9 @@ function ProductCard({ product, index, onView, onEdit, onToggleList }: ProductCa
           </h3>
           
           <div className="flex items-center gap-2 pt-1">
-            <span className="text-[1.4rem] font-bold text-gray-900 tracking-tight">₹{product.finalPrice}</span>
+            <span className="text-[1.4rem] font-bold text-gray-900 tracking-tight">£{product.finalPrice}</span>
             {product.offerPercentage > 0 && (
-              <span className="text-[0.85rem] font-bold text-gray-400 line-through decoration-gray-300">₹{product.price}</span>
+              <span className="text-[0.85rem] font-bold text-gray-400 line-through decoration-gray-300">£{product.price}</span>
             )}
           </div>
         </div>

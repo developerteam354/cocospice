@@ -320,7 +320,7 @@ export default function ProductDetailsPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-[0.95rem] font-bold text-gray-500">Base Price</span>
                     <span className={`text-[1.2rem] font-black ${product.offerPercentage > 0 ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
-                      ₹{product.price.toFixed(2)}
+                      £{product.price.toFixed(2)}
                     </span>
                   </div>
 
@@ -336,7 +336,7 @@ export default function ProductDetailsPage() {
                   <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                     <span className="text-[1.1rem] font-black text-gray-900">Selling Price</span>
                     <span className="text-[2.2rem] font-black text-emerald-600 tracking-tight">
-                      ₹{product.finalPrice.toFixed(2)}
+                      £{product.finalPrice.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -425,7 +425,7 @@ export default function ProductDetailsPage() {
                           <span className="text-[0.85rem] font-bold text-gray-800">{name}</span>
                           {price > 0 && (
                             <span className="text-[0.8rem] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm">
-                              +₹{price.toFixed(2)}
+                              +£{price.toFixed(2)}
                             </span>
                           )}
                         </div>

@@ -166,7 +166,7 @@ export default function DeliveredOrdersPage() {
 
                       {/* Amount */}
                       <td className="px-6 py-5">
-                        <p className="text-[1.1rem] font-bold text-emerald-600">₹{order.price.toFixed(2)}</p>
+                        <p className="text-[1.1rem] font-bold text-emerald-600">£{order.price.toFixed(2)}</p>
                       </td>
 
                       {/* Method */}
