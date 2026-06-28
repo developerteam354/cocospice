@@ -101,7 +101,19 @@ export default function MainContent({ categoryTitle, items, categories, onSelect
             </div>
             <div className={styles.productInfo}>
               <h3 style={{ color: '#000000', fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '1.1rem' }}>{item.name}</h3>
-              {item.description && <p style={{ color: '#000000', margin: '0 0 8px 0', fontSize: '0.85rem' }}>{item.description}</p>}
+              {item.description && (
+                <p style={{ 
+                  color: '#000000', 
+                  margin: '0 0 8px 0', 
+                  fontSize: '0.85rem',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  lineHeight: '1.4'
+                }}>{item.description}</p>
+              )}
               <p style={{ color: '#000000', margin: '0', fontSize: '1.1rem', fontWeight: '800' }}>£{item.price.toFixed(2)}</p>
             </div>
             <button className={styles.addBtn} onClick={(e) => { e.stopPropagation(); onAddToCart(item); }} title="Add to Cart">
