@@ -32,6 +32,21 @@ export const setShopStatus = createAsyncThunk<
   }
 );
 
+export const updateServiceToggles = createAsyncThunk<
+  IShopStatus,
+  { isCollectionEnabled?: boolean; isDeliveryEnabled?: boolean }
+>(
+  'settings/updateServiceToggles',
+  async ({ isCollectionEnabled, isDeliveryEnabled }, { rejectWithValue }) => {
+    try {
+      return await settingsService.updateServiceToggles(isCollectionEnabled, isDeliveryEnabled);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update service toggles';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 // ─── State ────────────────────────────────────────────────────────────────────
 
 interface SettingsState {
@@ -83,6 +98,21 @@ const settingsSlice = createSlice({
         state.shopStatus = action.payload;
       })
       .addCase(setShopStatus.rejected, (state, action) => {
+        state.saving = false;
+        state.error  = action.payload as string;
+      });
+
+    // updateServiceToggles
+    builder
+      .addCase(updateServiceToggles.pending, (state) => {
+        state.saving = true;
+        state.error  = null;
+      })
+      .addCase(updateServiceToggles.fulfilled, (state, action: PayloadAction<IShopStatus>) => {
+        state.saving     = false;
+        state.shopStatus = action.payload;
+      })
+      .addCase(updateServiceToggles.rejected, (state, action) => {
         state.saving = false;
         state.error  = action.payload as string;
       });

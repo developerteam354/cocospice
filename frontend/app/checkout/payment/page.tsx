@@ -14,6 +14,7 @@ import stripePromise from '@/lib/stripe';
 import PaymentStep, { PaymentMethod } from '@/components/CheckoutPage/PaymentStep';
 import styles from '@/components/CheckoutPage/CheckoutPage.module.css';
 import { toast } from 'sonner';
+import { fetchShopStatus, type ShopStatusResponse } from '@/services/shopService';
 
 const DELIVERY_FEE = 2.99;
 const COD_CHARGE   = 20.00;
@@ -254,7 +255,7 @@ function StripePaymentForm({ total, cartTotal }: { total: number; cartTotal: num
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function PaymentPage() {
-  const { cart, orderType, orderNote, clearCart, cartTotal, shippingAddress } = useCart();
+  const { cart, orderType, orderNote, clearCart, cartTotal, shippingAddress, setOrderType } = useCart();
   const { user }   = useAuth();
   const router     = useRouter();
   const dispatch   = useDispatch<AppDispatch>();
@@ -263,6 +264,59 @@ export default function PaymentPage() {
   const [clientSecret, setClientSecret]   = useState<string | null>(null);
   const [intentLoading, setIntentLoading] = useState(false);
   const [placing, setPlacing]             = useState(false);
+  const [shopStatus, setShopStatus]       = useState<ShopStatusResponse | null>(null);
+
+  // Fetch shop status
+  useEffect(() => {
+    fetchShopStatus()
+      .then(setShopStatus)
+      .catch(() => {});
+  }, []);
+
+  // Validate service availability on load
+  useEffect(() => {
+    if (!shopStatus) return;
+
+    // Check if shop is closed
+    if (!shopStatus.isOpen) {
+      toast.error('We are currently not accepting any online orders at the moment.');
+      router.push('/');
+      return;
+    }
+
+    // Check if both services disabled
+    if (!shopStatus.isCollectionEnabled && !shopStatus.isDeliveryEnabled) {
+      toast.error('We are currently not accepting any online orders at the moment.');
+      router.push('/');
+      return;
+    }
+
+    // Validate current order type
+    if (orderType === 'delivery' && !shopStatus.isDeliveryEnabled) {
+      if (shopStatus.isCollectionEnabled) {
+        toast.info('Online Delivery is currently unavailable. Switching to Self-Collection...', {
+          duration: 4000
+        });
+        setOrderType('collection');
+      } else {
+        toast.error('Online Delivery is currently unavailable.');
+        router.push('/');
+      }
+      return;
+    }
+
+    if (orderType === 'collection' && !shopStatus.isCollectionEnabled) {
+      if (shopStatus.isDeliveryEnabled) {
+        toast.info('Self-Collection is currently unavailable. Please use delivery.', {
+          duration: 4000
+        });
+        router.push('/checkout/address');
+      } else {
+        toast.error('Self-Collection is currently unavailable.');
+        router.push('/');
+      }
+    }
+  }, [shopStatus, orderType, router, setOrderType]);
 
   const deliveryFee = orderType === 'delivery' ? DELIVERY_FEE : 0;
   const codCharge   = payment === 'cash'       ? COD_CHARGE   : 0;

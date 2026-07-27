@@ -1,13 +1,15 @@
 import { publicApi } from '../lib/api';
 
 export interface ShopStatusResponse {
-  isOpen:          boolean;  // raw admin toggle — for header display
-  effectivelyOpen: boolean;  // isOpen AND within trading hours — for checkout blocking
-  manuallyOpen:    boolean;  // alias for isOpen
-  withinHours:     boolean;
-  closingReason:   string;
-  openFrom:        string;
-  openUntil:       string;
+  isOpen:              boolean;  // raw admin toggle — for header display
+  effectivelyOpen:     boolean;  // isOpen AND within trading hours — for checkout blocking
+  manuallyOpen:        boolean;  // alias for isOpen
+  withinHours:         boolean;
+  closingReason:       string;
+  isCollectionEnabled: boolean;  // Service toggle for collection orders
+  isDeliveryEnabled:   boolean;  // Service toggle for delivery orders
+  openFrom:            string;
+  openUntil:           string;
 }
 
 export async function fetchShopStatus(): Promise<ShopStatusResponse> {

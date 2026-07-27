@@ -61,7 +61,7 @@ export default function MainContent({ categoryTitle, items, categories, onSelect
   // Product List View
   return (
     <div className={styles.mainContent}>
-      <h2 style={{ color: '#ffffff', fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '16px', paddingBottom: '8px', borderBottom: '3px solid #004d80', display: 'inline-block' }}>{categoryTitle}</h2>
+      <h2 style={{ color: '#f6eada', fontSize: '1.8rem', fontWeight: 'bold', marginBottom: '16px', paddingBottom: '8px', borderBottom: '3px solid #802d00', display: 'inline-block', textShadow: '0 2px 8px rgba(0, 0, 0, 0.6)' }}>{categoryTitle}</h2>
       <div className={styles.productList}>
         {items.map((item, index) => (
           <div

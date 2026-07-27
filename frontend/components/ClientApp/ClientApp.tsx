@@ -22,7 +22,6 @@ import type { ShopStatusResponse } from '../../services/shopService';
 
 import styles from './ClientApp.module.css';
 import { useRouter } from 'next/navigation';
-import { ThreeDot } from 'react-loading-indicators';
 
 // Global to track splash screen across internal navigations (resets on refresh)
 let hasShownSplashGlobal = false;
@@ -216,8 +215,30 @@ export default function ClientApp() {
           flexDirection: 'column',
           gap: '1rem'
         }}>
-          <ThreeDot color="#ff6b35" size="medium" />
-          <p style={{ color: '#666', fontSize: '1.1rem' }}>Loading menu...</p>
+          <div style={{
+            width: '120px',
+            height: '120px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #322511 0%, #504008 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            boxShadow: '0 10px 40px rgba(128, 45, 0, 0.3)',
+            animation: 'pulse 2s ease-in-out infinite',
+          }}>
+            <img 
+              src="/coco__logo.png" 
+              alt="Loading"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '50%',
+              }}
+            />
+          </div>
+          <p style={{ color: '#322511', fontSize: '1.1rem', fontWeight: 600 }}>Loading menu...</p>
         </div>
       </div>
     );
@@ -236,6 +257,7 @@ export default function ClientApp() {
         onOpenCart={() => setIsCartOpen(true)}
         onOpenAuth={handleOpenAuth}
         shopStatus={shopStatus}
+        activePage="menu"
       />
 
       {/* Floating Cart Bouncing Banner */}
@@ -366,8 +388,30 @@ export default function ClientApp() {
               flexDirection: 'column',
               gap: '1rem'
             }}>
-              <ThreeDot color="#ff6b35" size="small" />
-              <p style={{ color: '#666' }}>Loading products...</p>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #322511 0%, #504008 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0.75rem',
+                boxShadow: '0 10px 40px rgba(128, 45, 0, 0.3)',
+                animation: 'pulse 2s ease-in-out infinite',
+              }}>
+                <img 
+                  src="/coco__logo.png" 
+                  alt="Loading"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%',
+                  }}
+                />
+              </div>
+              <p style={{ color: '#322511', fontWeight: 600 }}>Loading products...</p>
             </div>
           ) : (
             <MainContent
@@ -402,6 +446,8 @@ export default function ClientApp() {
         <OrderTypeModal 
           onSelectType={handleOrderTypeSelected}
           onClose={() => setShowOrderTypeModal(false)}
+          isCollectionEnabled={shopStatus?.isCollectionEnabled ?? true}
+          isDeliveryEnabled={shopStatus?.isDeliveryEnabled ?? true}
         />
       )}
 

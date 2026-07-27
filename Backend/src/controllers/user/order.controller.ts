@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import { orderService } from '../../services/user/order.service.js';
 import type { IOrderItem, IShippingAddress } from '../../models/Order.model.js';
 import { checkDeliveryRadius, DELIVERY_RADIUS_KM } from '../../utils/deliveryRadius.js';
+import { ShopStatus } from '../../models/ShopStatus.model.js';
 
 export const userOrderController = {
   /**
@@ -67,6 +68,35 @@ export const userOrderController = {
 
       if (orderType === 'delivery' && !shippingAddress) {
         res.status(400).json({ message: 'Shipping address is required for delivery orders' });
+        return;
+      }
+
+      // ── Shop Status & Service Toggle Validation ─────────────────────────
+      const shopStatus = await ShopStatus.findOne().exec();
+      
+      if (!shopStatus || !shopStatus.isOpen) {
+        res.status(403).json({ 
+          message: 'We are currently not accepting any online orders at the moment.',
+          code: 'SHOP_CLOSED'
+        });
+        return;
+      }
+
+      // Validate delivery service availability
+      if (orderType === 'delivery' && !shopStatus.isDeliveryEnabled) {
+        res.status(403).json({ 
+          message: 'Online Delivery is currently unavailable.',
+          code: 'DELIVERY_DISABLED'
+        });
+        return;
+      }
+
+      // Validate collection service availability
+      if (orderType === 'collection' && !shopStatus.isCollectionEnabled) {
+        res.status(403).json({ 
+          message: 'Self-Collection is currently unavailable.',
+          code: 'COLLECTION_DISABLED'
+        });
         return;
       }
 

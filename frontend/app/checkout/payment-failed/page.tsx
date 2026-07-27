@@ -44,7 +44,7 @@ export default function PaymentFailedPage() {
           <Link href="/checkout/payment" className={styles.retryBtn}>
             Try Again
           </Link>
-          <Link href="/" className={styles.homeBtn}>
+          <Link href="/menu" className={styles.homeBtn}>
             Back to Menu
           </Link>
         </div>

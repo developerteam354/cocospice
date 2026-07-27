@@ -10,7 +10,12 @@ import { ShopStatus } from '../../models/ShopStatus.model.js';
 async function getOrCreateStatus() {
   let status = await ShopStatus.findOne().exec();
   if (!status) {
-    status = await ShopStatus.create({ isOpen: true, closingReason: '' });
+    status = await ShopStatus.create({ 
+      isOpen: true, 
+      closingReason: '',
+      isCollectionEnabled: true,
+      isDeliveryEnabled: true
+    });
   }
   return status;
 }
@@ -30,16 +35,30 @@ export const getShopStatus = async (req: Request, res: Response): Promise<void> 
 
 export const updateShopStatus = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { isOpen, closingReason } = req.body as { isOpen: boolean; closingReason?: string };
-
-    if (typeof isOpen !== 'boolean') {
-      res.status(400).json({ message: '`isOpen` must be a boolean' });
-      return;
-    }
+    const { isOpen, closingReason, isCollectionEnabled, isDeliveryEnabled } = req.body as { 
+      isOpen?: boolean; 
+      closingReason?: string;
+      isCollectionEnabled?: boolean;
+      isDeliveryEnabled?: boolean;
+    };
 
     const status = await getOrCreateStatus();
-    status.isOpen        = isOpen;
-    status.closingReason = isOpen ? '' : (closingReason?.trim() ?? '');
+    
+    // Update shop open/closed status
+    if (typeof isOpen === 'boolean') {
+      status.isOpen = isOpen;
+      status.closingReason = isOpen ? '' : (closingReason?.trim() ?? '');
+    }
+    
+    // Update service toggles
+    if (typeof isCollectionEnabled === 'boolean') {
+      status.isCollectionEnabled = isCollectionEnabled;
+    }
+    
+    if (typeof isDeliveryEnabled === 'boolean') {
+      status.isDeliveryEnabled = isDeliveryEnabled;
+    }
+    
     await status.save();
 
     res.status(200).json({ shopStatus: status });
@@ -57,13 +76,15 @@ export const getPublicShopStatus = async (_req: Request, res: Response): Promise
 
     res.status(200).json({
       shopStatus: {
-        isOpen:        status.isOpen,
-        manuallyOpen:  status.isOpen,
-        withinHours:   true,
-        effectivelyOpen: status.isOpen,
-        closingReason: status.closingReason,
-        openFrom:      '9:00 AM',
-        openUntil:     '10:00 PM',
+        isOpen:              status.isOpen,
+        manuallyOpen:        status.isOpen,
+        withinHours:         true,
+        effectivelyOpen:     status.isOpen,
+        closingReason:       status.closingReason,
+        isCollectionEnabled: status.isCollectionEnabled,
+        isDeliveryEnabled:   status.isDeliveryEnabled,
+        openFrom:            '12:00 PM',
+        openUntil:           '11:00 PM',
       },
     });
   } catch (err) {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import Header from '@/components/Header/Header';
@@ -10,6 +10,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute';
 import { useAppSelector } from '@/store/hooks';
 import type { RootState } from '@/store/store';
+import { fetchShopStatus, type ShopStatusResponse } from '@/services/shopService';
 
 // Proxy helper
 const toProxyUrl = (urlOrKey: string): string => {
@@ -30,6 +31,14 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
   const [isCartOpen,         setIsCartOpen]         = useState(false);
   const [showOrderTypeModal, setShowOrderTypeModal]  = useState(false);
   const [imgError,           setImgError]            = useState(false);
+  const [shopStatus,         setShopStatus]          = useState<ShopStatusResponse | null>(null);
+
+  // Fetch shop status
+  useEffect(() => {
+    fetchShopStatus()
+      .then(setShopStatus)
+      .catch(() => {}); // silently fail
+  }, []);
 
   const currentUser = reduxUser ?? user;
 
@@ -159,7 +168,12 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
           />
         )}
         {showOrderTypeModal && (
-          <OrderTypeModal onSelectType={handleOrderTypeSelected} onClose={() => setShowOrderTypeModal(false)} />
+          <OrderTypeModal 
+            onSelectType={handleOrderTypeSelected} 
+            onClose={() => setShowOrderTypeModal(false)} 
+            isCollectionEnabled={shopStatus?.isCollectionEnabled ?? true}
+            isDeliveryEnabled={shopStatus?.isDeliveryEnabled ?? true}
+          />
         )}
       </div>
     </ProtectedRoute>

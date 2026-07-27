@@ -6,13 +6,13 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import type { RootState } from '@/store/store';
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, 
-  ArrowRight, TrendingUp, Clock, CheckCircle, Plus
+  ArrowRight, TrendingUp, Clock, CheckCircle, Plus, Truck, Store
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProductStats } from '@/store/slices/productSlice';
 import { fetchOrderStats, fetchNewOrders } from '@/store/slices/orderSlice';
 import { fetchUserStats } from '@/store/slices/userSlice';
-import { fetchShopStatus, setShopStatus } from '@/store/slices/settingsSlice';
+import { fetchShopStatus, setShopStatus, updateServiceToggles } from '@/store/slices/settingsSlice';
 import StatCard from '@/components/admin/products/StatCard';
 import Badge from '@/components/ui/Badge';
 
@@ -143,6 +143,22 @@ export default function DashboardPage() {
       .unwrap()
       .then(() => setShowCloseModal(false))
       .catch(() => setShowCloseModal(false));
+  };
+
+  const handleCollectionToggle = () => {
+    if (shopStatus) {
+      dispatch(updateServiceToggles({ 
+        isCollectionEnabled: !shopStatus.isCollectionEnabled 
+      }));
+    }
+  };
+
+  const handleDeliveryToggle = () => {
+    if (shopStatus) {
+      dispatch(updateServiceToggles({ 
+        isDeliveryEnabled: !shopStatus.isDeliveryEnabled 
+      }));
+    }
   };
 
   return (
@@ -312,6 +328,91 @@ export default function DashboardPage() {
                     )}
                   </span>
                 </button>
+              </div>
+
+              {/* ── Service Toggles Section ── */}
+              <div className="pt-4 space-y-3">
+                <p className="text-[0.7rem] font-bold text-gray-500 uppercase tracking-widest">Service Controls</p>
+                
+                {/* Self-Collection Toggle */}
+                <div className={`w-full flex items-center justify-between p-4 rounded-[20px] border-2 transition-all duration-300 ${
+                  shopStatus?.isCollectionEnabled
+                    ? 'bg-blue-50 border-blue-200'
+                    : 'bg-gray-50 border-gray-200'
+                }`}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                      shopStatus?.isCollectionEnabled ? 'bg-blue-100' : 'bg-gray-100'
+                    }`}>
+                      <Store size={18} strokeWidth={2.5} className={shopStatus?.isCollectionEnabled ? 'text-blue-600' : 'text-gray-400'} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className={`text-[0.82rem] font-bold ${shopStatus?.isCollectionEnabled ? 'text-blue-800' : 'text-gray-600'}`}>
+                        Self-Collection
+                      </p>
+                      <p className="text-[0.7rem] text-gray-500 font-medium">
+                        {shopStatus?.isCollectionEnabled ? 'Enabled' : 'Disabled'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleCollectionToggle}
+                    disabled={shopSaving || shopStatus === null || !shopStatus.isOpen}
+                    aria-label={shopStatus?.isCollectionEnabled ? 'Disable collection' : 'Enable collection'}
+                    className={`relative w-12 h-6 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      shopStatus?.isCollectionEnabled
+                        ? 'bg-blue-500 focus:ring-blue-400'
+                        : 'bg-gray-300 focus:ring-gray-300'
+                    }`}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${
+                      shopStatus?.isCollectionEnabled ? 'translate-x-6' : 'translate-x-0'
+                    }`} />
+                  </button>
+                </div>
+
+                {/* Online Delivery Toggle */}
+                <div className={`w-full flex items-center justify-between p-4 rounded-[20px] border-2 transition-all duration-300 ${
+                  shopStatus?.isDeliveryEnabled
+                    ? 'bg-purple-50 border-purple-200'
+                    : 'bg-gray-50 border-gray-200'
+                }`}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                      shopStatus?.isDeliveryEnabled ? 'bg-purple-100' : 'bg-gray-100'
+                    }`}>
+                      <Truck size={18} strokeWidth={2.5} className={shopStatus?.isDeliveryEnabled ? 'text-purple-600' : 'text-gray-400'} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className={`text-[0.82rem] font-bold ${shopStatus?.isDeliveryEnabled ? 'text-purple-800' : 'text-gray-600'}`}>
+                        Online Delivery
+                      </p>
+                      <p className="text-[0.7rem] text-gray-500 font-medium">
+                        {shopStatus?.isDeliveryEnabled ? 'Enabled' : 'Disabled'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleDeliveryToggle}
+                    disabled={shopSaving || shopStatus === null || !shopStatus.isOpen}
+                    aria-label={shopStatus?.isDeliveryEnabled ? 'Disable delivery' : 'Enable delivery'}
+                    className={`relative w-12 h-6 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      shopStatus?.isDeliveryEnabled
+                        ? 'bg-purple-500 focus:ring-purple-400'
+                        : 'bg-gray-300 focus:ring-gray-300'
+                    }`}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${
+                      shopStatus?.isDeliveryEnabled ? 'translate-x-6' : 'translate-x-0'
+                    }`} />
+                  </button>
+                </div>
+
+                {!shopStatus?.isOpen && (
+                  <p className="text-[0.7rem] text-amber-600 font-medium px-2">
+                    ⚠️ Service toggles disabled while shop is closed
+                  </p>
+                )}
               </div>
 
               <button

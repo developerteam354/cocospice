@@ -247,7 +247,7 @@ export default function SuccessPage() {
             </div>
 
             <div className={styles.actions}>
-              <Link href="/" className={styles.continueBtn}>
+              <Link href="/menu" className={styles.continueBtn}>
                 Continue Shopping
               </Link>
               <Link href="/profile/orders" className={styles.viewOrderBtn}>

@@ -3,24 +3,12 @@
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './store';
-import { ThreeDot } from 'react-loading-indicators';
+import LogoPreloader from '@/components/LogoPreloader/LogoPreloader';
 import AuthInitializer from './AuthInitializer';
 
 /** Shown while redux-persist rehydrates from localStorage */
 function RehydratingScreen() {
-  return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'column',
-      gap: '1rem',
-      background: 'var(--bg-color, #fff)',
-    }}>
-      <ThreeDot color="#ff6b35" size="medium" />
-    </div>
-  );
+  return <LogoPreloader />;
 }
 
 export default function ReduxProvider({ children }: { children: React.ReactNode }) {

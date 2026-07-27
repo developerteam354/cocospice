@@ -5,19 +5,26 @@
 }
 
 :root {
-  --bg-color: #f9fafb;
-  --surface-color: #ffffff;
-  --surface-hover: #f3f4f6;
-  --primary-color: #10b981;
-  --primary-hover: #059669;
-  --text-primary: #1a1a1a;
-  --text-secondary: #4a4a4a;
-  --border-color: #e5e7eb;
-  --success-color: #10b981;
+  /* New CoCo Spice Brand Colors */
+  --cream-bg: #f6eada;
+  --dark-brown: #322511;
+  --rust-orange: #802d00;
+  --olive-green: #504008;
+  
+  /* Legacy variable mapping for gradual migration */
+  --bg-color: #f6eada;
+  --surface-color: #f6eada;
+  --surface-hover: #f6eada;
+  --primary-color: #802d00;
+  --primary-hover: #802d00;
+  --text-primary: #322511;
+  --text-secondary: #504008;
+  --border-color: #504008;
+  --success-color: #802d00;
 }
 
 html {
-  background-color: #f9fafb;
+  background-color: #f6eada;
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
@@ -30,9 +37,9 @@ html::-webkit-scrollbar {
 body {
   margin: 0;
   padding: 0;
-  background-color: transparent;
-  color: #1a1a1a;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  background-color: #f6eada;
+  color: #322511;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   height: 100%;
   min-height: 100vh;
   overflow-x: hidden;
@@ -48,52 +55,64 @@ body::-webkit-scrollbar {
 body::before {
   content: '';
   position: fixed;
-  inset: -10px; /* Expand slightly to prevent white edges when blurring */
+  inset: -10px;
   background: url('/images/bg-food.png') center/cover no-repeat;
-  opacity: 1;
+  opacity: 0.15;
   filter: blur(4px);
   z-index: -1;
   pointer-events: none;
 }
-/* Removed old background */
 
 * {
   box-sizing: border-box;
 }
 
-/* Make text inside white surfaces black for readability */
-.bg-surface, .surface, [style*="background: white"], [style*="background-color: white"], [style*="background: #ffffff"], [style*="background-color: #ffffff"], [style*="background: rgba(255, 255, 255"] {
-  color: #000000 !important;
+/* Brand Typography - League Spartan for Brand Name */
+.brand-name,
+.brand-text,
+h1.brand,
+.logo-text,
+.brand-title {
+  font-family: var(--font-league-spartan), 'League Spartan', sans-serif !important;
+  font-weight: 700 !important;
+  color: #322511 !important;
 }
 
-.bg-surface *, .surface *, [style*="background: white"] *, [style*="background-color: white"] *, [style*="background: #ffffff"] *, [style*="background-color: #ffffff"] *, [style*="background: rgba(255, 255, 255"] * {
+/* Brand name with accent (e.g., "Coco SPICE") */
+.brand-accent {
+  color: #802d00 !important;
+}
+
+/* CoCo Spice specific styling */
+.cocospice-brand {
+  font-family: var(--font-league-spartan), 'League Spartan', sans-serif !important;
+  font-weight: 700 !important;
+  color: #322511 !important;
+  letter-spacing: 0.05em;
+}
+
+/* Updated text color for readability */
+.bg-surface, .surface {
+  color: #322511 !important;
+}
+
+.bg-surface *, .surface * {
   color: inherit !important;
 }
 
-/* Specific targeting for product items and category items */
 .productItem, .categoryItem, .cartItem, .orderItem {
-  color: #000000 !important;
+  color: #322511 !important;
 }
 
 .productItem *, .categoryItem *, .cartItem *, .orderItem * {
   color: inherit !important;
 }
 
-/* Override CSS variables for specific components */
 .productName, .productDesc, .productPrice, .categoryItemName, .categoryTitle {
-  color: #000000 !important;
+  color: #322511 !important;
 }
 
-/* Force black text for any element with white/semi-transparent background */
-[style*="background: rgba(255, 255, 255"], [style*="background-color: rgba(255, 255, 255"] {
-  color: #000000 !important;
-}
-
-[style*="background: rgba(255, 255, 255"] *, [style*="background-color: rgba(255, 255, 255"] * {
-  color: inherit !important;
-}
-
-/* Custom scrollbar for inner scrollable elements (not the page scrollbar) */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -103,10 +122,10 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ced4da;
+  background: #504008;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
+  background: #802d00;
 }

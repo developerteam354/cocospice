@@ -1,21 +1,22 @@
-import React from 'react';
-import styles from './SplashScreen.module.css';
+'use client';
 
-export default function SplashScreen() {
+import React from 'react';
+import styles from './LogoPreloader.module.css';
+
+export default function LogoPreloader() {
   return (
-    <div className={styles.splashContainer}>
-      <div className={styles.logoContainer}>
+    <div className={styles.preloaderContainer}>
+      <div className={styles.logoWrapper}>
         <div className={styles.logoCircle}>
           <img 
             src="/coco__logo.png" 
-            alt="COCO SPICE" 
+            alt="CoCo Spice Loading" 
             className={styles.logo}
           />
         </div>
         <h1 className={styles.brandName}>
-          COCO SPICE
+          COCO <span className={styles.brandAccent}>SPICE</span>
         </h1>
-        <div className={styles.slogan}>Where Every Bite Becomes a Memorable Experience</div>
         <div className={styles.loadingDots}>
           <span></span>
           <span></span>

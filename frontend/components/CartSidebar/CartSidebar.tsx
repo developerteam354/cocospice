@@ -74,10 +74,21 @@ export default function CartSidebar({ cart, onUpdateQuantity, onClearCart, onClo
             <div key={`${item.id}-${index}`} className={styles.cartItem}>
               <div className={styles.itemImgWrap}>
                 {item.image ? (
-                  <img src={item.image} alt={item.name} className={styles.itemImg} />
-                ) : (
-                  <div className={styles.itemImgPlaceholder}>🍽️</div>
-                )}
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    className={styles.itemImg}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      const placeholder = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                      if (placeholder) placeholder.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div 
+                  className={styles.itemImgPlaceholder}
+                  style={{ display: item.image ? 'none' : 'flex' }}
+                />
                 <span className={styles.qtyBadge}>{item.quantity}</span>
               </div>
               

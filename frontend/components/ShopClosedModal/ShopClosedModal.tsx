@@ -64,8 +64,9 @@ export default function ShopClosedModal({ closingReason, onClose }: ShopClosedMo
               </div>
               <div className="text-left">
                 <p className="text-[0.72rem] font-bold text-gray-400 uppercase tracking-widest">Opening Hours</p>
-                <p className="text-[0.95rem] font-bold text-gray-800 mt-0.5">9:00 AM – 10:00 PM</p>
-                <p className="text-[0.78rem] text-gray-500 font-medium">Monday to Sunday</p>
+                <p className="text-[0.95rem] font-bold text-gray-800 mt-0.5">12:00 PM – 11:00 PM</p>
+                <p className="text-[0.78rem] text-gray-500 font-medium">Wednesday to Monday</p>
+                <p className="text-[0.72rem] text-gray-400 font-medium mt-0.5">Closed on Tuesdays</p>
               </div>
             </div>
 
