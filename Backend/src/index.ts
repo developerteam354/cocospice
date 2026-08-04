@@ -31,6 +31,11 @@ const allowedOrigins = [
   process.env.ADMIN_FRONTEND_URL,
   'https://cocospice.uk',
   'https://www.cocospice.uk',
+  // Local frontends calling hosted API (dev)
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
 ].filter(Boolean) as string[];
 
 console.log('🔐 [CORS] Allowed origins:', allowedOrigins);
@@ -42,8 +47,9 @@ app.use(cors({
       console.log('🔐 [CORS] ✅ Origin allowed');
       callback(null, true);
     } else {
+      // Do not throw — throwing makes cors return HTTP 500
       console.log('🔐 [CORS] ❌ Origin blocked');
-      callback(new Error(`CORS: origin ${origin} not allowed`));
+      callback(null, false);
     }
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

@@ -51,6 +51,7 @@ export default function ItemDetailModal({ item, onClose, onAddToCart }: ItemDeta
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   // Fetch approved reviews when modal opens, clear on close
   useEffect(() => {
@@ -90,6 +91,26 @@ export default function ItemDetailModal({ item, onClose, onAddToCart }: ItemDeta
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentImageIndex((p) => (p - 1 + images.length) % images.length);
+  };
+
+  const handleImageError = () => {
+    setFailedImages((prev) => {
+      const next = new Set(prev);
+      next.add(currentImageIndex);
+      if (next.size >= images.length) {
+        setImageError(true);
+        return next;
+      }
+      // Jump to the next image that hasn't failed yet
+      for (let i = 1; i <= images.length; i += 1) {
+        const candidate = (currentImageIndex + i) % images.length;
+        if (!next.has(candidate)) {
+          setCurrentImageIndex(candidate);
+          break;
+        }
+      }
+      return next;
+    });
   };
 
   const handleAddToCartClick = () => {
@@ -147,10 +168,11 @@ export default function ItemDetailModal({ item, onClose, onAddToCart }: ItemDeta
             {images.length > 0 && !imageError ? (
               <>
                 <img
+                  key={images[currentImageIndex]}
                   src={images[currentImageIndex]}
                   alt={`${item.name} ${currentImageIndex + 1}`}
                   className="w-full h-full object-cover transition-opacity duration-300"
-                  onError={() => setImageError(true)}
+                  onError={handleImageError}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
                 

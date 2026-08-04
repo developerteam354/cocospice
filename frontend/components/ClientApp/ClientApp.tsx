@@ -317,41 +317,19 @@ export default function ClientApp() {
               className={`${styles.categoryPill} ${selectedCategoryId === null ? styles.activePill : ''}`}
               onClick={handleSelectAllCategories}
             >
-              <span className={styles.categoryIcon}>🍽️</span>
               <span className={styles.categoryText}>All Categories</span>
             </button>
-            {categories.map((c, index) => {
-              return (
-                <button
-                  key={c.id}
-                  className={`${styles.categoryPill} ${selectedCategoryId === c.id ? styles.activePill : ''}`}
-                  onClick={() => handleSelectCategory(c.id)}
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                >
-                  {c.categoryImage ? (
-                    <img
-                      src={c.categoryImage}
-                      alt={c.name}
-                      width={36}
-                      height={36}
-                      className={styles.categoryImg}
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display = 'none';
-                        const sibling = (e.currentTarget as HTMLImageElement).nextElementSibling as HTMLElement | null;
-                        if (sibling) sibling.style.display = 'inline';
-                      }}
-                    />
-                  ) : null}
-                  {(!c.categoryImage) && (
-                    <span className={styles.categoryIcon}>🍽️</span>
-                  )}
-                  {c.categoryImage && (
-                    <span className={styles.categoryIcon} style={{ display: 'none' }}>🍽️</span>
-                  )}
-                  <span className={styles.categoryText}>{c.name}</span>
-                </button>
-              );
-            })}
+            {categories.map((c, index) => (
+              <button
+                key={c.id}
+                className={`${styles.categoryPill} ${selectedCategoryId === c.id ? styles.activePill : ''}`}
+                onClick={() => handleSelectCategory(c.id)}
+                style={{ animationDelay: `${index * 0.03}s` }}
+                title={c.name}
+              >
+                <span className={styles.categoryText}>{c.name}</span>
+              </button>
+            ))}
           </div>
         </div>
 

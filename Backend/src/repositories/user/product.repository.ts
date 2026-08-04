@@ -16,6 +16,17 @@ const region = process.env.AWS_REGION!;
 
 function toS3Url(asset: IImageAsset): IImageAsset {
   if (!asset?.key) return asset;
+
+  // Keep imported / external / placeholder images as stored
+  if (asset.key.startsWith('import/') || asset.key.startsWith('placeholder/')) {
+    return asset;
+  }
+
+  // Already a direct public S3 URL
+  if (asset.url?.includes('.amazonaws.com/')) {
+    return asset;
+  }
+
   return {
     key: asset.key,
     url: `https://${bucket}.s3.${region}.amazonaws.com/${asset.key}`,

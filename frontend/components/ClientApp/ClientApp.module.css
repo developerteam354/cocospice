@@ -47,7 +47,7 @@
   display: flex;
   flex-direction: column;
   transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
-  width: 280px;
+  width: 300px;
   background: transparent;
   flex-shrink: 0;
   height: calc(100vh - 65px);
@@ -91,8 +91,8 @@
 .categoryScrollContainer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 24px 24px;
+  gap: 10px;
+  padding: 8px 20px 28px;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -162,32 +162,36 @@
 .categoryPill {
   display: flex;
   align-items: center;
-  gap: 12px;
-  white-space: nowrap;
-  padding: 12px 16px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--text-secondary);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  gap: 0;
+  white-space: normal;
+  padding: 14px 18px;
+  min-height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #3d3428;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  font-size: 0.95rem;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  font-size: 0.92rem;
+  line-height: 1.35;
   position: relative;
-  overflow: hidden;
-  animation: pillFadeIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  overflow: visible;
+  animation: pillFadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  text-align: left;
+  width: 100%;
 }
 
 .categoryPill:active {
-  transform: scale(0.95);
-  opacity: 0.8;
+  transform: scale(0.98);
+  opacity: 0.9;
 }
 
 @keyframes pillFadeIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(8px);
   }
 
   to {
@@ -197,61 +201,50 @@
 }
 
 .categoryIcon {
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: rgba(0, 0, 0, 0.04);
-  border-radius: 50%;
-  transition: all 0.3s ease;
+  display: none;
 }
 
 .categoryImg {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: none;
 }
 
 .categoryText {
   flex: 1;
   text-align: left;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .categoryPill:hover {
   background: #ffffff;
   color: var(--primary-color);
-  transform: translateX(6px) scale(1.02);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  transform: none;
+  box-shadow: 0 2px 10px rgba(128, 45, 0, 0.12);
+  border-color: rgba(128, 45, 0, 0.25);
 }
 
 .categoryPill:hover .categoryIcon,
 .categoryPill:hover .categoryImg {
-  background: rgba(0, 0, 0, 0.08);
-  transform: scale(1.1);
+  transform: none;
 }
 
 .activePill {
   background: var(--primary-color) !important;
   color: #fff !important;
   border-color: var(--primary-color) !important;
+  box-shadow: 0 2px 10px rgba(128, 45, 0, 0.28);
 }
 
 .activePill .categoryIcon,
 .activePill .categoryImg {
-  background: var(--primary-color);
+  background: transparent;
   color: #fff;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  box-shadow: none;
 }
 
 .activePill .categoryImg {
-  border: 2px solid var(--primary-color);
+  border: none;
 }
 
 .activeIndicator {
@@ -437,20 +430,31 @@
   }
 
   .categoryPill {
-    padding: 8px 20px;
-    border-radius: 24px;
+    padding: 10px 16px;
+    border-radius: 999px;
     border: 1px solid var(--border-color);
     background: var(--surface-hover);
     color: var(--text-primary);
     flex-shrink: 0;
     scroll-snap-align: start;
+    width: auto;
+    min-height: 40px;
+    white-space: nowrap;
   }
 
   .categoryPill:hover {
     transform: none;
   }
 
+  .categoryText {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+  }
+
   .categoryIcon,
+  .categoryImg,
   .activeIndicator {
     display: none;
   }
