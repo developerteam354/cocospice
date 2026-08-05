@@ -1,12 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Award, Users, Leaf, Clock, Star, ChefHat, Sparkles } from 'lucide-react';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
+import { fetchShopStatus, type ShopStatusResponse } from '@/services/shopService';
 
 export default function AboutPage() {
+  const [shopStatus, setShopStatus] = useState<ShopStatusResponse | null>(null);
+
+  // Fetch shop status on mount
+  useEffect(() => {
+    fetchShopStatus()
+      .then(setShopStatus)
+      .catch(() => {});
+  }, []);
   const values = [
     {
       icon: Heart,
@@ -48,7 +57,7 @@ export default function AboutPage() {
         cartCount={0} 
         onOpenCart={() => {}} 
         onOpenAuth={() => {}}
-        shopStatus={null}
+        shopStatus={shopStatus}
         activePage="about"
       />
 

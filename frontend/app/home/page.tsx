@@ -1,12 +1,51 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, UtensilsCrossed, Package, BookOpen } from 'lucide-react';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
+import { fetchShopStatus, type ShopStatusResponse } from '@/services/shopService';
 
 export default function HomePage() {
+  const [shopStatus, setShopStatus] = useState<ShopStatusResponse | null>(null);
+
+  // Fetch shop status on mount and poll every 15 seconds
+  useEffect(() => {
+    let cancelled = false;
+    
+    const load = async () => {
+      try {
+        const status = await fetchShopStatus();
+        if (!cancelled) {
+          console.log('🏠 [Home Page] Shop Status Updated:', status);
+          setShopStatus(status);
+        }
+      } catch (error) {
+        console.error('❌ [Home Page] Failed to fetch shop status:', error);
+      }
+    };
+
+    load();
+    const interval = setInterval(load, 15_000);
+
+    // Re-fetch when tab becomes visible
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('👁️ [Home Page] Tab visible - refreshing shop status');
+        load();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -14,7 +53,7 @@ export default function HomePage() {
         cartCount={0} 
         onOpenCart={() => {}} 
         onOpenAuth={() => {}}
-        shopStatus={null}
+        shopStatus={shopStatus}
         activePage="home"
       />
 

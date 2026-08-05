@@ -70,8 +70,12 @@ export default function ClientApp() {
     const load = async () => {
       try {
         const status = await fetchShopStatus();
-        if (!cancelled) setShopStatus(status);
-      } catch {
+        if (!cancelled) {
+          console.log('📊 Shop Status Updated:', status);
+          setShopStatus(status);
+        }
+      } catch (error) {
+        console.error('❌ Failed to fetch shop status:', error);
         // silently ignore — shop status is non-critical
       }
     };
@@ -81,9 +85,15 @@ export default function ClientApp() {
 
     // Re-fetch the moment the user switches back to this tab or window
     const handleVisibility = () => {
-      if (document.visibilityState === 'visible') load();
+      if (document.visibilityState === 'visible') {
+        console.log('👁️ Tab visible - refreshing shop status');
+        load();
+      }
     };
-    const handleFocus = () => load();
+    const handleFocus = () => {
+      console.log('🎯 Window focused - refreshing shop status');
+      load();
+    };
 
     document.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('focus', handleFocus);

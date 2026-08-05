@@ -42,7 +42,15 @@ export const updateShopStatus = async (req: Request, res: Response): Promise<voi
       isDeliveryEnabled?: boolean;
     };
 
+    console.log('🔧 [Admin Update Shop Status] Received:', { isOpen, closingReason, isCollectionEnabled, isDeliveryEnabled });
+
     const status = await getOrCreateStatus();
+    console.log('📦 [Admin Update Shop Status] Current status before update:', {
+      isOpen: status.isOpen,
+      closingReason: status.closingReason,
+      isCollectionEnabled: status.isCollectionEnabled,
+      isDeliveryEnabled: status.isDeliveryEnabled
+    });
     
     // Update shop open/closed status
     if (typeof isOpen === 'boolean') {
@@ -61,8 +69,16 @@ export const updateShopStatus = async (req: Request, res: Response): Promise<voi
     
     await status.save();
 
+    console.log('✅ [Admin Update Shop Status] Updated successfully:', {
+      isOpen: status.isOpen,
+      closingReason: status.closingReason,
+      isCollectionEnabled: status.isCollectionEnabled,
+      isDeliveryEnabled: status.isDeliveryEnabled
+    });
+
     res.status(200).json({ shopStatus: status });
   } catch (err) {
+    console.error('❌ [Admin Update Shop Status] Error:', err);
     res.status(500).json({ message: 'Failed to update shop status' });
   }
 };
@@ -74,7 +90,7 @@ export const getPublicShopStatus = async (_req: Request, res: Response): Promise
   try {
     const status = await getOrCreateStatus();
 
-    res.status(200).json({
+    const response = {
       shopStatus: {
         isOpen:              status.isOpen,
         manuallyOpen:        status.isOpen,
@@ -86,8 +102,12 @@ export const getPublicShopStatus = async (_req: Request, res: Response): Promise
         openFrom:            '12:00 PM',
         openUntil:           '11:00 PM',
       },
-    });
+    };
+
+    console.log('📊 [Public Shop Status] Returning:', response.shopStatus);
+    res.status(200).json(response);
   } catch (err) {
+    console.error('❌ [Public Shop Status] Error:', err);
     res.status(500).json({ message: 'Failed to fetch shop status' });
   }
 };
