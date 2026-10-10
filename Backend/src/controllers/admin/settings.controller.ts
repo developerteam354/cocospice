@@ -99,7 +99,7 @@ export const getPublicShopStatus = async (_req: Request, res: Response): Promise
         closingReason:       status.closingReason,
         isCollectionEnabled: status.isCollectionEnabled,
         isDeliveryEnabled:   status.isDeliveryEnabled,
-        openFrom:            '12:00 PM',
+        openFrom:            '4:00 PM',
         openUntil:           '11:00 PM',
       },
     };

@@ -18,8 +18,8 @@ export default function OutOfRangeModal({
   distanceKm,
   radiusKm,
   shopClosed,
-  openFrom  = '9:00 AM',
-  openUntil = '10:00 PM',
+  openFrom  = '4:00 PM',
+  openUntil = '11:00 PM',
   closingReason,
   onClose,
   onSwitchToCollection,
@@ -113,7 +113,11 @@ export default function OutOfRangeModal({
                 <div>
                   <p className="text-[0.72rem] font-bold text-amber-700 uppercase tracking-widest mb-1">Shop Hours</p>
                   <p className="text-[0.88rem] font-bold text-amber-900">
-                    {openFrom} – {openUntil}, Monday to Sunday
+                    Monday, Wednesday, Thursday · {openFrom}–{openUntil}
+                    <br />
+                    Friday, Saturday, Sunday · {openFrom}–{openUntil}
+                    <br />
+                    Closed on Tuesdays
                   </p>
                   {closingReason && (
                     <p className="text-[0.8rem] text-amber-700 font-medium mt-1">
@@ -151,7 +155,7 @@ export default function OutOfRangeModal({
                   01522 534 202
                 </a>
                 <p className="text-[0.75rem] text-gray-400 font-medium mt-0.5">
-                  {openFrom} – {openUntil} · Mon–Sun
+                  {openFrom}–{openUntil} · Closed on Tuesdays
                 </p>
               </div>
               <a

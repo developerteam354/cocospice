@@ -297,13 +297,19 @@ export default function ServicesPage() {
                   <p className="text-[#322511]/70 text-sm">370 High Street<br />Lincoln LN5 7RU</p>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-lg border border-[#322511]/10 text-center hover:shadow-xl transition-all sm:col-span-2 lg:col-span-1">
-                  <div className="inline-flex items-center justify-center w-14 h-14 bg-[#802d00]/10 rounded-xl mb-4">
-                    <Clock className="w-7 h-7 text-[#802d00]" />
+                <div className="bg-[#f9f1e7] rounded-2xl p-6 shadow-lg border border-[#322511]/10 text-center hover:shadow-xl transition-all sm:col-span-2 lg:col-span-1">
+                  <h4 className="font-bold text-[#322511] text-lg mb-4">Opening Hours</h4>
+                  <div className="space-y-2.5">
+                    <div className="bg-[#322511] text-[#f9f1e7] rounded-xl px-4 py-3">
+                      <p className="font-bold text-sm leading-snug">Monday, Wednesday, Thursday</p>
+                      <p className="text-sm mt-0.5 opacity-95">4:00 PM–11:00 PM</p>
+                    </div>
+                    <div className="bg-[#322511] text-[#f9f1e7] rounded-xl px-4 py-3">
+                      <p className="font-bold text-sm leading-snug">Friday, Saturday, Sunday</p>
+                      <p className="text-sm mt-0.5 opacity-95">4:00 PM–11:00 PM</p>
+                    </div>
                   </div>
-                  <h4 className="font-bold text-[#322511] mb-2">Opening Hours</h4>
-                  <p className="text-[#322511]/70 text-sm font-semibold">Wed - Mon: 12:00 PM - 11:00 PM</p>
-                  <p className="text-[#322511]/50 text-xs mt-1">Closed on Tuesdays</p>
+                  <p className="text-[#322511] font-bold text-sm mt-4">Closed on Tuesdays</p>
                 </div>
               </div>
             </motion.div>

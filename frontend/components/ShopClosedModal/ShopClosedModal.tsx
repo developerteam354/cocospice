@@ -57,17 +57,20 @@ export default function ShopClosedModal({ closingReason, onClose }: ShopClosedMo
               </p>
             </div>
 
-            {/* Hours card */}
-            <div className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0 text-xl shadow-sm">
-                🕘
+            {/* Hours card — matches official hours graphic */}
+            <div className="w-full bg-[#f9f1e7] border border-[#322511]/10 rounded-2xl px-5 py-4 text-center">
+              <p className="font-bold text-[#322511] text-[0.95rem] mb-3">Opening Hours</p>
+              <div className="space-y-2">
+                <div className="bg-[#322511] text-[#f9f1e7] rounded-xl px-4 py-2.5">
+                  <p className="font-bold text-[0.8rem] leading-snug">Monday, Wednesday, Thursday</p>
+                  <p className="text-[0.8rem] mt-0.5 opacity-95">4:00 PM–11:00 PM</p>
+                </div>
+                <div className="bg-[#322511] text-[#f9f1e7] rounded-xl px-4 py-2.5">
+                  <p className="font-bold text-[0.8rem] leading-snug">Friday, Saturday, Sunday</p>
+                  <p className="text-[0.8rem] mt-0.5 opacity-95">4:00 PM–11:00 PM</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-[0.72rem] font-bold text-gray-400 uppercase tracking-widest">Opening Hours</p>
-                <p className="text-[0.95rem] font-bold text-gray-800 mt-0.5">12:00 PM – 11:00 PM</p>
-                <p className="text-[0.78rem] text-gray-500 font-medium">Wednesday to Monday</p>
-                <p className="text-[0.72rem] text-gray-400 font-medium mt-0.5">Closed on Tuesdays</p>
-              </div>
+              <p className="font-bold text-[#322511] text-[0.82rem] mt-3">Closed on Tuesdays</p>
             </div>
 
             {/* Admin closing reason (if provided) */}

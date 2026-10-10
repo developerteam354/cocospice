@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Navigation } from 'lucide-react';
+import { MapPin, Phone, Mail, Navigation } from 'lucide-react';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import { fetchShopStatus, type ShopStatusResponse } from '@/services/shopService';
@@ -159,34 +159,31 @@ export default function ContactPage() {
                 </motion.div>
               </div>
 
-              {/* Business Hours Card */}
+              {/* Opening Hours Card — matches official hours graphic */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-gradient-to-br from-[#802d00] to-[#802d00]/80 rounded-2xl p-8 shadow-xl text-white"
+                className="bg-[#f9f1e7] rounded-2xl p-8 shadow-xl text-center border border-[#322511]/10"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-black text-2xl">Business Hours</h3>
-                </div>
-                
+                <h3 className="font-black text-2xl text-[#322511] mb-5">Opening Hours</h3>
+
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center py-2 border-b border-white/20">
-                    <span className="font-semibold">Wednesday - Monday</span>
-                    <span className="font-bold">12:00 PM - 11:00 PM</span>
+                  <div className="bg-[#322511] text-[#f9f1e7] rounded-xl px-5 py-4">
+                    <p className="font-bold text-base leading-snug">Monday, Wednesday, Thursday</p>
+                    <p className="text-base mt-1 opacity-95">4:00 PM–11:00 PM</p>
                   </div>
-                  <div className="flex justify-between items-center py-2">
-                    <span className="font-semibold">Tuesday</span>
-                    <span className="font-bold text-white/70">Closed (Weekly Holiday)</span>
+                  <div className="bg-[#322511] text-[#f9f1e7] rounded-xl px-5 py-4">
+                    <p className="font-bold text-base leading-snug">Friday, Saturday, Sunday</p>
+                    <p className="text-base mt-1 opacity-95">4:00 PM–11:00 PM</p>
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
-                  <p className="text-sm text-white/90 leading-relaxed">
-                    <strong>Note:</strong> Last orders are taken 30 minutes before closing time. 
+                <p className="mt-5 font-bold text-[#322511] text-base">Closed on Tuesdays</p>
+
+                <div className="mt-6 p-4 bg-white/60 rounded-xl border border-[#322511]/10 text-left">
+                  <p className="text-sm text-[#322511]/80 leading-relaxed">
+                    <strong>Note:</strong> Last orders are taken 30 minutes before closing time.
                     We recommend calling ahead for large groups or special occasions.
                   </p>
                 </div>
