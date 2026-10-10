@@ -16,9 +16,8 @@ import { fetchShopStatus, type ShopStatusResponse } from '@/services/shopService
 const toProxyUrl = (urlOrKey: string): string => {
   if (!urlOrKey) return '';
   if (urlOrKey.includes('/upload/image')) return urlOrKey;
-  const s3Match = urlOrKey.match(/amazonaws\.com\/(.+)$/);
-  const key = s3Match ? s3Match[1] : urlOrKey;
-  return `${process.env.NEXT_PUBLIC_API_URL}/api/user/upload/image?key=${encodeURIComponent(key)}`;
+  if (/^https?:\/\//i.test(urlOrKey)) return urlOrKey;
+  return `${process.env.NEXT_PUBLIC_API_URL}/api/user/upload/image?key=${encodeURIComponent(urlOrKey)}`;
 };
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {

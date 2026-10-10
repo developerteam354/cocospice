@@ -73,18 +73,13 @@ export default function ProfilePage() {
     }
 
     const updateToast = toast.loading('Updating credentials...');
-    let s3Url = admin?.profileImage || '';
-    
-    if (profileImageKey) {
-      const bucket = 'hokz-media-storage';
-      const region = 'eu-north-1';
-      s3Url = `https://${bucket}.s3.${region}.amazonaws.com/${profileImageKey}`;
-    }
+    // profileImage state already holds the Cloudinary secure_url after upload
+    const imageUrl = profileImageKey ? profileImage : (admin?.profileImage || '');
 
     try {
       await dispatch(updateProfile({
         fullName: fullName.trim(),
-        profileImage: s3Url || undefined,
+        profileImage: imageUrl || undefined,
       })).unwrap();
 
       // Force refresh the admin data to update header and sidebar

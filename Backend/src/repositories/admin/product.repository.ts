@@ -1,6 +1,6 @@
 import { Product, type IProduct, type IImageAsset, type IExtraOption } from '../../models/Product.model.js';
 import { BaseRepository } from '../base.repository.js';
-import { deleteFromS3 } from '../../utils/s3.utils.js';
+import { deleteImage } from '../../utils/cloudinary.utils.js';
 
 export interface ICreateProductInput {
   name: string;
@@ -14,8 +14,8 @@ export interface ICreateProductInput {
   category: string;
   hasSpiceLevel: boolean;
   extraOptions: IExtraOption[];
-  thumbnail: IImageAsset;   // pre-uploaded S3 asset
-  gallery: IImageAsset[];   // pre-uploaded S3 assets
+  thumbnail: IImageAsset;   // pre-uploaded Cloudinary asset
+  gallery: IImageAsset[];   // pre-uploaded Cloudinary assets
 }
 
 export class ProductRepository extends BaseRepository<IProduct> {
@@ -43,17 +43,17 @@ export class ProductRepository extends BaseRepository<IProduct> {
         : price;
     }
 
-    // Delete old S3 images if new ones are provided
+    // Delete old Cloudinary images if new ones are provided
     const deletePromises: Promise<void>[] = [];
     
     if (input.thumbnail && oldThumbnailKey && oldThumbnailKey !== input.thumbnail.key) {
-      deletePromises.push(deleteFromS3(oldThumbnailKey));
+      deletePromises.push(deleteImage(oldThumbnailKey));
     }
     
     if (input.gallery && oldGalleryKeys && oldGalleryKeys.length > 0) {
       const newKeys = input.gallery.map(g => g.key);
       const keysToDelete = oldGalleryKeys.filter(k => !newKeys.includes(k));
-      deletePromises.push(...keysToDelete.map(deleteFromS3));
+      deletePromises.push(...keysToDelete.map(deleteImage));
     }
 
     if (deletePromises.length > 0) {
@@ -73,7 +73,7 @@ export class ProductRepository extends BaseRepository<IProduct> {
     const product = await Product.findById(id).exec();
     if (!product) return;
     const keys = [product.thumbnail.key, ...product.gallery.map((g) => g.key)];
-    await Promise.allSettled(keys.map(deleteFromS3));
+    await Promise.allSettled(keys.map(deleteImage));
     await Product.findByIdAndDelete(id).exec();
   }
 

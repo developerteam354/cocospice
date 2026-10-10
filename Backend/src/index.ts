@@ -10,7 +10,7 @@ import { errorHandler } from './middlewares/error.middleware.js';
 // ─── Validate required env vars at startup ────────────────────────────────────
 const REQUIRED_ENV = [
   'MONGO_URI', 'ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET',
-  'AWS_REGION', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_S3_BUCKET',
+  'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET',
   'STRIPE_SECRET_KEY',
 ];
 const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
@@ -18,7 +18,7 @@ if (missing.length) {
   console.error(`❌ Missing required env variables: ${missing.join(', ')}`);
   process.exit(1);
 }
-console.log(`✅ AWS config — region=${process.env.AWS_REGION} bucket=${process.env.AWS_S3_BUCKET}`);
+console.log(`✅ Cloudinary config — cloud=${process.env.CLOUDINARY_CLOUD_NAME}`);
 
 
 const app: Application = express();

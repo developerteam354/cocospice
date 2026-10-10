@@ -24,9 +24,8 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 const toProxyUrl = (urlOrKey: string): string => {
   if (!urlOrKey) return '';
   if (urlOrKey.includes('/upload/image')) return urlOrKey;
-  const s3Match = urlOrKey.match(/amazonaws\.com\/(.+)$/);
-  const key = s3Match ? s3Match[1] : urlOrKey;
-  return `${API_BASE}/api/admin/upload/image?key=${encodeURIComponent(key)}`;
+  if (/^https?:\/\//i.test(urlOrKey)) return urlOrKey;
+  return `${API_BASE}/api/admin/upload/image?key=${encodeURIComponent(urlOrKey)}`;
 };
 
 const formatDate = (iso: string) =>

@@ -15,29 +15,12 @@ const labelCls     = 'text-[0.85rem] font-bold text-[#4a4a4a] ml-1 mb-1 block ma
 const inputBase    = 'bg-[#f8fafc] border-2 border-[#e2e8f0] rounded-2xl px-5 py-[13px] text-[0.95rem] font-semibold transition-all duration-300 focus:outline-none focus:border-[#10b981] focus:bg-white focus:shadow-[0_0_0_4px_rgba(16,185,129,0.1)] w-full max-sm:px-3 max-sm:py-[10px] max-sm:text-[0.9rem]';
 const inputRO      = 'bg-transparent border-transparent pl-0 cursor-default text-[#374151]';
 
-// ─── S3 / proxy helpers ───────────────────────────────────────────────────────
-// NEXT_PUBLIC_API_URL = "http://localhost:5000/api"
-// Backend user upload proxy: GET /api/user/upload/image?key=...
-// So the full URL is:  NEXT_PUBLIC_API_URL + "/user/upload/image?key=..."
-
-const S3_BUCKET = 'hokz-media-storage';
-const S3_REGION = 'eu-north-1';
-
-const keyToS3Url = (key: string) =>
-  `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${key}`;
-
-/**
- * Convert a stored S3 URL or raw key into the backend proxy URL.
- * NEXT_PUBLIC_API_URL already contains "/api", so we append "/user/upload/image".
- */
+// ─── Image URL helper ─────────────────────────────────────────────────────────
 const toProxyUrl = (urlOrKey: string): string => {
   if (!urlOrKey) return '';
-  // Already a proxy URL — return as-is
   if (urlOrKey.includes('/upload/image')) return urlOrKey;
-  // Extract key from a full S3 URL
-  const s3Match = urlOrKey.match(/amazonaws\.com\/(.+)$/);
-  const key = s3Match ? s3Match[1] : urlOrKey;
-  return `${process.env.NEXT_PUBLIC_API_URL}/api/user/upload/image?key=${encodeURIComponent(key)}`;
+  if (/^https?:\/\//i.test(urlOrKey)) return urlOrKey;
+  return `${process.env.NEXT_PUBLIC_API_URL}/api/user/upload/image?key=${encodeURIComponent(urlOrKey)}`;
 };
 
 // ─── Validation ───────────────────────────────────────────────────────────────
@@ -57,7 +40,8 @@ export default function ProfileDetailsPage() {
 
   // Image state
   const [displayUrl, setDisplayUrl]         = useState('');  // shown in <img>
-  const [pendingKey, setPendingKey]         = useState('');  // S3 key from upload
+  const [pendingKey, setPendingKey]         = useState('');  // Cloudinary public_id
+  const [pendingUrl, setPendingUrl]         = useState('');  // Cloudinary secure_url
   const [isUploadingImg, setIsUploadingImg] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -110,10 +94,11 @@ export default function ProfileDetailsPage() {
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
-      // Replace local blob preview with the real proxy URL
+      // Replace local blob preview with the Cloudinary URL
       URL.revokeObjectURL(localPreview);
       setPendingKey(data.key);
-      setDisplayUrl(toProxyUrl(data.key));
+      setPendingUrl(data.url);
+      setDisplayUrl(data.url);
       toast.success('Image ready — click Save to apply', { id: toastId });
     } catch (err: unknown) {
       // Revert preview on failure
@@ -139,8 +124,7 @@ export default function ProfileDetailsPage() {
     if (name.trim()  !== (user?.name  ?? '')) payload.name  = name.trim();
     if (email.trim() !== (user?.email ?? '')) payload.email = email.trim();
     if (phone.trim() !== (user?.phone ?? '')) payload.phone = phone.trim();
-    // Construct full S3 URL from the key (same as admin handleSave)
-    if (pendingKey) payload.profileImage = keyToS3Url(pendingKey);
+    if (pendingKey && pendingUrl) payload.profileImage = pendingUrl;
 
     if (Object.keys(payload).length === 0) {
       setIsEditing(false);
@@ -155,6 +139,7 @@ export default function ProfileDetailsPage() {
       toast.success('Profile updated successfully', { id: toastId });
       setIsEditing(false);
       setPendingKey('');
+      setPendingUrl('');
     } catch (err: unknown) {
       const msg = typeof err === 'string' ? err : 'Failed to update profile';
       toast.error(msg, { id: toastId });
@@ -169,6 +154,7 @@ export default function ProfileDetailsPage() {
     setPhone(user?.phone ?? '');
     setDisplayUrl(user?.profileImage ? toProxyUrl(user.profileImage) : '');
     setPendingKey('');
+    setPendingUrl('');
     setIsEditing(false);
   };
 

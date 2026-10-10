@@ -6,39 +6,42 @@ import type { IProduct, IImageAsset } from '../../models/Product.model.js';
 type MongoQuery = Record<string, unknown>;
 
 // ─── URL normalisation ────────────────────────────────────────────────────────
-// Products saved by the admin store a backend proxy URL in thumbnail.url
-// (e.g. http://localhost:5000/api/admin/upload/image?key=products/...).
-// The user frontend cannot hit that admin-only route, so we reconstruct the
-// direct public S3 URL from the stored key before returning to the client.
+// Prefer the stored public URL (Cloudinary secure_url). Fall back to building
+// a Cloudinary delivery URL from the public_id (`key`) when needed.
 
-const bucket = process.env.AWS_S3_BUCKET!;
-const region = process.env.AWS_REGION!;
+function toPublicUrl(asset: IImageAsset): IImageAsset {
+  if (!asset?.key && !asset?.url) return asset;
 
-function toS3Url(asset: IImageAsset): IImageAsset {
-  if (!asset?.key) return asset;
-
-  // Keep imported / external / placeholder images as stored
-  if (asset.key.startsWith('import/') || asset.key.startsWith('placeholder/')) {
+  // Already a usable absolute URL
+  if (asset.url && /^https?:\/\//i.test(asset.url)) {
     return asset;
   }
 
-  // Already a direct public S3 URL
-  if (asset.url?.includes('.amazonaws.com/')) {
+  // Keep placeholders / imports as stored
+  if (
+    asset.key?.startsWith('import/') ||
+    asset.key?.startsWith('placeholder/')
+  ) {
     return asset;
   }
 
-  return {
-    key: asset.key,
-    url: `https://${bucket}.s3.${region}.amazonaws.com/${asset.key}`,
-  };
+  // Cloudinary public_id → delivery URL
+  if (asset.key && process.env.CLOUDINARY_CLOUD_NAME) {
+    return {
+      key: asset.key,
+      url: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/${asset.key}`,
+    };
+  }
+
+  return asset;
 }
 
 function normaliseProduct(p: any): any {
   if (!p) return p;
   return {
     ...p,
-    thumbnail: p.thumbnail ? toS3Url(p.thumbnail) : p.thumbnail,
-    gallery:   Array.isArray(p.gallery) ? p.gallery.map(toS3Url) : p.gallery,
+    thumbnail: p.thumbnail ? toPublicUrl(p.thumbnail) : p.thumbnail,
+    gallery:   Array.isArray(p.gallery) ? p.gallery.map(toPublicUrl) : p.gallery,
   };
 }
 

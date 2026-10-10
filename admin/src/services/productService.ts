@@ -28,26 +28,20 @@ export interface ICreateProductPayload {
 const API_BASE = `${process.env.NEXT_PUBLIC_API_URL}/api/admin`;
 
 /**
- * Convert a raw S3 URL or key into a backend proxy URL.
- * The proxy endpoint streams the private S3 object through the backend,
- * so the S3 bucket can remain private.
- *
- * Accepts:
- *   - Full S3 URL:  https://bucket.s3.region.amazonaws.com/folder/file.jpg
- *   - S3 key only:  folder/file.jpg
+ * Resolve an image URL for display.
+ * Cloudinary returns public HTTPS URLs — use those directly.
+ * Falls back to the backend proxy for legacy keys.
  */
 export function toProxyUrl(urlOrKey: string): string {
   if (!urlOrKey) return '';
-  // If it's already a proxy URL, return as-is
   if (urlOrKey.includes('/upload/image')) return urlOrKey;
-  // Extract the key from a full S3 URL
-  const s3Match = urlOrKey.match(/amazonaws\.com\/(.+)$/);
-  const key = s3Match ? s3Match[1] : urlOrKey;
-  return `${API_BASE}/upload/image?key=${encodeURIComponent(key)}`;
+  if (/^https?:\/\//i.test(urlOrKey)) return urlOrKey;
+  if (urlOrKey.includes('res.cloudinary.com')) return urlOrKey;
+  return `${API_BASE}/upload/image?key=${encodeURIComponent(urlOrKey)}`;
 }
 
 const productService = {
-  // Upload a single image to S3 — returns { url, key } with a proxy URL
+  // Upload a single image to Cloudinary — returns { url, key }
   uploadImage: async (file: File, folder: string = 'products'): Promise<IImageAsset> => {
     const fd = new FormData();
     fd.append('image', file);
@@ -57,20 +51,18 @@ const productService = {
       fd
     );
 
-    // Replace the direct S3 URL with a backend proxy URL so the private
-    // bucket is never accessed directly from the browser.
     return {
-      ...data,
-      url: toProxyUrl(data.key ?? data.url),
+      url: data.url,
+      key: data.key,
     };
   },
 
-  // Delete an image from S3 by key
+  // Delete an image from Cloudinary by public_id (key)
   deleteImage: async (key: string): Promise<void> => {
     await privateApi.delete('/upload', { data: { key } });
   },
 
-  // Create product with pre-uploaded S3 assets — JSON body
+  // Create product with pre-uploaded Cloudinary assets — JSON body
   create: async (payload: ICreateProductPayload): Promise<{ product: IProduct; message: string }> => {
     const { data } = await privateApi.post<{ product: IProduct; message: string }>(
       '/products',

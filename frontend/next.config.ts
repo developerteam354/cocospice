@@ -29,17 +29,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'hokz-media-storage.s3.eu-north-1.amazonaws.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'nokz-media-storage.s3.eu-north-1.amazonaws.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.s3.*.amazonaws.com',
+        hostname: 'res.cloudinary.com',
         pathname: '/**',
       },
     ],
