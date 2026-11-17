@@ -66,7 +66,7 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold text-[#f6eada] text-base mb-1.5">Email Us</p>
                   <a href="mailto:info@cocospice.uk" className="text-[#f6eada]/80 text-base hover:text-[#802d00] transition-colors block">
-                    info@cocospice.uk
+                    cocospiceltd@gmail.com
                   </a>
                 </div>
               </div>
