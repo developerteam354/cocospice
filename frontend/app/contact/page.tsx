@@ -146,10 +146,10 @@ export default function ContactPage() {
                     <div className="flex-1">
                       <h3 className="font-bold text-[#322511] mb-1 text-lg">Email Us</h3>
                       <a 
-                        href="mailto:info@cocospice.uk" 
+                        href="mailto:cocospiceltd@gmail.com" 
                         className="text-[#322511]/70 hover:text-[#802d00] transition-colors font-medium"
                       >
-                        info@cocospice.uk
+                        cocospiceltd@gmail.com
                       </a>
                       <p className="text-sm text-[#322511]/50 mt-1">
                         We'll respond within 24 hours
